@@ -1,0 +1,134 @@
+.homes {
+    display: grid;
+    column-gap: 14px;
+    row-gap: 14px;
+    grid-template-columns: repeat(auto-fill, minmax(500px, 00px));
+    margin-top: 50px;
+    justify-content: space-around;
+  
+}
+
+.logout{
+  border: white;
+  background-color: purple;
+  padding: 10px;
+  border-radius: 8px;
+  color: white;
+  margin-right: 10px;
+}
+
+.logout:hover{
+  background-color: rgb(156, 2, 156);
+  color:black;
+  cursor: pointer;
+}
+
+.user-profile{
+  border: white;
+  background-color: purple;
+  padding: 10px;
+  border-radius: 8px;
+  color: white;
+  margin-right: 10px;
+}
+.user-profile:hover{
+  background-color: rgb(156, 2, 156);
+  color:black;
+  cursor: pointer;
+}
+
+.user{
+  display: flex;
+  justify-content: flex-end;
+  margin-top: -30px;
+}
+
+.register{
+  border: white;
+  background-color: purple;
+  padding: 10px;
+  border-radius: 8px;
+  color: white;
+  margin-right: 10px;
+}
+
+.register:hover{
+  background-color: rgb(156, 2, 156);
+  color:black;
+  cursor: pointer;
+}
+
+.login{
+  border: white;
+  background-color: purple;
+  padding: 10px;
+  border-radius: 8px;
+  color: white;
+  margin-right: 100px;
+}
+
+.login:hover{
+  background-color: rgb(156, 2, 156);
+  color:black;
+  cursor: pointer;
+}
+
+.search-wrapper {
+  display: flex;
+  justify-content: center;
+  width: 125%;
+}
+
+.search{
+width: 50%;
+margin-top: 10px;
+}
+
+  input[type="text"] {
+    border: solid 1px purple;
+    padding: 10px;
+    border-radius: 8px;
+    margin-right: 4px;
+    display: inline-block;
+    text-align: center;
+    width: 50%;
+  }
+
+  input[type="text"]:hover{
+    border:solid 1px rgb(156, 2, 156);
+    background: rgb(235, 235, 235);
+  }
+
+  input[type="text"]:focus{
+    border:solid 1px rgb(156, 2, 156);
+  }
+
+  .searchbutton {
+    padding: 10px;
+    border: solid 1px purple;
+    background: purple;
+    color: white;
+    border-radius: 8px;
+    width: auto;
+  }
+
+  .searchbutton:hover{
+    background-color: rgb(156, 2, 156);
+    color:black;
+    cursor: pointer;
+  }
+  
+  @media (min-width: 500px) and (max-width: 768px) {
+    .results {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    input[type="text"] {
+        width: 70%;
+    }   
+  }
+  
+  @media (max-width: 499px) {
+    .results {
+        grid-template-columns: 1fr;
+    }    
+  }
