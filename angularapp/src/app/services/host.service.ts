@@ -10,6 +10,7 @@ import { error } from '../interfaces/error';
 export class HostService {
   private HostURL = "https://localhost:7018/Host/Create";
   private HostDataURL = "https://localhost:7018/Host/GetHost/";
+  private EditHostURL = "https://localhost:7018/Host/Edit"
   constructor(private http: HttpClient) { }
   CreateHost(HostName: string | undefined, HostAbout: string | undefined, HostLocation: string | undefined, UserId: string | undefined): Observable<error[] | Host> {
     const HostData = {
@@ -19,6 +20,15 @@ export class HostService {
       HostLocation
     };
     return this.http.post<error[] | Host>(this.HostURL, HostData);
+  }
+  EditHost(HostName: string | undefined, HostAbout: string | undefined, HostLocation: string | undefined, UserId: string | undefined): Observable<error[] | Host> {
+    const HostData = {
+      UserId,
+      HostName,
+      HostAbout,
+      HostLocation
+    };
+    return this.http.post<error[] | Host>(this.EditHostURL, HostData);
   }
   SetHostData(data: Host) {
     if (data == undefined)

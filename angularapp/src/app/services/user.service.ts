@@ -10,8 +10,9 @@ import { User } from '../interfaces/user';
 export class UserService {
   private LoginURL = "https://localhost:7018/User/Login";
   private RegisterURL = "https://localhost:7018/User/Register";
-  private LogoutURL = "https://localhost:7018/User/Logout"
-  private EditURL = "https://localhost:7018/User/Edit/"
+  private LogoutURL = "https://localhost:7018/User/Logout";
+  private EditURL = "https://localhost:7018/User/Edit/";
+  private EditEmailURL = "https://localhost:7018/User/EditEmail";
   private User: User | undefined;
 
   constructor(private http: HttpClient) { }
@@ -46,6 +47,15 @@ export class UserService {
       bio
     }
     return this.http.post<User | error[]>(this.EditURL + this.User?.Id,EditData);
+  }
+  EditEmail(UserId: string|undefined,Email: string|undefined,Password: string|undefined,ConfirmPassword: string|undefined): Observable<User|error[]>{
+    const EditEmail = {
+      UserId,
+      Email,
+      Password,
+      ConfirmPassword
+    };
+    return this.http.post<User|error[]>(this.EditEmailURL,EditEmail);
   }
   SetUserData(data: User) {
     if (data == undefined)

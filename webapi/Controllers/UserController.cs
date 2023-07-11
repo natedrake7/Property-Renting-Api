@@ -129,7 +129,7 @@ namespace airbnb.Controllers
                     _logger.LogInformation("User logged in.");
                     var user = await _userManager.FindByNameAsync(Input.UserName);
                     if (user == null)
-                        return Content("[]");
+                        return NotFound();
                     ReturnModel model = new()
                     {
                         Id = user.Id,
@@ -171,6 +171,46 @@ namespace airbnb.Controllers
             };
             var json = JsonSerializer.Serialize("ok", options);
             return Content(json, "application/json");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EditEmail([FromBody]EmailModel Input)
+        {
+            var options = new JsonSerializerOptions
+            {
+                Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+            };
+            var user = await _userManager.FindByIdAsync(Input.UserId);
+
+            if (user == null)
+                return NotFound();
+            var CheckPassword = await _signInManager.CheckPasswordSignInAsync(user, Input.Password, false);
+            if (!CheckPassword.Succeeded)
+            {
+                ModelState.AddModelError("Password", "Wrong Password");
+            }
+            if (ModelState.ErrorCount > 0)
+            {
+                var ModelErrors = ModelState
+                                    .Where(entry => entry.Value!.Errors.Count > 0)
+                                    .Select(entry => new {
+                                        Variable = entry.Key,
+                                        Errors = entry.Value!.Errors.Select(error => error.ErrorMessage)
+                                    })
+                                    .ToList();
+                var json3 = JsonSerializer.Serialize(ModelErrors, options);
+                return Content(json3, "application/json");
+            }
+            var email = await _userManager.GetEmailAsync(user);
+            if(email != Input.Email)
+            {
+                var result = await _userManager.SetEmailAsync(user, Input.Email);
+                if (!result.Succeeded) 
+                    ModelState.AddModelError("Email", "Failed to change email");
+            }
+            await _signInManager.RefreshSignInAsync(user);
+            var json2 = JsonSerializer.Serialize(user, options);
+            return Content(json2, "application/json");
         }
 
         [HttpPost]

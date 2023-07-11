@@ -137,23 +137,34 @@ namespace webapi.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        public async Task<IActionResult> Edit(int id, [FromBody] Models.Host userHost)
+        public async Task<IActionResult> Edit([FromBody] Models.Host Host)
         {
-            if (id != userHost.Id)
+            var options = new JsonSerializerOptions
             {
+                Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+            };
+            var user = await _userManager.FindByIdAsync(Host.UserId);         
+            if(user == null) 
                 return NotFound();
-            }
-
+            var host = await _context.Hosts.FirstOrDefaultAsync(h => h.Id == user.HostId);
+            if(host == null)
+                return NotFound();
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _context.Update(userHost);
+                    if (host.HostName != Host.HostName && Host.HostName != "")
+                        host.HostName = Host.HostName;
+                    if (host.HostAbout != Host.HostAbout && Host.HostAbout != "")
+                        host.HostAbout = Host.HostAbout;
+                    if (host.HostLocation != Host.HostLocation && Host.HostLocation != "")
+                        host.HostLocation = Host.HostLocation;
+                    _context.Update(host);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!UserHostExists(userHost.Id))
+                    if (!UserHostExists(Host.Id))
                     {
                         return NotFound();
                     }
@@ -162,9 +173,18 @@ namespace webapi.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                var json2 = JsonSerializer.Serialize(Host, options);
+                return Content(json2, "application/json");
             }
-            return View(userHost);
+            var ModelErrors = ModelState
+                                .Where(entry => entry.Value!.Errors.Count > 0)
+                                .Select(entry => new {
+                                    Variable = entry.Key,
+                                    Errors = entry.Value!.Errors.Select(error => error.ErrorMessage)
+                                })
+                                .ToList();
+            var json = JsonSerializer.Serialize(ModelErrors, options);
+            return Content(json, "application/json");
         }
 
         // GET: UserHosts/Delete/5

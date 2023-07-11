@@ -133,3 +133,7 @@
   description-null::placeholder{
     color: rgb(67, 29, 29);
   }
+
+  form > * + * {
+    margin-top: 10px;
+  }
