@@ -54,6 +54,10 @@ import { error } from 'src/app/interfaces/error';
         <button type="submit" class="primary">Submit</button>
       </form>
     </section>
+    <div class="left-buttons">
+      <a [routerLink]="['AddHouse']">
+        <button class="house-button" type="button">Add a House</button>
+      </a>
   `,
   styleUrls: ['./host-profile.component.css']
 })
@@ -94,6 +98,5 @@ export class HostProfileComponent {
                         this.HostLocation_Error = Host_Error.find(item => item.Variable === 'HostLocation');
                       }
     });
-  }
-  
+  } 
 }
