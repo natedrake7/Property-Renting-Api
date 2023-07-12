@@ -130,20 +130,7 @@ namespace airbnb.Controllers
                     var user = await _userManager.FindByNameAsync(Input.UserName);
                     if (user == null)
                         return NotFound();
-                    ReturnModel model = new()
-                    {
-                        Id = user.Id,
-                        Username = user.UserName,
-                        FirstName = user.FirstName,
-                        LastName = user.LastName,
-                        Email = user.Email,
-                        PhoneNumber = user.PhoneNumber,
-                        IsHost = user.IsHost,
-                        Bio = user.Bio,
-                        HostId = user.HostId,
-
-                    };
-                    var json2 = JsonSerializer.Serialize(model, options);
+                    var json2 = JsonSerializer.Serialize(user, options);
                     return Content(json2, "application/json");
 
                 }
@@ -211,6 +198,55 @@ namespace airbnb.Controllers
             await _signInManager.RefreshSignInAsync(user);
             var json2 = JsonSerializer.Serialize(user, options);
             return Content(json2, "application/json");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ChangePassword([FromBody]PasswordModel Input,string? Id)
+        {
+            var options = new JsonSerializerOptions
+            {
+                Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+            };
+            var user = await _userManager.FindByIdAsync(Id);
+            if (user == null)
+                return NotFound();
+            var CheckPassword = await _signInManager.CheckPasswordSignInAsync(user, Input.OldPassword!, false);
+            if (!CheckPassword.Succeeded)
+                ModelState.AddModelError("OldPassword", "Wrong Password");
+            if (ModelState.ErrorCount > 0)
+            {
+                var ModelErrors = ModelState
+                                    .Where(entry => entry.Value!.Errors.Count > 0)
+                                    .Select(entry => new {
+                                        Variable = entry.Key,
+                                        Errors = entry.Value!.Errors.Select(error => error.ErrorMessage)
+                                    })
+                                    .ToList();
+                var json3 = JsonSerializer.Serialize(ModelErrors, options);
+                return Content(json3, "application/json");
+            }
+            var result = await _userManager.CheckPasswordAsync(user, Input.Password!);
+            if(result == false)
+            {
+                var check = await _userManager.ChangePasswordAsync(user, Input.OldPassword, Input.Password);
+                if (!check.Succeeded)
+                    ModelState.AddModelError("Password", "An error occured when trying to set the new password");
+            }
+            if (ModelState.ErrorCount > 0)
+            {
+                var ModelErrors = ModelState
+                                    .Where(entry => entry.Value!.Errors.Count > 0)
+                                    .Select(entry => new {
+                                        Variable = entry.Key,
+                                        Errors = entry.Value!.Errors.Select(error => error.ErrorMessage)
+                                    })
+                                    .ToList();
+                var json3 = JsonSerializer.Serialize(ModelErrors, options);
+                return Content(json3, "application/json");
+            }
+           await _signInManager.RefreshSignInAsync(user);
+           var json = JsonSerializer.Serialize(user, options);
+           return Content(json, "application/json");
         }
 
         [HttpPost]
@@ -305,6 +341,66 @@ namespace airbnb.Controllers
             await _signInManager.RefreshSignInAsync(user);
             var json2 = JsonSerializer.Serialize(user, options);
             return Content(json2, "application/json");
+        }
+
+        [HttpPost]
+
+        public async Task<IActionResult>Delete([FromBody]DeleteModel Input,string? Id)
+        {
+            var options = new JsonSerializerOptions
+            {
+                Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+            };
+            var user = await _userManager.FindByIdAsync(Id);
+            if (user == null)
+                return NotFound();
+            var result = await _userManager.CheckPasswordAsync(user, Input.Password!);
+            if (!result)
+                ModelState.AddModelError("Password", "Wrong Password");
+            if (ModelState.ErrorCount > 0)
+            {
+                var ModelErrors = ModelState
+                                    .Where(entry => entry.Value!.Errors.Count > 0)
+                                    .Select(entry => new {
+                                        Variable = entry.Key,
+                                        Errors = entry.Value!.Errors.Select(error => error.ErrorMessage)
+                                    })
+                                    .ToList();
+                var json3 = JsonSerializer.Serialize(ModelErrors, options);
+                return Content(json3, "application/json");
+            }
+            var json = JsonSerializer.Serialize("correct", options);
+            return Content(json, "application/json");
+        }
+
+        public async Task<IActionResult>DeleteConfirmed(string? Id)
+        {
+            var options = new JsonSerializerOptions
+            {
+                Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+            };
+            var user = await _userManager.FindByIdAsync(Id);
+            if (user == null)
+                return NotFound();
+            await _signInManager.SignOutAsync();
+            
+            var result = await _userManager.DeleteAsync(user);
+            if (!result.Succeeded)
+                ModelState.AddModelError("Delete", "Failed to delete user");
+            if (ModelState.ErrorCount > 0)
+            {
+                var ModelErrors = ModelState
+                                    .Where(entry => entry.Value!.Errors.Count > 0)
+                                    .Select(entry => new {
+                                        Variable = entry.Key,
+                                        Errors = entry.Value!.Errors.Select(error => error.ErrorMessage)
+                                    })
+                                    .ToList();
+                var json3 = JsonSerializer.Serialize(ModelErrors, options);
+                return Content(json3, "application/json");
+            }
+            var json = JsonSerializer.Serialize("done", options);
+            return Content(json, "application/json");
         }
 
         private User CreateUser()

@@ -7,6 +7,8 @@ import { UserProfileComponent } from './components/user-profile/user-profile.com
 import { HostProfileComponent } from './components/host-profile/host-profile.component';
 import { EmailComponent } from './components/email/email.component';
 import { Title } from '@angular/platform-browser';
+import { PasswordComponent } from './components/password/password.component';
+import { PersonalDataComponent } from './components/personal-data/personal-data.component';
 
 const routeConfig: Routes = [
   {
@@ -43,6 +45,16 @@ const routeConfig: Routes = [
     path:'Profile/Email',
     component: EmailComponent,
     title: 'Email'
+  },
+  {
+    path:'Profile/Password',
+    component: PasswordComponent,
+    title: 'Password'
+  },
+  {
+    path: 'Profile/PersonalData',
+    component: PersonalDataComponent,
+    title: 'PersonalData'
   }
 ];
 

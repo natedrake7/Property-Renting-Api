@@ -65,7 +65,8 @@ export class LoginComponent {
     const RememberMe = formValue.RememberMe || false;
     if (this.UserService.GetUserStatus() === false) {
       this.UserService.Login(userName, password, RememberMe).subscribe((response) => {
-        if ('Username' in response) {
+        if ('UserName' in response) {
+          console.log(response);
           const UserResponse = response as User;
           if (UserResponse.IsHost === true) {
             this.HostService.RetrieveHostData(UserResponse.Id).subscribe(response => {
@@ -73,7 +74,6 @@ export class LoginComponent {
                 const HostData = response as Host;
                 this.HostService.SetHostData(HostData);
               }
-              console.log(response);
               this.UserService.SetUserData(UserResponse);
               this.RoutingService.navigate(['/']);
             })

@@ -123,6 +123,18 @@ app.MapControllerRoute(
 
 app.MapControllerRoute(
     name: "EditUser",
-    pattern: "{controller=User}/{action=Edit}/c{id}");
+    pattern: "{controller=User}/{action=Edit}/{id}");
+
+app.MapControllerRoute(
+    name: "ChangePassword",
+    pattern: "{controller=User}/{action=ChangePassword}/{id}");
+
+app.MapControllerRoute(
+    name: "ChangePassword",
+    pattern: "{controller=User}/{action=Delete}/{id}");
+
+app.MapControllerRoute(
+    name: "ChangePassword",
+    pattern: "{controller=User}/{action=DeleteConfirmed}/{id}");
 
 app.Run();

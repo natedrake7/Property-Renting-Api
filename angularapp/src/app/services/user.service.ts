@@ -13,6 +13,9 @@ export class UserService {
   private LogoutURL = "https://localhost:7018/User/Logout";
   private EditURL = "https://localhost:7018/User/Edit/";
   private EditEmailURL = "https://localhost:7018/User/EditEmail";
+  private ChangePasswordURL = "https://localhost:7018/User/ChangePassword/";
+  private DeleteURL = "https://localhost:7018/User/Delete/"
+  private DeleteConfirmedURL = "https://localhost:7018/User/DeleteConfirmed/"
   private User: User | undefined;
 
   constructor(private http: HttpClient) { }
@@ -36,7 +39,7 @@ export class UserService {
     const LoginData = { UserName, Password, RememberMe };
     return this.http.post<User | error[]>(this.LoginURL, LoginData);
   }
-  Logout(): Observable<string> { return this.http.get<string>(this.LogoutURL); }
+  Logout(): Observable<string> { localStorage.clear(); return this.http.get<string>(this.LogoutURL); }
   EditUser(username: string|undefined,firstname: string|undefined,lastname: string|undefined,
            phonenumber: string|undefined,bio: string|undefined):Observable<User | error[]>{
     const EditData = {
@@ -56,6 +59,24 @@ export class UserService {
       ConfirmPassword
     };
     return this.http.post<User|error[]>(this.EditEmailURL,EditEmail);
+  }
+  ChangePassword(OldPassword: string|undefined,Password: string|undefined,ConfirmPassword: string|undefined): Observable<User|error[]>{
+    const ChangePassword = {
+      OldPassword,
+      Password,
+      ConfirmPassword
+    };
+    return this.http.post<User | error[]>(this.ChangePasswordURL + this.User?.Id,ChangePassword);
+  }
+  DeleteUser(Password: string|undefined,ConfirmPassword: string|undefined):Observable<error[] | string>{
+    const PasswordConfirm = {
+      Password,
+      ConfirmPassword
+    };
+    return this.http.post<error[] | string>(this.DeleteURL + this.User?.Id,PasswordConfirm);
+  }
+  DeleteConfirmedUser():Observable<error | string>{
+    return this.http.delete<error | string>(this.DeleteConfirmedURL + this.User?.Id);
   }
   SetUserData(data: User) {
     if (data == undefined)

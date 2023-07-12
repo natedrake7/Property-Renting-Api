@@ -34,10 +34,14 @@ input[type="password"] {
 }
 
 button.primary {
-  background-color: #4caf50;
+  background-color: #337ab7;
   color: #fff;
   padding: 10px 20px;
   border: none;
   border-radius: 4px;
   cursor: pointer;
+}
+
+button.primary:hover{
+  background-color: #1e5b91;
 }

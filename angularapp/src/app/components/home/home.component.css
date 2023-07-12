@@ -10,7 +10,7 @@
 
 .logout{
   border: white;
-  background-color: purple;
+  background-color: #337ab7;
   padding: 10px;
   border-radius: 8px;
   color: white;
@@ -18,21 +18,21 @@
 }
 
 .logout:hover{
-  background-color: rgb(156, 2, 156);
+  background-color: #1e5b91;
   color:black;
   cursor: pointer;
 }
 
 .user-profile{
   border: white;
-  background-color: purple;
+  background-color: #337ab7;
   padding: 10px;
   border-radius: 8px;
   color: white;
   margin-right: 10px;
 }
 .user-profile:hover{
-  background-color: rgb(156, 2, 156);
+  background-color: #1e5b91;
   color:black;
   cursor: pointer;
 }
@@ -45,7 +45,7 @@
 
 .register{
   border: white;
-  background-color: purple;
+  background-color: #337ab7;
   padding: 10px;
   border-radius: 8px;
   color: white;
@@ -53,14 +53,14 @@
 }
 
 .register:hover{
-  background-color: rgb(156, 2, 156);
+  background-color: #1e5b91;
   color:black;
   cursor: pointer;
 }
 
 .login{
   border: white;
-  background-color: purple;
+  background-color: #337ab7;
   padding: 10px;
   border-radius: 8px;
   color: white;
@@ -68,7 +68,7 @@
 }
 
 .login:hover{
-  background-color: rgb(156, 2, 156);
+  background-color: #1e5b91;
   color:black;
   cursor: pointer;
 }
@@ -85,7 +85,7 @@ margin-top: 10px;
 }
 
   input[type="text"] {
-    border: solid 1px purple;
+    border: solid 1px #337ab7;
     padding: 10px;
     border-radius: 8px;
     margin-right: 4px;
@@ -95,25 +95,25 @@ margin-top: 10px;
   }
 
   input[type="text"]:hover{
-    border:solid 1px rgb(156, 2, 156);
+    border:solid 1px #1e5b91;
     background: rgb(235, 235, 235);
   }
 
   input[type="text"]:focus{
-    border:solid 1px rgb(156, 2, 156);
+    border:solid 1px #1e5b91;
   }
 
   .searchbutton {
     padding: 10px;
-    border: solid 1px purple;
-    background: purple;
+    border: solid 1px #337ab7;
+    background: #337ab7;
     color: white;
     border-radius: 8px;
     width: auto;
   }
 
   .searchbutton:hover{
-    background-color: rgb(156, 2, 156);
+    background-color: #1e5b91;
     color:black;
     cursor: pointer;
   }
