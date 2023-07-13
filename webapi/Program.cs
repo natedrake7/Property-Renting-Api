@@ -137,4 +137,12 @@ app.MapControllerRoute(
     name: "ChangePassword",
     pattern: "{controller=User}/{action=DeleteConfirmed}/{id}");
 
+app.MapControllerRoute(
+    name: "CreateProperty",
+    pattern: "{controller=House}/{action=Create}/{id}");
+
+app.MapControllerRoute(
+    name: "GetProperties",
+    pattern: "{controller=Host}/{action=GetHouses}/{id}");
+
 app.Run();

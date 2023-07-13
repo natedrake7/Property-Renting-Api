@@ -1,7 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { ReactiveFormsModule,FormGroup,FormControl, Validators } from '@angular/forms';
+import { HouseService } from 'src/app/services/house.service';
+import { UserService } from 'src/app/services/user.service';
+import { User } from 'src/app/interfaces/user';
 
 @Component({
   selector: 'app-add-house',
@@ -14,7 +17,7 @@ import { ReactiveFormsModule,FormGroup,FormControl, Validators } from '@angular/
       </a>
     </div>
     <section class='create-house-listing'>
-      <form [formGroup]="HouseForm" (submit)="AddHouseListing()">
+      <form [formGroup]="HouseForm" (submit)="AddPropertyListing()">
       <div class="listing">
       <label for="house-name">Your House name</label>
         <input id="house-name" type="text" placeholder="Enter you house name" formControlName="Name">
@@ -79,6 +82,12 @@ import { ReactiveFormsModule,FormGroup,FormControl, Validators } from '@angular/
        <label for="cancellation-policy">Cancellation policy</label>
          <input id="cancellation-policy" type="text" placeholder="Specify your cancellation policy" formControlName="CancellationPolicy">
     </div>
+    <div class="images">
+      <label for="thumbnail">Upload Thumbnail</label>
+      <input id="thumbnail" type="file" (change)="OnImageUpload($event)" accept="image/*">
+      <label for="images-etc">Upload the rest of the images</label>
+      <input id="thumbnail" type="file" (change)="OnImagesUpload($event)" accept="image/*" multiple>
+    </div>
       <button type="submit" class="primary">Submit</button>
     </form>
     </section>
@@ -86,7 +95,12 @@ import { ReactiveFormsModule,FormGroup,FormControl, Validators } from '@angular/
   styleUrls: ['./add-house.component.css']
 })
 export class AddHouseComponent {
-
+  HouseService = inject(HouseService);
+  UserService = inject(UserService);
+  RoutingService = inject(Router);
+  User: User | undefined;
+  imageError: string | undefined;
+  images: File[] = [];
   HouseForm = new FormGroup({
     Name: new FormControl('',Validators.required),
     Summary: new FormControl('',Validators.required),
@@ -120,9 +134,45 @@ export class AddHouseComponent {
     InstantBookable: new FormControl(false),
     RequireGuestPhoneVerification: new FormControl(false),
     CancellationPolicy: new FormControl('',Validators.required),
+    ThumbnailImage: new FormControl('',Validators.required)
   });
 
-  AddHouseListing(){
+  constructor(){
+    this.User = this.UserService.GetUserData();
+  }
 
+  AddPropertyListing(){
+    const formValue = this.HouseForm.value;
+    const Name = formValue.Name || '';
+    const Summary = formValue.Summary || '';
+
+    this.HouseService.CreateProperty(this.User?.Id,Name,Summary).subscribe((response) => {
+      this.RoutingService.navigate(['/','Profile','Host'])
+      console.log(response);
+    });
+
+  }
+  OnImageUpload(event:any){
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const base64Image = reader.result as string;
+        // Handle the base64Image here or pass it to a service for further processing
+        console.log('Base64 image:', base64Image);
+      };
+      reader.readAsDataURL(file);
+    } else {
+      this.imageError = 'No image selected.';
+    }
+  }
+  OnImagesUpload(event:any){
+    const files: FileList = event.target.files;
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      if (file) {
+        this.images.push(file);
+      }
+    }
   }
 }

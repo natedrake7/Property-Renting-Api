@@ -7,6 +7,7 @@ using System.Text.Encodings.Web;
 using System.Text.Json;
 using webapi.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Hosting;
 
 namespace webapi.Controllers
 {
@@ -27,27 +28,38 @@ namespace webapi.Controllers
         [HttpGet]
         public async Task<IActionResult> GetHost(string? Id)
         {
-            var user = await _userManager.FindByIdAsync(Id); //Get current user
+            var user = await _userManager.FindByIdAsync(Id!); //Get current user
             if (user == null)
-            {
                 return NotFound();
-            }
-            var host = (from h in _context.Hosts //get the host with the matching id
-                        where h.Id == user.HostId
-                        select h).FirstOrDefault();
+
+            var host = await (from h in _context.Hosts //get the host with the matching id
+                              where h.Id == user.HostId
+                              select h).FirstOrDefaultAsync();
 
             if (host == null) //No need to check since we have authorization
                 return NotFound();
-
-            var houses = (from h in _context.Houses //Get the host's houses
-                          where h.HostId == user.HostId //as a list
-                          select h).ToList();
 
             var options = new JsonSerializerOptions
             {
                 Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
             };
             var json = JsonSerializer.Serialize(host, options);
+            return Content(json, "application/json");
+        }
+
+        [HttpGet]
+        public async Task<IActionResult>GetHouses(int Id)
+        {
+            var Houses = await (from h in _context.Houses
+                          where h.HostId == Id
+                          select h).ToListAsync();
+            if(Houses == null) 
+                return NotFound();
+            var options = new JsonSerializerOptions
+            {
+                Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+            };
+            var json = JsonSerializer.Serialize(Houses, options);
             return Content(json, "application/json");
         }
 

@@ -68,7 +68,7 @@ export class LoginComponent {
         if ('UserName' in response) {
           console.log(response);
           const UserResponse = response as User;
-          if (UserResponse.IsHost === true) {
+          if (UserResponse.IsHost) {
             this.HostService.RetrieveHostData(UserResponse.Id).subscribe(response => {
               if (response) {
                 const HostData = response as Host;

@@ -7,11 +7,15 @@ import {RouterModule } from '@angular/router';
 import { UserService } from 'src/app/services/user.service';
 import { User } from 'src/app/interfaces/user';
 import { error } from 'src/app/interfaces/error';
+import { House } from 'src/app/interfaces/house';
+import { HouseService } from 'src/app/services/house.service';
+import { HouseComponent } from '../house/house.component';
+import { PreviewHouseComponent } from '../preview-house/preview-house.component';
 
 @Component({
   selector: 'app-host-profile',
   standalone: true,
-  imports: [CommonModule,RouterModule,ReactiveFormsModule],
+  imports: [CommonModule,RouterModule,ReactiveFormsModule,PreviewHouseComponent],
   template: `
     <div class="left-buttons">
       <a routerLink="../">
@@ -58,17 +62,25 @@ import { error } from 'src/app/interfaces/error';
       <a [routerLink]="['AddHouse']">
         <button class="house-button" type="button">Add a House</button>
       </a>
+    <div class="houses">
+    <app-preview-house
+        *ngFor="let housingLocation of Houses"
+            [house]="housingLocation">
+      </app-preview-house>
+    </div>
   `,
   styleUrls: ['./host-profile.component.css']
 })
 export class HostProfileComponent {
   HostService = inject(HostService);
   UserService = inject(UserService);
+  HouseService = inject(HouseService);
   HostName_Error: error | undefined;
   HostAbout_Error: error | undefined;
   HostLocation_Error: error | undefined;
   Host: Host | undefined;
   User: User | undefined;
+  Houses: House[] | undefined;
 
   EditForm = new FormGroup({
     HostName: new FormControl('', Validators.required),
@@ -78,6 +90,10 @@ export class HostProfileComponent {
   constructor(){
     this.Host = this.HostService.GetHostData();
     this.User = this.UserService.GetUserData();
+    this.HouseService.GetHousesByHostId(this.Host?.Id).subscribe((response) =>{
+      this.Houses = response;
+    })
+    
   }
   EditProfile(){
     const formValue = this.EditForm.value;

@@ -10,6 +10,7 @@ import { Title } from '@angular/platform-browser';
 import { PasswordComponent } from './components/password/password.component';
 import { PersonalDataComponent } from './components/personal-data/personal-data.component';
 import { AddHouseComponent } from './components/add-house/add-house.component';
+import { EditHouseComponent } from './components/edit-house/edit-house.component';
 
 const routeConfig: Routes = [
   {
@@ -61,6 +62,11 @@ const routeConfig: Routes = [
     path: 'Profile/Host/AddHouse',
     component: AddHouseComponent,
     title: 'AddHouse'
+  },
+  {
+    path: 'Profile/Host/EditHouse/:id',
+    component: EditHouseComponent,
+    title: 'EditHouse'
   }
 ];
 

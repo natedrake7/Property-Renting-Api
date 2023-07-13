@@ -3,6 +3,7 @@ import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { Host } from '../interfaces/host';
 import { error } from '../interfaces/error';
+import { House } from '../interfaces/house';
 
 @Injectable({
   providedIn: 'root'
