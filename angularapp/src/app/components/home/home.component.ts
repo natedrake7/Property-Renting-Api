@@ -61,7 +61,7 @@ export class HomeComponent {
       this.filteredLocationList = data;
       this.housingLocationList = data;
       this.filteredLocationList.forEach((house) => {
-        this.housingService.getThumbnailImageById(house.Id).then(image => {
+        this.housingService.getThumbnailImageById(house.Id).subscribe(image => {
           if (image) {
             house.ThumbnailURL = image.URL;
             house.Image = image.Image;

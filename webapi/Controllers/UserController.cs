@@ -8,11 +8,13 @@ using System.Text.Json;
 using Microsoft.AspNetCore.Antiforgery;
 using webapi.Models;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using webapi.Data;
 
 namespace airbnb.Controllers
 {
     public class UserController : Controller
     {
+        private readonly ApplicationDbContext _context;
         private readonly SignInManager<User> _signInManager;
         private readonly UserManager<User> _userManager;
         private readonly IUserStore<User> _userStore;
@@ -26,7 +28,8 @@ namespace airbnb.Controllers
             SignInManager<User> signInManager,
             ILogger<UserController> logger,
             IEmailSender emailSender,
-            IAntiforgery antiforgery)
+            IAntiforgery antiforgery,
+            ApplicationDbContext context)
         {
             _userManager = userManager;
             _userStore = userStore;
@@ -35,15 +38,17 @@ namespace airbnb.Controllers
             _logger = logger;
             _emailSender = emailSender;
             _antiforgery = antiforgery;
+            _context = context;
         }
 
         [HttpPost]
-        public async Task<IActionResult> Register([FromBody] RegisterModel Input, HttpRequestMessage message)
+        public async Task<IActionResult> Register([FromBody] RegisterModel Input)
         {
             var options = new JsonSerializerOptions
             {
                 Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
             };
+            using var transaction = _context.Database.BeginTransaction();
             if (ModelState.IsValid)
             {
                 var user = CreateUser();
@@ -64,39 +69,53 @@ namespace airbnb.Controllers
 
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                     WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
-                    if (_userManager.Options.SignIn.RequireConfirmedAccount)
+                    await _signInManager.SignInAsync(user, isPersistent: false);
+                    if (user.IsHost == true)
                     {
-                        //return RedirectToPage("RegisterConfirmation", new { email = Input.Email, returnUrl = returnUrl });
-                    }
-                    else
-                    {
-                        await _signInManager.SignInAsync(user, isPersistent: false);
-                        if (user.IsHost == true)
+                        await _signInManager.RefreshSignInAsync(user);
+                        if(Input.HostName == null)
+                            Input.HostName = user.FirstName;
+                        if (Input.HostAbout == null)
+                           Input.HostAbout = user.Bio;
+                        if(Input.HostLocation == null)
                         {
-                            await _userManager.AddToRoleAsync(user, "Host");
-                            await _signInManager.RefreshSignInAsync(user);
-                        }
-                        else
-                        {
-                            await _userManager.AddToRoleAsync(user, "Tenant");
-                            await _signInManager.RefreshSignInAsync(user);
-                        }
-                        ReturnModel model = new()
-                        {
-                            Id = user.Id,
-                            Username = user.UserName,
-                            FirstName = user.FirstName,
-                            LastName = user.LastName,
-                            Email = user.Email,
-                            PhoneNumber = user.PhoneNumber,
-                            IsHost = user.IsHost,
-                            Bio = user.Bio,
-                            HostId = user.HostId,
+                           ModelState.AddModelError("HostLocation", "You must enter a valid location");
+                           var ModelErrors2 = ModelState
+                                    .Where(entry => entry.Value!.Errors.Count > 0)
+                                    .Select(entry => new {
+                                        Variable = entry.Key,
+                                        Errors = entry.Value!.Errors.Select(error => error.ErrorMessage)
+                                    })
+                                    .ToList();
+                            var json3 = JsonSerializer.Serialize(ModelErrors2, options);
+                            return Content(json3, "application/json");
 
-                        };
-                        var json2 = JsonSerializer.Serialize(model, options);
-                        return Content(json2, "application/json");
+                        }
+                        var userHost = new webapi.Models.Host()
+                        {
+                            UserId = user.Id,
+                            HostSince = DateTime.Now,
+                            HostName = Input.HostName,
+                            HostAbout = Input.HostAbout,
+                            HostLocation = Input.HostLocation
+                         };
+
+                         _context.Add(userHost);
+
+                         await _context.SaveChangesAsync(); //save changes to host
+                        user.Host = userHost; //set host navigation property
+                        user.HostId = userHost.Id; //and foreign key in user instance
+                        await _userManager.AddToRoleAsync(user, "Host");
                     }
+                     else
+                       await _userManager.AddToRoleAsync(user, "Tenant");
+
+                     await _userManager.UpdateAsync(user); //Update user values (HostId changed)
+                     await _signInManager.RefreshSignInAsync(user);
+
+                     transaction.Commit();
+                     var json2 = JsonSerializer.Serialize(user, options);
+                     return Content(json2, "application/json");
                 }
                 foreach (var error in result.Errors)
                 {

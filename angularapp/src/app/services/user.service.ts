@@ -22,7 +22,7 @@ export class UserService {
 
   Register(UserName: string | undefined, FirstName: string | undefined,
     LastName: string | undefined, Email: string | undefined, PhoneNumber: string | undefined,
-    Password: string | undefined, ConfirmPassword: string | undefined, IsHost: boolean | undefined): Observable<error[] | User> {
+    Password: string | undefined, ConfirmPassword: string | undefined, IsHost: boolean | undefined,HostName: string | undefined,HostAbout:string|undefined,HostLocation: string|undefined): Observable<error[] | User> {
     const registrationData = {
       UserName,
       FirstName,
@@ -31,7 +31,10 @@ export class UserService {
       PhoneNumber,
       Password,
       ConfirmPassword,
-      IsHost
+      IsHost,
+      HostName,
+      HostAbout,
+      HostLocation
     };
     return this.http.post<error[] | User>(this.RegisterURL, registrationData);
   }

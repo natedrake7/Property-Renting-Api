@@ -8,6 +8,7 @@ using System.Text.Json.Serialization;
 using System.Text.Json;
 using webapi.Models;
 using webapi.Data;
+using Microsoft.Extensions.Options;
 
 namespace webapi.Controllers
 {
@@ -62,6 +63,7 @@ namespace webapi.Controllers
             var json = JsonSerializer.Serialize(images, options);
             return Content(json, "application/json");
         }
+
         [AllowAnonymous]
         public async Task<IActionResult> GetThumbnail(int? id)
         {
@@ -84,8 +86,32 @@ namespace webapi.Controllers
             return Content(json, "application/json");
         }
 
-        // GET: UserHouses/Details/5
-        [AllowAnonymous]
+        [HttpPost]
+        public async Task<IActionResult> SetThumbnail(int? id,[FromBody]int ImageId)
+        {
+            var options = new JsonSerializerOptions
+            {
+                Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+            };
+            var Images = await (from i in _context.HouseImages
+                                where i.HouseId == id
+                                select i).ToListAsync();
+            if(Images == null) 
+                return NotFound();
+
+            foreach(var image in Images)
+            {
+                if(image.Id == ImageId)
+                     image.Name = "Thumbnail";
+                else if(image.Name == "Thumbnail")
+                    image.Name = "Images";
+            }
+            await _context.SaveChangesAsync();
+            var json = JsonSerializer.Serialize("ok", options);
+            return Content(json, "application/json");
+        }
+            // GET: UserHouses/Details/5
+            [AllowAnonymous]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null || _context.Houses == null)
@@ -134,7 +160,7 @@ namespace webapi.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(string? Id,[FromBody]House userHouse)
+        public async Task<IActionResult> Create(string? Id,[FromForm]HouseInput House)
         {
             var options = new JsonSerializerOptions
             {
@@ -145,76 +171,110 @@ namespace webapi.Controllers
             var user = await _userManager.FindByIdAsync(Id!);
             if (user == null)
                 return NotFound();
-
+            using var transaction = _context.Database.BeginTransaction();
             if (ModelState.IsValid)
             {
+                //Create PropertyInstance
+                var userHouse = new House()
+                {
+                    Name = House.Name,
+                    Summary = House.Summary,
+                    HostId = user.HostId
+                };
                 _context.Add(userHouse);
+                await _context.SaveChangesAsync(); //Save changes
 
-                userHouse.HostId = user!.HostId;
-                await _context.SaveChangesAsync();
+                var houseImage = new HouseImage()
+                {
+                    HouseId = userHouse.Id,
+                    Name = "Thumbnail",
+                    Image = ConvertFileToBytes(House.Thumbnail!)
+                };
+                _context.Add(houseImage);
+                foreach (var image in House.Images!)
+                {
+                    var Image = new HouseImage()
+                    {
+                        HouseId = userHouse.Id,
+                        Name = "Image",
+                        Image = ConvertFileToBytes(image)
+                    };
+                    _context.Add(Image);
+                }
+                await _context.SaveChangesAsync(); //Save changes
+
+                transaction.Commit();
+
                 var json = JsonSerializer.Serialize("ok", options);
                 return Content(json, "application/json");
             }
             else
             {
-                var json = JsonSerializer.Serialize("ok", options);
+                var ModelErrors = ModelState
+                .Where(entry => entry.Value!.Errors.Count > 0)
+                .Select(entry => new
+                {
+                    Variable = entry.Key,
+                    Errors = entry.Value!.Errors.Select(error => error.ErrorMessage)
+                })
+                .ToList();
+                var json = JsonSerializer.Serialize(ModelErrors, options);
                 return Content(json, "application/json");
             }
         }
-
-        // GET: UserHouses/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public byte[] ConvertFileToBytes(IFormFile file)
         {
-            if (id == null || _context.Houses == null)
-                return NotFound();
-
-            var user = await _userManager.GetUserAsync(User);
-
-            var userHouse = await _context.Houses.FindAsync(id);
-
-            if (userHouse == null)
-                return NotFound();
-
-            if (user == null)
-                return LocalRedirect("/Identity/Account/Login");
-            else if (user.HostId != userHouse.HostId)
-                return RedirectToAction("Index", "Home");
-
-            return View(userHouse);
+            using (var memoryStream = new MemoryStream())
+            {
+                file.CopyTo(memoryStream);
+                return memoryStream.ToArray();
+            }
         }
-
-        // POST: UserHouses/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, House userHouse)
+        public async Task<IActionResult> Edit(int id,[FromForm] HouseEdit House)
         {
-            var user = await _userManager.GetUserAsync(User);
-            if (user == null)
-                return LocalRedirect("/Identity/Account/Login");
-
+            var options = new JsonSerializerOptions
+            {
+                Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
+                NumberHandling = JsonNumberHandling.AllowNamedFloatingPointLiterals,
+                ReferenceHandler = ReferenceHandler.Preserve
+            };
             var existingHouse = await _context.Houses.FindAsync(id);
-            if (id != userHouse.Id)
-                return NotFound();
             if (existingHouse == null)
                 return NotFound();
             else if (id != existingHouse.Id)
                 return NotFound();
-
+            using var transaction = _context.Database.BeginTransaction();
             if (ModelState.IsValid)
             {
                 try
                 {
                     //Will need to update as i increase the number of values user can change
-                    existingHouse.ListingUrl = userHouse.ListingUrl;
-                    existingHouse.Name = userHouse.Name;
-                    existingHouse.Summary = userHouse.Summary;
+                    existingHouse.Name = House.Name;
+                    existingHouse.Summary = House.Summary;
                     await _context.SaveChangesAsync();
+
+                    if(House.Images != null)
+                    {
+                        foreach (var image in House.Images)
+                        {
+                            var Image = new HouseImage()
+                            {
+                                HouseId = id,
+                                Name = image.Name,
+                                Image = ConvertFileToBytes(image)
+                            };
+                            _context.Add(Image);
+                        }
+                        await _context.SaveChangesAsync(); //Save changes
+                    }
+                    transaction.Commit();
+                    var json = JsonSerializer.Serialize("ok", options);
+                    return Content(json, "application/json");
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!UserHouseExists(userHouse.Id))
+                    if (!UserHouseExists(id))
                     {
                         return NotFound();
                     }
@@ -223,9 +283,18 @@ namespace webapi.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction("Index", "UserHosts");
+
             }
-            return View(userHouse);
+            var ModelErrors = ModelState
+            .Where(entry => entry.Value!.Errors.Count > 0)
+            .Select(entry => new
+            {
+                Variable = entry.Key,
+                Errors = entry.Value!.Errors.Select(error => error.ErrorMessage)
+            })
+            .ToList();
+            var json2 = JsonSerializer.Serialize(ModelErrors, options);
+            return Content(json2, "application/json");
         }
 
         // GET: UserHouses/Delete/5

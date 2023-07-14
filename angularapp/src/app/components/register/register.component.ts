@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule,Router } from '@angular/router';
-import { FormControl,FormGroup,ReactiveFormsModule,Validators } from '@angular/forms';
+import { FormControl,FormGroup,ReactiveFormsModule,UntypedFormBuilder,Validators } from '@angular/forms';
 import { UserService } from 'src/app/services/user.service';
 import { HostService } from 'src/app/services/host.service';
 import { HttpClientModule,HttpClientXsrfModule } from '@angular/common/http';
@@ -74,10 +74,25 @@ import { Host } from '../../interfaces/host';
           <div class ="host"*ngIf="RegisterForm.value.IsHost === true">
             <label for="host-name">Your Host Name</label>
               <input id="host-name" type="text" placeholder="Enter your Host name" formControlName="HostName">
+              <div class ="error"*ngIf="HostName_Error">
+              <div *ngFor="let message of HostName_Error.Errors">
+                <p>{{message}}</p>
+              </div>
+            </div>
             <label for="host-location">Your Location</label>
               <input id="host-location" type="text" placeholder="Enter your Location" formControlName="HostLocation">
+              <div class ="error"*ngIf="HostLocation_Error">
+              <div *ngFor="let message of HostLocation_Error.Errors">
+                <p>{{message}}</p>
+              </div>
+            </div>
             <label for="host-about">Your Host Description</label>
               <input id="host-about" type="text" placeholder="Enter your description" formControlName="HostAbout">
+                  <div class ="error"*ngIf="HostAbout_Error">
+              <div *ngFor="let message of HostAbout_Error.Errors">
+                <p>{{message}}</p>
+              </div>
+            </div>
             </div>
           <button type="submit" class="primary">Register</button>
         </form>
@@ -97,6 +112,9 @@ export class RegisterComponent {
   Password_Error: error|undefined;
   ConfPassword_Error: error|undefined;
   HostName_Error: error | undefined;
+  HostLocation_Error : error | undefined;
+  HostAbout_Error : error | undefined;
+
   HostRegistrationForm: boolean = false;
 
   RegisterForm = new FormGroup({
@@ -134,18 +152,20 @@ export class RegisterComponent {
                               phoneNumber,
                               password,
                               confirmPassword,
-                              isHost).subscribe((response) => {
-                                          if('Username' in response){
-                                            const UserResponse = response as User;
-                                            if(isHost === true){
-                                              this.HostService.CreateHost(hostname,hostlocation,hostabout,UserResponse.Id)
-                                              .subscribe((response2) => {
-                                                  const Host = response2 as Host;
-                                                  this.HostService.SetHostData(Host);
+                              isHost,hostname,hostlocation,hostabout).subscribe((response) => {
+                                          if('UserName' in response){
+                                            this.UserService.SetUserData(response as User);
+                                            if(this.UserService.GetUserData()?.IsHost){
+                                              this.HostService.RetrieveHostData(this.UserService.GetUserData()?.Id).subscribe((response) => {
+                                                if(typeof response  != 'string'){
+                                                  const data = response as Host;
+                                                  this.HostService.SetHostData(data);
+                                                  this.RoutingService.navigate(['/']);  
+                                                };
                                               });
                                             }
-                                            this.UserService.SetUserData(UserResponse);
-                                            this.RoutingService.navigate(['/']);  
+                                            else
+                                              this.RoutingService.navigate(['/']);  
                                           }else{
                                             const ErrorResponse = response as error[];
                                             this.Username_Error = ErrorResponse.find(item => item.Variable === 'Username');
@@ -155,6 +175,9 @@ export class RegisterComponent {
                                             this.Email_Error = ErrorResponse.find(item => item.Variable === 'Email');
                                             this.Password_Error = ErrorResponse.find(item => item.Variable === 'Password');
                                             this.ConfPassword_Error = ErrorResponse.find(item => item.Variable === 'ConfirmPassword');
+                                            this.HostName_Error = ErrorResponse.find(item => item.Variable === 'HostName');
+                                            this.HostAbout_Error = ErrorResponse.find(item => item.Variable === 'HostAbout');
+                                            this.HostLocation_Error = ErrorResponse.find(item => item.Variable === 'HostLocation');
                                           };});
   }
 }

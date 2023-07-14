@@ -5,6 +5,8 @@ import { ReactiveFormsModule,FormGroup,FormControl, Validators } from '@angular/
 import { HouseService } from 'src/app/services/house.service';
 import { UserService } from 'src/app/services/user.service';
 import { User } from 'src/app/interfaces/user';
+import { ImageService } from 'src/app/services/image.service';
+import { error } from 'src/app/interfaces/error';
 
 @Component({
   selector: 'app-add-house',
@@ -86,7 +88,12 @@ import { User } from 'src/app/interfaces/user';
       <label for="thumbnail">Upload Thumbnail</label>
       <input id="thumbnail" type="file" (change)="OnImageUpload($event)" accept="image/*">
       <label for="images-etc">Upload the rest of the images</label>
-      <input id="thumbnail" type="file" (change)="OnImagesUpload($event)" accept="image/*" multiple>
+      <input id="images-etc" type="file" (change)="OnImagesUpload($event)" accept="image/*" multiple>
+        <div class="error" *ngIf="Thumbnail_Error">
+          <div *ngFor="let message of Thumbnail_Error.Errors">
+                <p>{{message}}</p>
+        </div>
+      </div>
     </div>
       <button type="submit" class="primary">Submit</button>
     </form>
@@ -100,7 +107,9 @@ export class AddHouseComponent {
   RoutingService = inject(Router);
   User: User | undefined;
   imageError: string | undefined;
+  Thumbnail_Error: error | undefined;
   images: File[] = [];
+  Thumbnail: File | undefined;
   HouseForm = new FormGroup({
     Name: new FormControl('',Validators.required),
     Summary: new FormControl('',Validators.required),
@@ -133,8 +142,7 @@ export class AddHouseComponent {
     RequiresLicense: new FormControl(false),
     InstantBookable: new FormControl(false),
     RequireGuestPhoneVerification: new FormControl(false),
-    CancellationPolicy: new FormControl('',Validators.required),
-    ThumbnailImage: new FormControl('',Validators.required)
+    CancellationPolicy: new FormControl('',Validators.required)
   });
 
   constructor(){
@@ -146,22 +154,23 @@ export class AddHouseComponent {
     const Name = formValue.Name || '';
     const Summary = formValue.Summary || '';
 
-    this.HouseService.CreateProperty(this.User?.Id,Name,Summary).subscribe((response) => {
-      this.RoutingService.navigate(['/','Profile','Host'])
+    this.HouseService.CreateProperty(this.User?.Id,Name,Summary,this.Thumbnail,this.images).subscribe((response) => {
       console.log(response);
+      if(response === 'ok'){
+        this.RoutingService.navigateByUrl('../');
+      }
+      else{
+        console.log(response);
+        //const Error = response as error[];
+        //this.Thumbnail_Error = Error.find(item => item.Variable === 'Thumbnail');
+      }
     });
 
   }
   OnImageUpload(event:any){
     const file = event.target.files[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        const base64Image = reader.result as string;
-        // Handle the base64Image here or pass it to a service for further processing
-        console.log('Base64 image:', base64Image);
-      };
-      reader.readAsDataURL(file);
+      this.Thumbnail = file; 
     } else {
       this.imageError = 'No image selected.';
     }

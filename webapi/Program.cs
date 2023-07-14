@@ -145,4 +145,20 @@ app.MapControllerRoute(
     name: "GetProperties",
     pattern: "{controller=Host}/{action=GetHouses}/{id}");
 
+app.MapControllerRoute(
+    name: "CreateImage",
+    pattern: "{controller=HouseImages}/{action=Create}/{id}");
+
+app.MapControllerRoute(
+    name: "EditHouse",
+    pattern: "{controller=House}/{action=Edit}/{id}");
+
+app.MapControllerRoute(
+    name: "EditThumbnail",
+    pattern: "{controller=House}/{action=SetThumbnail}/{id}");
+
+app.MapControllerRoute(
+    name: "DeleteImage",
+    pattern: "{controller=HouseImages}/{action=Delete}/{id}");
+
 app.Run();

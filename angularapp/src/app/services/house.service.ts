@@ -3,86 +3,65 @@ import { Images } from '../interfaces/images';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { House } from '../interfaces/house';
-import { FormGroup } from '@angular/forms';
+import * as FormData from 'form-data';
+import { error } from '../interfaces/error';
 
 @Injectable({
   providedIn: 'root'
 })
 
 export class HouseService {
-  private URL = 'https://localhost:7018/House/Index'
-  private URL2 = 'https://localhost:7018/House/Details'
-  private ImageURL = 'https://localhost:7018/House/GetImages'
-  private ThumbnailURL = 'https://localhost:7018/House/GetThumbnail'
+  private GetHouses = 'https://localhost:7018/House/Index'
+  private GetHouse = 'https://localhost:7018/House/Details/'
+  private ImageURL = 'https://localhost:7018/House/GetImages/'
+  private ThumbnailURL = 'https://localhost:7018/House/GetThumbnail/'
   private CreatePropertyURL = 'https://localhost:7018/House/Create/'
   private GetHostHousesURL = 'https://localhost:7018/Host/GetHouses/'
-  housingLocationList: House[] = [];
+  private EditHouseURL = 'https://localhost:7018/House/Edit/'
+  private housingLocationList: House[] = [];
   constructor(private http: HttpClient) { }
-  CreateProperty(UserId: string|undefined,Name: string | undefined,Summary: string | undefined):Observable<string>{
-    const HouseForm = {
-      Name,
-      Summary
-    };
-    return this.http.post<string>(this.CreatePropertyURL + UserId,HouseForm);
+  CreateProperty(UserId: string|undefined,Name: string | undefined,Summary: string | undefined,Thumbnail: File | undefined,Images: File[] | undefined):Observable<string|error[]>{
+    const HouseForm = new FormData();
+    HouseForm.append('Name',Name);
+    HouseForm.append('Summary',Summary);
+    HouseForm.append('Thumbnail',Thumbnail);
+    for(let i = 0;i < Images?.length!;i++){
+      HouseForm.append('Images',Images![i]);
+    }
+    return this.http.post<string|error[]>(this.CreatePropertyURL + UserId,HouseForm);
   }
 
-  getAllHousingLocations(): Observable<House[]> {
-    return this.http.get<House[]>(this.URL);
+getAllHousingLocations(): Observable<House[]> {
+    return this.http.get<House[]>(this.GetHouses);
   }
 
-  async getHousingLocationById(id: number): Promise<House | undefined> {
-    try {
-      const data = await fetch(`${this.URL2}/${id}`);
-      console.log(data);
-      if (data.ok) {
-        return await data.json() ?? {};
-      }
-      else {
-        throw new Error('Failed to fetch house.');
-      }
-    }
-    catch (error) {
-      console.error(error);
-      return undefined;
-    }
-  }
-  async getHousingImagebyId(id: number): Promise<Images[]> {
-    try {
-      const data = await fetch(`${this.ImageURL}/${id}`);
-      console.log(data);
-      if (data.ok) {
-        return await data.json() ?? {};
-      }
-      else {
-        throw new Error('Failed to fetch house.');
-      }
-    }
-    catch (error) {
-      console.error(error);
-      return [];
-    }
-  }
-  async getThumbnailImageById(id: number): Promise<Images | undefined> {
-    try {
-      const data = await fetch(`${this.ThumbnailURL}/${id}`);
-      console.log(data);
-      if (data.ok) {
-        return await data.json() ?? {};
-      }
-      else {
-        throw new Error('Failed to fetch Thumbnail.');
-      }
-    }
-    catch (error) {
-      console.error(error);
-      return undefined;
-    }
-  }
-  GetHousesByHostId(HostId: number|undefined):Observable<House[]>{
+getHousingLocationById(id: number): Observable<House> {
+  return this.http.get<House>(this.GetHouse + id);
+}
+
+getHousingImagebyId(id: number): Observable<Images[]> {
+  return this.http.get<Images[]>(this.ImageURL + id)
+}
+
+getThumbnailImageById(id: number): Observable<Images | undefined> {
+  return this.http.get<Images>(this.ThumbnailURL + id);
+}
+
+GetHousesByHostId(HostId: number|undefined):Observable<House[]>{
     return this.http.get<House[]>(this.GetHostHousesURL + HostId);
   }
-  submitApplication(firstName: string, lastName: string, email: string) {
-    console.log(`Homes application received: firstName: ${firstName}
-                , lastName: ${lastName}, email: ${email}.`);
+
+EditHouseById(Id : number | undefined,Name: string | undefined,Summary: string | undefined,Images: File[] | undefined):Observable<string|error[]>{
+  const EditData = new FormData();
+  EditData.append('Name',Name);
+  EditData.append('Summary',Summary);
+  if(Images != undefined){
+    for(let i = 0;i < Images?.length;i++)
+    {
+      EditData.append('Images',Images[i]);
+      console.log(Images[i]);
+    }
   }
+  return this.http.post<string|error[]>(this.EditHouseURL + Id,EditData);
+}
 }

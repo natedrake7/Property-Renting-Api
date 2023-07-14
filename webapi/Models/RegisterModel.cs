@@ -34,5 +34,14 @@ namespace webapi.Models
         [Display(Name = "Confirm password")]
         [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
         public string? ConfirmPassword { get; set; }
+
+        [StringLength(30)]
+        public string? HostName { get; set; }
+
+        [StringLength(60)]
+        public string? HostLocation { get; set; }
+
+        [StringLength(1000)]
+        public string? HostAbout { get; set; }
     }
 }

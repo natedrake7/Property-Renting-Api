@@ -11,11 +11,12 @@ import { House } from 'src/app/interfaces/house';
 import { HouseService } from 'src/app/services/house.service';
 import { HouseComponent } from '../house/house.component';
 import { PreviewHouseComponent } from '../preview-house/preview-house.component';
+import { EditHouseComponent } from '../edit-house/edit-house.component';
 
 @Component({
   selector: 'app-host-profile',
   standalone: true,
-  imports: [CommonModule,RouterModule,ReactiveFormsModule,PreviewHouseComponent],
+  imports: [CommonModule,RouterModule,ReactiveFormsModule,PreviewHouseComponent,EditHouseComponent],
   template: `
     <div class="left-buttons">
       <a routerLink="../">
@@ -69,7 +70,7 @@ import { PreviewHouseComponent } from '../preview-house/preview-house.component'
       </app-preview-house>
     </div>
   `,
-  styleUrls: ['./host-profile.component.css']
+  styleUrls: ['./host-profile.component.css'] 
 })
 export class HostProfileComponent {
   HostService = inject(HostService);

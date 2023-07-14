@@ -20,5 +20,6 @@ namespace webapi.Models
         public bool? IsHost { get; set; }
 
         public int HostId { get; set; }
+
     }
 }
