@@ -9,7 +9,6 @@ import { User } from 'src/app/interfaces/user';
 import { error } from 'src/app/interfaces/error';
 import { House } from 'src/app/interfaces/house';
 import { HouseService } from 'src/app/services/house.service';
-import { HouseComponent } from '../house/house.component';
 import { PreviewHouseComponent } from '../preview-house/preview-house.component';
 import { EditHouseComponent } from '../edit-house/edit-house.component';
 

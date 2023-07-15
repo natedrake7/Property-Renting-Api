@@ -29,7 +29,6 @@ builder.Services.AddCors(options =>
                  );
 builder.Services.AddAntiforgery(options =>
 {
-    options.Cookie.Name = "XSRF-TOKEN";
     options.HeaderName = "X-XSRF-TOKEN";
 });
 builder.Services.AddRazorPages();
@@ -83,19 +82,23 @@ if (!app.Environment.IsDevelopment())
 
 var antiforgery = app.Services.GetRequiredService<IAntiforgery>();
 
-app.Use((context, next) =>
+app.Use(nextDelegate => context =>
 {
-    var requestPath = context.Request.Path.Value;
+    var requestPath = context.Request.Path.Value!.ToLower();
 
     if (string.Equals(requestPath, "/", StringComparison.OrdinalIgnoreCase)
         || string.Equals(requestPath, "/register", StringComparison.OrdinalIgnoreCase))
     {
         var tokenSet = antiforgery.GetAndStoreTokens(context);
         context.Response.Cookies.Append("XSRF-TOKEN", tokenSet.RequestToken!,
-            new CookieOptions { HttpOnly = false });
+            new CookieOptions() { 
+                HttpOnly = false ,
+                Secure = true ,
+                IsEssential = true,
+                SameSite = SameSiteMode.Strict
+            });
     }
-
-    return next(context);
+    return nextDelegate(context);
 });
 
 app.UseHttpsRedirection();
@@ -156,6 +159,10 @@ app.MapControllerRoute(
 app.MapControllerRoute(
     name: "EditThumbnail",
     pattern: "{controller=House}/{action=SetThumbnail}/{id}");
+
+app.MapControllerRoute(
+    name: "DeleteProperty",
+    pattern: "{controller=House}/{action=Delete}/{id}");
 
 app.MapControllerRoute(
     name: "DeleteImage",

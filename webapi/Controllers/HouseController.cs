@@ -9,6 +9,7 @@ using System.Text.Json;
 using webapi.Models;
 using webapi.Data;
 using Microsoft.Extensions.Options;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace webapi.Controllers
 {
@@ -110,8 +111,8 @@ namespace webapi.Controllers
             var json = JsonSerializer.Serialize("ok", options);
             return Content(json, "application/json");
         }
-            // GET: UserHouses/Details/5
-            [AllowAnonymous]
+        
+        [AllowAnonymous]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null || _context.Houses == null)
@@ -164,9 +165,7 @@ namespace webapi.Controllers
         {
             var options = new JsonSerializerOptions
             {
-                Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
-                NumberHandling = JsonNumberHandling.AllowNamedFloatingPointLiterals,
-                ReferenceHandler = ReferenceHandler.Preserve
+                Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
             };
             var user = await _userManager.FindByIdAsync(Id!);
             if (user == null)
@@ -297,54 +296,33 @@ namespace webapi.Controllers
             return Content(json2, "application/json");
         }
 
-        // GET: UserHouses/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null || _context.Houses == null)
-                return NotFound();
-
-            var userHouse = await _context.Houses
-                                .Include(u => u.Host)
-                                .FirstOrDefaultAsync(m => m.Id == id);
-
-            if (userHouse == null)
-                return NotFound();
-
-            var user = await _userManager.GetUserAsync(User);
-
-
-            if (user == null)
-                return LocalRedirect("/Identity/Account/Login");
-            else if (user.HostId != userHouse.HostId)
-                return RedirectToAction("Index", "Home");
-
-            return View(userHouse);
-        }
-
         // POST: UserHouses/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        [HttpPost]
+        public async Task<IActionResult> Delete(int id,[FromForm]string? UserId)
         {
+            var options = new JsonSerializerOptions
+            {
+                Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
+                NumberHandling = JsonNumberHandling.AllowNamedFloatingPointLiterals,
+                ReferenceHandler = ReferenceHandler.Preserve
+            };
             if (_context.Houses == null)
                 return Problem("Entity set 'UserContext.UserHouses'  is null.");
 
             var userHouse = await _context.Houses.FindAsync(id);
             if (userHouse == null)
-                return RedirectToAction("Index", "UserHosts");
+                return NotFound($"House with id {id} not found.");
 
-
-            var user = await _userManager.GetUserAsync(User);
-
+            var user = await _userManager.FindByIdAsync(UserId!);
             if (user == null)
-                LocalRedirect("/Identity/Account/Login");
-            else if (user.HostId != userHouse.HostId)
+                return NotFound($"User with id {UserId} not found.");
 
-                if (userHouse != null)
-                    _context.Houses.Remove(userHouse);
+            if (userHouse != null)
+                  _context.Houses.Remove(userHouse);
 
             await _context.SaveChangesAsync();
-            return RedirectToAction("Index", "UserHosts");
+            var json = JsonSerializer.Serialize("ok", options);
+            return Content(json, "application/json");
         }
 
         private bool UserHouseExists(int id)

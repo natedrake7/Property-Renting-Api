@@ -18,7 +18,7 @@ export class HouseService {
   private CreatePropertyURL = 'https://localhost:7018/House/Create/'
   private GetHostHousesURL = 'https://localhost:7018/Host/GetHouses/'
   private EditHouseURL = 'https://localhost:7018/House/Edit/'
-  private housingLocationList: House[] = [];
+  private DeleteHouseURL = 'https://localhost:7018/House/Delete/'
   constructor(private http: HttpClient) { }
   CreateProperty(UserId: string|undefined,Name: string | undefined,Summary: string | undefined,Thumbnail: File | undefined,Images: File[] | undefined):Observable<string|error[]>{
     const HouseForm = new FormData();
@@ -63,5 +63,10 @@ EditHouseById(Id : number | undefined,Name: string | undefined,Summary: string |
     }
   }
   return this.http.post<string|error[]>(this.EditHouseURL + Id,EditData);
+}
+DeleteHousebyId(Id:number,UserId:string | undefined):Observable<string>{
+  const DeleteData = new FormData();
+  DeleteData.append('UserId',UserId);
+  return this.http.post<string>(this.DeleteHouseURL + Id,DeleteData);
 }
 }

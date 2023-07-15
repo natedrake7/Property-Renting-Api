@@ -1,38 +1,55 @@
 .listing {
-    margin-bottom: 20px;
-  }
-  
-  .listing-heading {
-    font-size: 24px;
-    margin-bottom: 10px;
-  }
-  
-  .thumbnail {
-    width: 200px;
-    height: 150px;
-    object-fit: cover;
-    margin-bottom: 10px;
-  }
-  
-  .listing-location {
-    font-size: 14px;
-    margin-bottom: 10px;
-  }
-  
-  .property-link {
-    display: inline-block;
-    padding: 10px 20px;
-    background-color: #337ab7;
-    border: none;
-    border-radius: 4px;
-    color: white;
-    font-size: 14px;
-    margin-right: 10px;
-    text-decoration: none;
-  }
-  
-  .property-link:hover {
-    background-color: #23527c;
-    text-decoration: none;
-  }
-  
+  background-color: #f5f5f5;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.listing-heading {
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+.thumbnail {
+  width: 200px;
+  height: auto;
+}
+
+.listing-location {
+  margin-bottom: 10px;
+}
+
+.property-link {
+  display: inline-block;
+  margin-right: 10px;
+  color: blue;
+  text-decoration: underline;
+}
+
+.property-link:hover {
+  text-decoration: none;
+}
+
+.deletecheck {
+  margin-top: 20px;
+  padding: 10px;
+  background-color: #ffe6e6;
+  border: 1px solid #ffcccc;
+}
+
+.message {
+  color: red;
+  margin-bottom: 5px;
+}
+
+.delete-button {
+  background-color: blue;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  margin-right: 10px;
+  cursor: pointer;
+}
+
+.delete-button.red {
+  background-color: red;
+}

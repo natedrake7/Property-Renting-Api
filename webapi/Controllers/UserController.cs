@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Antiforgery;
 using webapi.Models;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using webapi.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace airbnb.Controllers
 {
@@ -400,9 +401,35 @@ namespace airbnb.Controllers
             };
             var user = await _userManager.FindByIdAsync(Id);
             if (user == null)
-                return NotFound();
+                return NotFound($"User with id {Id} not found.");
+
+            using var transaction = _context.Database.BeginTransaction();
+
             await _signInManager.SignOutAsync();
-            
+
+            if (user.IsHost == true)
+            {
+                var host = await (from h in _context.Hosts
+                                  where h.Id == user.HostId
+                                  select h).FirstAsync();
+                if(host == null)
+                    return NotFound("User is not a host");
+
+                var Houses = await (from h in _context.Houses
+                                    where h.HostId == host.Id
+                                    select h).ToListAsync();
+                if(Houses != null)
+                {
+                    foreach (var House in Houses) 
+                    {
+                        _context.Remove(House);
+                    }
+                    await _context.SaveChangesAsync();
+                }
+                _context.Remove(host);
+               await _context.SaveChangesAsync();
+            }
+
             var result = await _userManager.DeleteAsync(user);
             if (!result.Succeeded)
                 ModelState.AddModelError("Delete", "Failed to delete user");
@@ -418,6 +445,7 @@ namespace airbnb.Controllers
                 var json3 = JsonSerializer.Serialize(ModelErrors, options);
                 return Content(json3, "application/json");
             }
+            transaction.Commit();
             var json = JsonSerializer.Serialize("done", options);
             return Content(json, "application/json");
         }
