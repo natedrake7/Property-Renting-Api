@@ -18,86 +18,99 @@ import { AuthModel } from 'src/app/interfaces/auth-model';
   standalone: true,
   imports: [CommonModule,RouterModule,ReactiveFormsModule,PreviewHouseComponent,EditHouseComponent],
   template: `
-<div class="container">
-  <div class="row">
-    <div class="col-md-5">
-      <div class="left-buttons">
-        <a routerLink="../">
-          <button class="btn btn-primary profile-button" type="button">Profile</button>
-        </a>
-        <a routerLink="../Email">
-          <button class="btn btn-primary email-button" type="button">Email</button>
-        </a>
-        <a routerLink="../Password">
-          <button class="btn btn-primary password-button" type="button">Change Password</button>
-        </a>
-        <a routerLink="../PersonalData">
-          <button class="btn btn-primary personal-data-button" type="button">Personal Data</button>
-        </a>
-      </div>
-    </div>
-    <div class="col-md-9">
-      <section class="Host-Profile">
-        <h2 class="section-heading">Your Profile</h2>
-        <form [formGroup]="EditForm" (submit)="EditProfile()">
-          <div class="form-group">
-            <label for="host-name">Your name as a host</label>
-            <input id="host-name" class="form-control" type="text" [placeholder]="Host?.HostName" formControlName="HostName">
-            <div class="error" *ngIf="HostName_Error">
-              <div *ngFor="let message of HostName_Error.Errors">
-                <p>{{message}}</p>
-              </div>
-            </div>
-          </div>
-          <div class="form-group">
-            <label for="host-about">About you</label>
-              <div *ngIf="Host?.HostAbout != undefined">
-                <input id="host-about" class="form-control" type="text" [placeholder]="Host?.HostAbout" formControlName="HostAbout">
-              </div>
-              <div *ngIf="Host?.HostAbout === undefined">
-                <input id="host-about" class="form-control" type="text" placeholder="Please give us a description about you" formControlName="HostAbout">
-              </div> 
-            <div class="error" *ngIf="HostAbout_Error">
-              <div *ngFor="let message of HostAbout_Error.Errors">
-                <p>{{message}}</p>
-              </div>
-            </div>
-          </div>
-          <div class="form-group">
-            <label for="host-location">Your Location</label>
-            <div *ngIf="Host?.HostLocation != undefined">
-                <input id="host-location" class="form-control" type="text" [placeholder]="Host?.HostLocation" formControlName="HostLocation">
-              </div>
-              <div *ngIf="Host?.HostLocation === undefined">
-                 <input id="host-location" class="form-control" type="text" placeholder="Please enter you location" formControlName="HostLocation">
-              </div> 
-            <div class="error" *ngIf="HostLocation_Error">
-              <div *ngFor="let message of HostLocation_Error.Errors">
-                <p>{{message}}</p>
-              </div>
-            </div>
-          </div>
-          <button type="submit" class="btn btn-primary">Submit</button>
-        </form>
-      </section>
-    </div>
-  </div>
-</div>
+<!DOCTYPE html>
+<html lang="en">
 
-<div class="container">
-  <div class="row">
-    <div class="col-md-12">
-      <div class="left-buttons">
-        <a [routerLink]="['AddHouse']">
-          <button class="btn btn-primary house-button" type="button">Add a House</button>
-        </a>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Edit Listing</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <link rel="stylesheet" href="./host-profile.component.css">
+</head>
+
+<body>
+  <div class="container layout">
+    <div class="row">
+      <div class="col-md-1 buttons">
+          <a routerLink="../">
+            <button class="btn btn-primary profile-button" type="button">Profile</button>
+          </a>
+          <a routerLink="../Email">
+            <button class="btn btn-primary email-button" type="button">Email</button>
+          </a>
+          <a routerLink="../Password">
+            <button class="btn btn-primary password-button" type="button">Change Password</button>
+          </a>
+          <a routerLink="../PersonalData">
+            <button class="btn btn-primary personal-data-button" type="button">Personal Data</button>
+          </a>
       </div>
-      <div class="houses">
-        <app-preview-house *ngFor="let housingLocation of Houses" [house]="housingLocation"></app-preview-house>
+      <div class="col-md-6 profile-col">
+        <section class="Host-Profile">
+          <h2 class="section-heading">Your Profile</h2>
+          <form [formGroup]="EditForm" (submit)="EditProfile()">
+            <div class="form-group">
+              <label for="host-name">Your name as a host</label>
+              <input id="host-name" class="form-control" type="text" [placeholder]="Host?.HostName" formControlName="HostName">
+              <div class="error" *ngIf="HostName_Error">
+                <div *ngFor="let message of HostName_Error.Errors">
+                  <p>{{message}}</p>
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="host-about">About you</label>
+                <div *ngIf="Host?.HostAbout != undefined">
+                  <input id="host-about" class="form-control" type="text" [placeholder]="Host?.HostAbout" formControlName="HostAbout">
+                </div>
+                <div *ngIf="Host?.HostAbout === undefined">
+                  <input id="host-about" class="form-control" type="text" placeholder="Please give us a description about you" formControlName="HostAbout">
+                </div> 
+              <div class="error" *ngIf="HostAbout_Error">
+                <div *ngFor="let message of HostAbout_Error.Errors">
+                  <p>{{message}}</p>
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="host-location">Your Location</label>
+              <div *ngIf="Host?.HostLocation != undefined">
+                  <input id="host-location" class="form-control" type="text" [placeholder]="Host?.HostLocation" formControlName="HostLocation">
+                </div>
+                <div *ngIf="Host?.HostLocation === undefined">
+                  <input id="host-location" class="form-control" type="text" placeholder="Please enter you location" formControlName="HostLocation">
+                </div> 
+              <div class="error" *ngIf="HostLocation_Error">
+                <div *ngFor="let message of HostLocation_Error.Errors">
+                  <p>{{message}}</p>
+                </div>
+              </div>
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+          </form>
+        </section>
       </div>
     </div>
   </div>
-</div>
+  <div class="container houses-container">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="add-house">
+          <a [routerLink]="['AddHouse']">
+            <button class="btn btn-primary house-button" type="button">List Property</button>
+          </a>
+        </div>
+        <div class="houses">
+          <app-preview-house *ngFor="let housingLocation of Houses" [house]="housingLocation"></app-preview-house>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+
+</html>
 
   `,
   styleUrls: ['./host-profile.component.css'] 

@@ -26,8 +26,8 @@ import { HostService } from 'src/app/services/host.service';
 
 <body>
   <div class="container">
-    <div class="col">
-      <div class="col-md-4">
+    <div class="row">
+      <div class="col-md-1 nav-buttons">
           <div *ngIf="HostService.GetHostStatus()">
             <a [routerLink]="['Host']">
               <button class="btn btn-primary" type="button">Host Profile</button>
@@ -43,11 +43,11 @@ import { HostService } from 'src/app/services/host.service';
             <button class="btn btn-primary" type="button">Personal Data</button>
           </a>
         </div>
-      <div class="col-md-8">
+      <div class="col-md-3 profile-col">
         <section class="Profile">
+          <h2>Your Profile</h2>
           <form [formGroup]="EditForm" (submit)="EditProfile()">
             <div class="row">
-              <div class="col-md-6">
                 <div class="form-group">
                   <label for="username">Username</label>
                   <input id="username" class="form-control" type="text" [placeholder]="User?.UserName"
@@ -68,7 +68,6 @@ import { HostService } from 'src/app/services/host.service';
                     </div>
                   </div>
                 </div>
-              </div>
                 <div class="form-group">
                   <label for="last-name">Last Name</label>
                   <input id="last-name" class="form-control" type="text" [placeholder]="User?.LastName"
@@ -100,12 +99,13 @@ import { HostService } from 'src/app/services/host.service';
                   formControlName="Bio">
               </div>
             </div>
-            <button type="submit" class="btn btn-primary">Change</button>
+            <button type="submit" class="btn btn-primary">Submit</button>
           </form>
         </section>
       </div>
     </div>
   </div>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 
 </html>

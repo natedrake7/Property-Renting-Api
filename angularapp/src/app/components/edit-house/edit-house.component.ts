@@ -43,44 +43,52 @@ import { ImageService } from 'src/app/services/image.service';
             <h2>General Information</h2>
             <div class="form-group">
               <label for="house-name">Your House name</label>
-              <input id="house-name" class="form-control" type="text" placeholder="Enter your house name" formControlName="Name">
+              <input id="house-name" class="form-control" type="text" [placeholder]="House?.Name" formControlName="Name">
             </div>
             <div class="form-group">
               <label for="house-summary">Summary</label>
-              <input id="house-summary" class="form-control summary-input" type="text" placeholder="Enter your summary of the house" formControlName="Summary">
+              <input id="house-summary" class="form-control summary-input" type="text" [placeholder]="House?.Summary" formControlName="Summary">
             </div>
             <div class="form-group">
               <label for="house-space">Space</label>
-              <input id="house-space" class="form-control space-input" type="text" placeholder="Describe the space of the house" formControlName="Space">
+              <input id="house-space" class="form-control space-input" type="text" [placeholder]="House?.Space" formControlName="Space">
             </div>
             <div class="form-group">
               <label for="country">Country</label>
-              <input id="country" class="form-control" type="text" placeholder="Enter the country where your house is" formControlName="Country">
+              <input id="country" class="form-control" type="text" [placeholder]="House?.Country" formControlName="Country">
             </div>
             <div class="form-group">
               <label for="country-code">CountryCode</label>
-              <input id="country-code" class="form-control" type="text" placeholder="Enter the country code (e.g. GR)" formControlName="CountryCode">
+              <input id="country-code" class="form-control" type="text" [placeholder]="House?.CountryCode" formControlName="CountryCode">
             </div>
             <div class="form-group">
               <label for="city">City</label>
-              <input id="city" class="form-control" type="text" placeholder="Enter the city where your house is" formControlName="City">
+              <input id="city" class="form-control" type="text" [placeholder]="House?.City" formControlName="City">
             </div>
             <div class="form-group">
               <label for="street">Street Address</label>
-              <input id="street" class="form-control" type="text" placeholder="Enter the street address of your house" formControlName="Street">
+              <input id="street" class="form-control" type="text" [placeholder]="House?.Street" formControlName="Street">
             </div>
             <div class="form-group">
               <label for="zipcode">ZipCode</label>
-              <input id="zipcode" class="form-control" type="text" placeholder="Enter the zipcode" formControlName="Zipcode">
+              <input id="zipcode" class="form-control" type="text" [placeholder]="House?.Zipcode" formControlName="Zipcode">
             </div>
             <div class="form-group">
               <label for="neighborhood">Neighborhood</label>
-              <input id="neighborhood" class="form-control" type="text" placeholder="Enter the neighborhood of your house" formControlName="Neighborhood">
+              <input id="neighborhood" class="form-control" type="text" [placeholder]="House?.Neighbourhood" formControlName="Neighborhood">
             </div>
-            <div class="form-group">
-              <label for="neighborhood-overview">Neighborhood Overview</label>
-              <input id="neighborhood-overview" class="form-control" type="text" placeholder="Describe the Neighborhood" formControlName="NeighborhoodOverview">
-            </div>        
+            <div *ngIf="House?.NeighborhoodOverview">
+              <div class="form-group">
+                <label for="neighborhood-overview">Neighborhood Overview</label>
+                <input id="neighborhood-overview" class="form-control" type="text" [placeholder]="House?.NeighborhoodOverview" formControlName="NeighborhoodOverview">
+              </div>
+            </div>
+            <div *ngIf="!House?.NeighborhoodOverview">
+              <div class="form-group">
+                  <label for="neighborhood-overview">Neighborhood Overview</label>
+                  <input id="neighborhood-overview" class="form-control" type="text" placeholder="Describe the Neighborhood" formControlName="NeighborhoodOverview">
+                </div>
+            </div>     
               <h2> Upload Images </h2>
                 <div class="form-group">
                     <input id="image-upload" type="file" (change)="OnImagesUpload($event)" accept="image/*" multiple>
@@ -105,17 +113,17 @@ import { ImageService } from 'src/app/services/image.service';
                 <div class="col-md-6">
                   <div class="form-group">
                     <label for="bathrooms">Bathrooms</label>
-                    <input id="bathrooms" class="form-control" type="number" formControlName="Bathrooms">
+                    <input id="bathrooms" class="form-control" type="number" [placeholder]="House?.Bathrooms" formControlName="Bathrooms">
                   </div>
                   <div class="form-group">
                     <label for="beds">Beds</label>
-                    <input id="beds" class="form-control" type="number" formControlName="Beds">
+                    <input id="beds" class="form-control" type="number" [placeholder]="House?.Beds" formControlName="Beds">
                   </div>
                 </div>
                 <div class="col-md-6">
                   <div class="form-group">
                     <label for="bedrooms">Bedrooms</label>
-                    <input id="bedrooms" class="form-control" type="number" formControlName="Bedrooms">
+                    <input id="bedrooms" class="form-control" type="number" [placeholder]="House?.Bedrooms" formControlName="Bedrooms">
                   </div>
                 </div>
               </div>
@@ -125,6 +133,7 @@ import { ImageService } from 'src/app/services/image.service';
                     <div class="form-group">
                       <label for="property-type">Property Type</label>
                       <select id="property-type" class="form-control" formControlName="PropertyType">
+                        <option [value]="House?.PropertyType" disabled selected>Select Property Type</option>
                         <option *ngFor="let option of PropertyOptions" [value]="option">{{ option }}</option>
                       </select>
                     </div>
@@ -132,7 +141,7 @@ import { ImageService } from 'src/app/services/image.service';
                   <div class="col-md-6">
                     <div class="form-group">
                       <label for="square-feet">Property Size(in square feet)</label>
-                      <input id="square-feet" class="form-control" type="number" formControlName="SquareFeet">
+                      <input id="square-feet" class="form-control" type="number" [placeholder]="House?.SquareFeet" formControlName="SquareFeet">
                     </div>
                   </div>
                 </div>
@@ -141,35 +150,84 @@ import { ImageService } from 'src/app/services/image.service';
               <div class="col-md-6 custom-col">
                 <div class="form-group">
                   <label for="price">Daily Price</label>
-                  <input id="price" class="form-control" type="number" formControlName="Price">
+                  <input id="price" class="form-control" type="number" [placeholder]="House?.Price" formControlName="Price">
                 </div>
-                <div class="form-group">
-                  <label for="weekly-price">Weekly Price</label>
-                  <input id="weekly-price" class="form-control" type="number" formControlName="WeeklyPrice">
+                <div *ngIf="House?.WeeklyPrice">
+                  <div class="form-group">
+                    <label for="weekly-price">Weekly Price</label>
+                    <input id="weekly-price" class="form-control" type="number" [placeholder]="House?.WeeklyPrice" formControlName="WeeklyPrice">
+                  </div>
                 </div>
-                <div class="form-group">
-                  <label for="monthly-price">Monthly Price</label>
-                  <input id="monthly-price" class="form-control" type="number" formControlName="MonthlyPrice">
+                <div *ngIf="!House?.WeeklyPrice">
+                  <div class="form-group">
+                    <label for="weekly-price">Weekly Price</label>
+                    <input id="weekly-price" class="form-control" type="number" formControlName="WeeklyPrice">
+                  </div>
                 </div>
-                <div class="form-group">
-                  <label for="cleaning-fee">Cleaning Fee</label>
-                  <input id="cleaning-fee" class="form-control" type="number" formControlName="CleaningFee">
+                <div *ngIf="House?.MonthlyPrice">
+                  <div class="form-group">
+                    <label for="monthly-price">Monthly Price</label>
+                    <input id="monthly-price" class="form-control" type="number" formControlName="MonthlyPrice">
+                  </div>
+                </div>
+                <div *ngIf="!House?.MonthlyPrice">
+                  <div class="form-group">
+                    <label for="monthly-price">Monthly Price</label>
+                    <input id="monthly-price" class="form-control" type="number" formControlName="MonthlyPrice">
+                  </div>
+                </div>
+                <div *ngIf="House?.CleaningFee">
+                  <div class="form-group">
+                    <label for="cleaning-fee">Cleaning Fee</label>
+                    <input id="cleaning-fee" class="form-control" type="number" [placeholder]="House?.CleaningFee" formControlName="CleaningFee">
+                  </div>
+                </div>
+                <div *ngIf="!House?.CleaningFee">
+                  <div class="form-group">
+                    <label for="cleaning-fee">Cleaning Fee</label>
+                    <input id="cleaning-fee" class="form-control" type="number" formControlName="CleaningFee">
+                  </div>
                 </div>
               </div>
-              <div class="col-md-6">
-                <div class="form-group">
-                  <label for="extra-people">Extra People Cost</label>
-                  <input id="extra-people" class="form-control" type="number" formControlName="ExtraPeople">
-                </div>
-                <div class="form-group">
-                  <label for="minimum-nights">Minimum Nights</label>
-                  <input id="minimum-nights" class="form-control" type="number" formControlName="MinimumNights">
-                </div>
-                <div class="form-group">
-                  <label for="maximum-nights">Maximum Nights</label>
-                  <input id="maximum-nights" class="form-control" type="number" formControlName="MaximumNights">
-                </div>
+                <div class="col-md-6 custom-col">
+                  <div *ngIf="House?.ExtraPeople">
+                    <div class="form-group">
+                      <label for="extra-people">Extra People Cost</label>
+                      <input id="extra-people" class="form-control" type="number" [placeholder]="House?.ExtraPeople" formControlName="ExtraPeople">
+                    </div>
+                  </div>
+                  <div *ngIf="!House?.ExtraPeople">
+                    <div class="form-group">
+                      <label for="extra-people">Extra People Cost</label>
+                      <input id="extra-people" class="form-control" type="number" formControlName="ExtraPeople">
+                    </div>
+                  </div>
+                  <div *ngIf="House?.MinimumNights">
+                    <div class="form-group">
+                      <label for="minimum-nights">Minimum Nights</label>
+                      <input id="minimum-nights" class="form-control" type="number" [placeholder]="House?.MinimumNights" formControlName="MinimumNights">
+                    </div>
+                  </div>
+                  <div *ngIf="!House?.MinimumNights">
+                    <div class="form-group">
+                      <label for="minimum-nights">Minimum Nights</label>
+                      <input id="minimum-nights" class="form-control" type="number" formControlName="MinimumNights">
+                    </div>
+                  </div>
+                  <div *ngIf="House?.MaximumNights">
+                    <div class="form-group">
+                      <label for="maximum-nights">Maximum Nights</label>
+                      <input id="maximum-nights" class="form-control" type="number" [placeholder]="House?.MaximumNights" formControlName="MaximumNights">
+                    </div>
+                  </div>
+                  <div *ngIf="!House?.MaximumNights">
+                    <div class="form-group">
+                      <label for="maximum-nights">Maximum Nights</label>
+                      <input id="maximum-nights" class="form-control" type="number" formControlName="MaximumNights">
+                    </div>
+                  </div>
               </div>
+            </div>
                 <h2>Other Options</h2>
                 <div class="row">
                   <div class="col-md-6">
@@ -215,7 +273,6 @@ import { ImageService } from 'src/app/services/image.service';
                 </div>
               </div>
             </div>
-          </div>
           <div class="submit-button">
             <button type="submit" class="btn btn-primary">Submit</button>
           </div>        
