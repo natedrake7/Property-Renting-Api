@@ -5,6 +5,7 @@ import { User } from 'src/app/interfaces/user';
 import {RouterModule } from '@angular/router';
 import { ReactiveFormsModule,FormGroup,FormControl,Validators } from '@angular/forms';
 import { error } from 'src/app/interfaces/error';
+import { AuthModel } from 'src/app/interfaces/auth-model';
 
 @Component({
   selector: 'app-password-change',
@@ -78,9 +79,8 @@ export class PasswordComponent {
     const ConfirmPassword = formValue.ConfirmPassword || '';
     this.UserService.ChangePassword(OldPassword,Password,ConfirmPassword).subscribe((response) => {
       console.log(response);
-      if('UserName' in response){
-        const data = response as User;
-        this.UserService.SetUserData(data);
+      if('Token' in response){
+        const data = response as AuthModel;
         location.reload();
       }
       else{

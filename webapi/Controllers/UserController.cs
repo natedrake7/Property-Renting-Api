@@ -10,6 +10,10 @@ using webapi.Models;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using webapi.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 
 namespace airbnb.Controllers
 {
@@ -22,15 +26,16 @@ namespace airbnb.Controllers
         private readonly IUserEmailStore<User> _emailStore;
         private readonly ILogger<UserController> _logger;
         private readonly IEmailSender _emailSender;
-        private readonly IAntiforgery _antiforgery;
+        private readonly JwtHandler _jwthandler;
+          
         public UserController(
             UserManager<User> userManager,
             IUserStore<User> userStore,
             SignInManager<User> signInManager,
             ILogger<UserController> logger,
             IEmailSender emailSender,
-            IAntiforgery antiforgery,
-            ApplicationDbContext context)
+            ApplicationDbContext context,
+            JwtHandler jwthandler)
         {
             _userManager = userManager;
             _userStore = userStore;
@@ -38,12 +43,12 @@ namespace airbnb.Controllers
             _signInManager = signInManager;
             _logger = logger;
             _emailSender = emailSender;
-            _antiforgery = antiforgery;
             _context = context;
+            _jwthandler = jwthandler;
         }
 
         [HttpPost]
-        public async Task<IActionResult> Register([FromBody] RegisterModel Input)
+        public async Task<IActionResult> Register([FromBody]RegisterModel Input)
         {
             var options = new JsonSerializerOptions
             {
@@ -62,7 +67,7 @@ namespace airbnb.Controllers
 
                 await _userStore.SetUserNameAsync(user, Input.Username, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
-                var result = await _userManager.CreateAsync(user, Input.Password);
+                var result = await _userManager.CreateAsync(user, Input.Password!);
 
                 if (result.Succeeded)
                 {
@@ -135,7 +140,7 @@ namespace airbnb.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Login([FromBody] LoginModel Input)
+        public async Task<IActionResult> Login([FromBody]LoginModel Input)
         {
             var options = new JsonSerializerOptions
             {
@@ -143,14 +148,19 @@ namespace airbnb.Controllers
             };
             if (ModelState.IsValid)
             {
-                var result = await _signInManager.PasswordSignInAsync(Input.UserName, Input.Password, Input.RememberMe, lockoutOnFailure: false);
+                var result = await _signInManager.PasswordSignInAsync(Input.UserName!, Input.Password!, Input.RememberMe, lockoutOnFailure: false);
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User logged in.");
-                    var user = await _userManager.FindByNameAsync(Input.UserName);
+                    var user = await _userManager.FindByNameAsync(Input.UserName!);
                     if (user == null)
                         return NotFound();
-                    var json2 = JsonSerializer.Serialize(user, options);
+                    var SigningCredentials = _jwthandler.GetSigningCredentials();
+                    var claims = await _jwthandler.GetClaims(user);
+                    var tokenOptions = _jwthandler.GenerateTokenOptions(SigningCredentials, claims);
+                    var token = new JwtSecurityTokenHandler().WriteToken(tokenOptions);
+                    
+                    var json2 = JsonSerializer.Serialize(new AuthModel {Token = token }, options);
                     return Content(json2, "application/json");
 
                 }
@@ -167,6 +177,7 @@ namespace airbnb.Controllers
             var json = JsonSerializer.Serialize(ModelErrors, options);
             return Content(json, "application/json");
         }
+
         [HttpGet]
         public async Task<IActionResult> Logout()
         {
@@ -187,11 +198,11 @@ namespace airbnb.Controllers
             {
                 Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
             };
-            var user = await _userManager.FindByIdAsync(Input.UserId);
+            var user = await _userManager.FindByIdAsync(Input.UserId!);
 
             if (user == null)
                 return NotFound();
-            var CheckPassword = await _signInManager.CheckPasswordSignInAsync(user, Input.Password, false);
+            var CheckPassword = await _signInManager.CheckPasswordSignInAsync(user, Input.Password!, false);
             if (!CheckPassword.Succeeded)
             {
                 ModelState.AddModelError("Password", "Wrong Password");
@@ -216,7 +227,12 @@ namespace airbnb.Controllers
                     ModelState.AddModelError("Email", "Failed to change email");
             }
             await _signInManager.RefreshSignInAsync(user);
-            var json2 = JsonSerializer.Serialize(user, options);
+            var SigningCredentials = _jwthandler.GetSigningCredentials();
+            var claims = await _jwthandler.GetClaims(user);
+            var tokenOptions = _jwthandler.GenerateTokenOptions(SigningCredentials, claims);
+            var token = new JwtSecurityTokenHandler().WriteToken(tokenOptions);
+
+            var json2 = JsonSerializer.Serialize(new AuthModel { Token = token }, options);
             return Content(json2, "application/json");
         }
 
@@ -227,7 +243,7 @@ namespace airbnb.Controllers
             {
                 Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
             };
-            var user = await _userManager.FindByIdAsync(Id);
+            var user = await _userManager.FindByIdAsync(Id!);
             if (user == null)
                 return NotFound();
             var CheckPassword = await _signInManager.CheckPasswordSignInAsync(user, Input.OldPassword!, false);
@@ -248,7 +264,7 @@ namespace airbnb.Controllers
             var result = await _userManager.CheckPasswordAsync(user, Input.Password!);
             if(result == false)
             {
-                var check = await _userManager.ChangePasswordAsync(user, Input.OldPassword, Input.Password);
+                var check = await _userManager.ChangePasswordAsync(user, Input.OldPassword!, Input.Password!);
                 if (!check.Succeeded)
                     ModelState.AddModelError("Password", "An error occured when trying to set the new password");
             }
@@ -265,19 +281,26 @@ namespace airbnb.Controllers
                 return Content(json3, "application/json");
             }
            await _signInManager.RefreshSignInAsync(user);
-           var json = JsonSerializer.Serialize(user, options);
-           return Content(json, "application/json");
+
+           var SigningCredentials = _jwthandler.GetSigningCredentials();
+           var claims = await _jwthandler.GetClaims(user);
+           var tokenOptions = _jwthandler.GenerateTokenOptions(SigningCredentials, claims);
+           var token = new JwtSecurityTokenHandler().WriteToken(tokenOptions);
+
+           var json2 = JsonSerializer.Serialize(new AuthModel { Token = token }, options);
+           return Content(json2, "application/json");
         }
 
         [HttpPost]
-
+        [Authorize(Roles = "Host")]
         public async Task<IActionResult> Edit([FromBody]ReturnModel Input,string? Id)
         {
             var options = new JsonSerializerOptions
             {
                 Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
             };
-            var user = await _userManager.FindByIdAsync(Id);
+            var user = await _userManager.FindByIdAsync(Id!);
+
             if(user == null) 
                 return NotFound();
 
@@ -292,10 +315,12 @@ namespace airbnb.Controllers
                 var json = JsonSerializer.Serialize(ModelErrors, options);
                 return Content(json, "application/json");
             }
+            var Model = new ReturnModel();
             var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
             if (Input.PhoneNumber != phoneNumber && Input.PhoneNumber != "")
             {
                 var setPhoneResult = await _userManager.SetPhoneNumberAsync(user, Input.PhoneNumber);
+                Model.PhoneNumber = Input.PhoneNumber;
                 if (!setPhoneResult.Succeeded)
                 {
                     ModelState.AddModelError("PhoneNumber", "Failed to set phone number");
@@ -305,6 +330,7 @@ namespace airbnb.Controllers
             if (Input.Username != username && Input.Username != "")
             {
                 var SetUsername = await _userManager.SetUserNameAsync(user, Input.Username);
+                Model.Username = Input.Username;
                 if (!SetUsername.Succeeded)
                 {
                     ModelState.AddModelError("Username", "Failed to set username");
@@ -315,6 +341,7 @@ namespace airbnb.Controllers
             {
                 user.FirstName = Input.FirstName;
                 var Result = await _userManager.UpdateAsync(user);
+                Model.FirstName = Input.FirstName;
                 if (!Result.Succeeded)
                 {
                     ModelState.AddModelError("Firstname", "Failed to set first name");
@@ -326,6 +353,7 @@ namespace airbnb.Controllers
             {
                 user.LastName = Input.LastName;
                 var Result = await _userManager.UpdateAsync(user);
+                Model.LastName = Input.LastName;
                 if (!Result.Succeeded)
                 {
                     ModelState.AddModelError("Lastname", "Failed to set last name");
@@ -336,6 +364,7 @@ namespace airbnb.Controllers
             {
                 user.Bio = Input.Bio;
                 var Result = await _userManager.UpdateAsync(user);
+                Model.Bio = Input.Bio;
                 if (!Result.Succeeded)
                 {
                     ModelState.AddModelError("Bio", "Failed to set bio");
@@ -345,6 +374,7 @@ namespace airbnb.Controllers
             if (Input.Email != email && Input.Email != "")
             {
                 user.Email = Input.Email;
+                Model.Email = Input.Email;
             }
             if (ModelState.ErrorCount > 0)
             {
@@ -359,19 +389,22 @@ namespace airbnb.Controllers
                 return Content(json3, "application/json");
             }
             await _signInManager.RefreshSignInAsync(user);
-            var json2 = JsonSerializer.Serialize(user, options);
+            var SigningCredentials = _jwthandler.GetSigningCredentials();
+            var claims = await _jwthandler.GetClaims(user);
+            var tokenOptions = _jwthandler.GenerateTokenOptions(SigningCredentials, claims);
+            var token = new JwtSecurityTokenHandler().WriteToken(tokenOptions);
+            var json2 = JsonSerializer.Serialize(new AuthModel { Token = token }, options); ;
             return Content(json2, "application/json");
         }
 
         [HttpPost]
-
         public async Task<IActionResult>Delete([FromBody]DeleteModel Input,string? Id)
         {
             var options = new JsonSerializerOptions
             {
                 Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
             };
-            var user = await _userManager.FindByIdAsync(Id);
+            var user = await _userManager.FindByIdAsync(Id!);
             if (user == null)
                 return NotFound();
             var result = await _userManager.CheckPasswordAsync(user, Input.Password!);
@@ -399,7 +432,7 @@ namespace airbnb.Controllers
             {
                 Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
             };
-            var user = await _userManager.FindByIdAsync(Id);
+            var user = await _userManager.FindByIdAsync(Id!);
             if (user == null)
                 return NotFound($"User with id {Id} not found.");
 

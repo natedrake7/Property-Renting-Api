@@ -6,7 +6,7 @@ import { Router, RouterModule } from '@angular/router';
 import { error } from 'src/app/interfaces/error';
 import { User } from 'src/app/interfaces/user';
 import { HostService } from 'src/app/services/host.service';
-import { Host } from 'src/app/interfaces/host';
+import { AuthModel } from 'src/app/interfaces/auth-model';
 
 @Component({
   selector: 'app-login',
@@ -65,23 +65,16 @@ export class LoginComponent {
     const RememberMe = formValue.RememberMe || false;
     if (this.UserService.GetUserStatus() === false) {
       this.UserService.Login(userName, password, RememberMe).subscribe((response) => {
-        if ('UserName' in response) {
-          console.log(response);
-          const UserResponse = response as User;
-          if (UserResponse.IsHost) {
-            this.HostService.RetrieveHostData(UserResponse.Id).subscribe(response => {
-              if (response) {
-                const HostData = response as Host;
-                this.HostService.SetHostData(HostData);
-              }
-              this.UserService.SetUserData(UserResponse);
-              this.RoutingService.navigate(['/']);
-            })
-          }
-          else {
-            this.UserService.SetUserData(UserResponse);
+        if('Token' in response){
+          const Auth = response as AuthModel;
+          localStorage.setItem('usertoken',Auth.Token);
+          this.HostService.RetrieveHostData().subscribe((response2) => {
+            if('Token' in response2){
+              const Auth = response2 as AuthModel;
+              localStorage.setItem('hosttoken',Auth.Token);
+            }
             this.RoutingService.navigate(['/']);
-          }
+          });
         }
         else {
           const ErrorResponse = response as error[];

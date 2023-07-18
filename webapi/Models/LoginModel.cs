@@ -13,4 +13,9 @@ namespace webapi.Models
         [Display(Name = "Remember me?")]
         public bool RememberMe { get; set; }
     }
+
+    public class AuthModel
+    {
+        public string? Token { get; set; }
+    }
 }

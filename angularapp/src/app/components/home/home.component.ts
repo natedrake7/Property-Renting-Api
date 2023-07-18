@@ -13,36 +13,52 @@ import { error } from 'src/app/interfaces/error';
   standalone: true,
   imports: [CommonModule, HouseComponent, RouterModule],
   template: `
-        <section class="main">
+<section class="main">
+  <div class="container">
+    <div class="row align-items-center">
+      <div class="col-md-6">
         <div class="search-wrapper">
-          <form class="search">
-              <input type="text" placeholder="Filter by city" #filter>
-              <button class="searchbutton" type="button" (click)="filterResults(filter.value)">Search</button>
+          <form class="search d-flex">
+            <div class="form-group flex-grow-1">
+              <input type="text" class="form-control" placeholder="Filter by city" #filter>
+            </div>
+            <button class="btn btn-primary searchbutton" type="button" (click)="filterResults(filter.value)">Search</button>
           </form>
         </div>
+      </div>
+      <div class="col-md-6">
+        <div class="d-flex justify-content-end">
           <form class="user">
             <div *ngIf="!UserStatus">
               <a [routerLink]="['Register']">
-                <button class="register" type="button">Register</button>
+                <button class="btn btn-primary register" type="button">Register</button>
               </a>
               <a [routerLink]="['Login']">
-                <button class="login" type="button">Login</button>
+                <button class="btn btn-primary login" type="button">Login</button>
               </a>
             </div>
             <div *ngIf="UserStatus">
-            <a [routerLink]="['Profile']">
-              <button class="user-profile" type="button">Hello {{ this.Username }}</button>
-            </a>
-              <button class="logout" type="button" (click)="Logout()">Logout</button>
-          </div>
+              <a [routerLink]="['Profile']">
+                <button class="btn btn-primary user-profile" type="button">Hello {{ this.Username }}</button>
+              </a>
+              <button class="btn btn-primary logout" type="button" (click)="Logout()">Logout</button>
+            </div>
           </form>
-        </section>
-        <section class="homes">
-          <app-housing-location
-            *ngFor="let housingLocation of filteredLocationList"
-            [house]="housingLocation">
-          </app-housing-location>
-        </section>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="homes">
+  <div class="container">
+    <div class="row">
+      <div class="col">
+        <app-housing-location *ngFor="let housingLocation of filteredLocationList" [house]="housingLocation"></app-housing-location>
+      </div>
+    </div>
+  </div>
+</section>
+
         `
   ,
   styleUrls: ['./home.component.css']

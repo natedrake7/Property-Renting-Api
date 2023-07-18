@@ -5,6 +5,7 @@ namespace webapi.Models
     public class ReturnModel
     {
         public string? Id { get; set; }
+
         public string? Username { get; set; }
 
         public string? FirstName { get; set; }

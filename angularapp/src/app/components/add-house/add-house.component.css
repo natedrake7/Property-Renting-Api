@@ -18,75 +18,27 @@
   background-color: #ccc;
 }
 
-.create-house-listing {
-  display: grid;
-  flex-direction: column;
-  justify-content: center;
-  margin-bottom: 20px;
-}
-
-
-.create-house-listing label {
-  display: block;
-  margin-bottom: 5px;
-  text-align: left;
-  font-weight: bold;
-}
-
-.create-house-listing input[type="text"],
-.create-house-listing textarea,
-.create-house-listing select,
-.create-house-listing input[type="number"] {
-  width: 100%;
-  padding: 8px;
-  margin-bottom: 10px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
-
-.create-house-listing .listing
-{
-  width: 50%;
-  float: left;
-}
-
-.create-house-listing .experiences{
-  width: 50%;
-  float: right;
-  margin: auto;
-}
-
-.create-house-listing .property,
-.create-house-listing .etc {
-  flex: 1;
-  width: 50%;
-}
-
-
-.create-house-listing .primary {
-  margin-top: 10px;
-  padding: 10px 15px;
-  border: none;
-  border-radius: 4px;
-  background-color: #337ab7;
-  color: #fff;
-  cursor: pointer;
-}
-
-.create-house-listing .primary:hover {
-  background-color: #23527c;
-}
-
-.error {
+.error{
   color: red;
 }
 
-@media (max-width: 600px) {
-  .create-house-listing .listing,
-  .create-house-listing .experiences,
-  .create-house-listing .property,
-  .create-house-listing .etc {
-    width: 100%;
-    margin-top: 20px;
-  }
+
+input[type="number"]{
+  width: 25%;
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+select option:hover {
+  background-color: #ffffff;
+  color: #fff;
+}
+
+.summary-input,
+.space-input {
+  height: 75px;
 }

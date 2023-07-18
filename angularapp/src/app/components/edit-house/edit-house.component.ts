@@ -16,98 +16,217 @@ import { ImageService } from 'src/app/services/image.service';
   standalone: true,
   imports: [CommonModule,ReactiveFormsModule,RouterModule],
   template: `
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Edit Listing</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <link rel="stylesheet" href="./edit-house.component.css">
+</head>
+
+<body>
+  <div class="container">
     <div class="left-buttons">
       <a routerLink="../../">
         <button class="profile-button" type="button">Back</button>
       </a>
     </div>
-    <section class='create-house-listing'>
+
+    <section class="create-house-listing">
       <form [formGroup]="HouseForm" (submit)="EditListing()">
-      <div class="listing">
-      <label for="house-name">Your House name</label>
-        <input id="house-name" type="text" [placeholder]="House?.Name" formControlName="Name">
-      <label for="house-summary">Summary</label>
-        <input id="house-name" type="text" [placeholder]="House?.Summary" formControlName="Summary">
-      <label for="house-space">Space</label>
-        <input id="house-name" type="text" placeholder="Describe the space of the house" formControlName="Space">
-      <label for="country">Country</label>
-        <input id="country" type="text" placeholder="Enter the country where your house is" formControlName="Country">
-      <label for="country-code">CountryCode</label>
-        <input id="country-code" type="text" placeholder="Enter the country code (e.g. GR)" formControlName="CountryCode">
-      <label for="city">City</label>
-        <input id="city" type="text" placeholder="Enter the city where your house is" formControlName="City">
-      <label for="street">Street Address</label>
-        <input id="street" type="text" placeholder="Enter the street address of your house" formControlName="Street">
-      <label for="zipcode">ZipCode</label>
-        <input id="zipcode" type="text" placeholder="Enter the zipcode" formControlName="Zipcode">
-      <label for="neighborhood">Neighborhood</label>
-        <input id="neighborhood" type="text" placeholder="Enter the neighborhood of your house" formControlName="Neighborhood">
-      <label for="neighborhood-overview">Neighborhood Overview</label>
-        <input id="neighborhood-overview" type="text" placeholder="Describe the Neighborhood" formControlName="NeighborhoodOverview">
-      <label for="location-exact">Is Location Exact</label>
-        <input id="location-exact" type="checkbox" formControlName="IsLocationExact">
-      </div>
-      <div class = "experiences">
-        <label for="bathrooms">Bathrooms</label>
-          <input id="bathrooms" type="number" formControlName="Bathrooms">
-        <label for="bedrooms">Bedrooms</label>
-        <input id="bedrooms" type="number" formControlName="Bedrooms"> 
-      <label for="beds">Beds</label>
-        <input id="beds" type="number" formControlName="Beds">              
-    </div>
-    <div class = "property">
-      <label for="property-type">Property Type</label>
-          <input id="property-type" type="text" placeholder="Enter the type of property (e.g. appartment)" formControlName="PropertyType">
-      <label for="square-feet">Property Size</label>
-          <input id="square-feet" type="number" formControlName="SquareFeet">
-    </div>
-    <div class="etc">
-      <label for="price">Daily Price</label>
-          <input id="price" type="number" formControlName="Price">
-      <label for="weekly-price">Weekly Price</label>
-          <input id="weekly-price" type="number" formControlName="WeeklyPrice">
-      <label for="monthly-price">Monthly Price</label>
-          <input id="monthly-price" type="number"formControlName="MonthlyPrice">
-      <label for="cleaning-fee">Cleaning Fee</label>
-          <input id="cleaning-fee" type="number" formControlName="CleaningFee">
-      <label for="extra-people">Extra People Cost</label>
-          <input id="extra-people" type="number" formControlName="ExtraPeople">
-      <label for="minimum-nights">Minimum Nights</label>
-          <input id="minimum-nights" type="number" formControlName="MinimumNights">
-      <label for="maximum-nights">Maximum Nights</label>
-          <input id="maximum-nights" type="number"formControlName="MaximumNights">
-      <label for="transit">Transit</label>
-        <input id="transit" type="text" placeholder="Enter the available tranists,leave blank if none" formControlName="Transit">
-      <label for="license">Check if driver's license is required in the area</label>
-         <input id="license" type="checkbox" formControlName="RequiresLicense">
-      <label for="instantly-bookable">Check if the property can be instantly booked</label>
-         <input id="instantly-bookable" type="checkbox" formControlName="InstantBookable">
-      <label for="phone-verification">Check if guest must verify the booking by phone</label>
-         <input id="phone-verification" type="checkbox" formControlName="RequireGuestPhoneVerification">
-       <label for="cancellation-policy">Cancellation policy</label>
-         <input id="cancellation-policy" type="text" placeholder="Specify your cancellation policy" formControlName="CancellationPolicy">
-    </div>
-      <div class="add-images">
-        <label for="image-upload">Add Images</label>
-        <input id="image-upload" type="file" (change)="OnImagesUpload($event)" accept="image/*" multiple>
-      </div>
-      <button type="submit" class="primary">Submit</button>
-    </form>
-    <div class="image-slider">
-      <div class="image-container">
-        <img [src]="currentImage" alt="Image">
-      </div>
-      <div class="navigation-buttons">
-        <button class="btn btn-primary" (click)="previousImage()">&lt;</button>
-        <button class="btn btn-primary" (click)="nextImage()">&gt;</button>
-        <button class="btn btn-danger" (click)="DeleteImage()">Delete Image</button>
-        <div class="error" *ngIf="DeleteError">
-          <p> {{DeleteError}} </p>
-        </div>
-        <button class="btn btn-success" (click)="SetAsThumbnail()">Set as Thumbnail</button>
-      </div>
-    </div>
+        <div class="row">
+          <div class="col-md-6">
+            <h2>General Information</h2>
+            <div class="form-group">
+              <label for="house-name">Your House name</label>
+              <input id="house-name" class="form-control" type="text" placeholder="Enter your house name" formControlName="Name">
+            </div>
+            <div class="form-group">
+              <label for="house-summary">Summary</label>
+              <input id="house-summary" class="form-control summary-input" type="text" placeholder="Enter your summary of the house" formControlName="Summary">
+            </div>
+            <div class="form-group">
+              <label for="house-space">Space</label>
+              <input id="house-space" class="form-control space-input" type="text" placeholder="Describe the space of the house" formControlName="Space">
+            </div>
+            <div class="form-group">
+              <label for="country">Country</label>
+              <input id="country" class="form-control" type="text" placeholder="Enter the country where your house is" formControlName="Country">
+            </div>
+            <div class="form-group">
+              <label for="country-code">CountryCode</label>
+              <input id="country-code" class="form-control" type="text" placeholder="Enter the country code (e.g. GR)" formControlName="CountryCode">
+            </div>
+            <div class="form-group">
+              <label for="city">City</label>
+              <input id="city" class="form-control" type="text" placeholder="Enter the city where your house is" formControlName="City">
+            </div>
+            <div class="form-group">
+              <label for="street">Street Address</label>
+              <input id="street" class="form-control" type="text" placeholder="Enter the street address of your house" formControlName="Street">
+            </div>
+            <div class="form-group">
+              <label for="zipcode">ZipCode</label>
+              <input id="zipcode" class="form-control" type="text" placeholder="Enter the zipcode" formControlName="Zipcode">
+            </div>
+            <div class="form-group">
+              <label for="neighborhood">Neighborhood</label>
+              <input id="neighborhood" class="form-control" type="text" placeholder="Enter the neighborhood of your house" formControlName="Neighborhood">
+            </div>
+            <div class="form-group">
+              <label for="neighborhood-overview">Neighborhood Overview</label>
+              <input id="neighborhood-overview" class="form-control" type="text" placeholder="Describe the Neighborhood" formControlName="NeighborhoodOverview">
+            </div>        
+              <h2> Upload Images </h2>
+                <div class="form-group">
+                    <input id="image-upload" type="file" (change)="OnImagesUpload($event)" accept="image/*" multiple>
+                </div>
+                <h2>Edit Images</h2>
+                <div class="image-container">
+                    <img [src]="currentImage" alt="Image">
+                </div>
+                <div class="navigation-buttons">
+                  <button class="btn btn-primary" type="button" (click)="previousImage()">&lt;</button>
+                  <button class="btn btn-primary" type="button" (click)="nextImage()">&gt;</button>
+                  <button class="btn btn-danger"  type="button"(click)="DeleteImage()">Delete Image</button>
+                  <div class="error" *ngIf="DeleteError">
+                    <p> {{DeleteError}} </p>
+                  </div>
+                  <button class="btn btn-success" type="button" (click)="SetAsThumbnail()">Set as Thumbnail</button>
+              </div>
+          </div>
+          <div class="col-md-6">
+            <h2>Property Accommodations</h2>
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label for="bathrooms">Bathrooms</label>
+                    <input id="bathrooms" class="form-control" type="number" formControlName="Bathrooms">
+                  </div>
+                  <div class="form-group">
+                    <label for="beds">Beds</label>
+                    <input id="beds" class="form-control" type="number" formControlName="Beds">
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label for="bedrooms">Bedrooms</label>
+                    <input id="bedrooms" class="form-control" type="number" formControlName="Bedrooms">
+                  </div>
+                </div>
+              </div>
+                <h2>Property Type and Size</h2>
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="property-type">Property Type</label>
+                      <select id="property-type" class="form-control" formControlName="PropertyType">
+                        <option *ngFor="let option of PropertyOptions" [value]="option">{{ option }}</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="square-feet">Property Size(in square feet)</label>
+                      <input id="square-feet" class="form-control" type="number" formControlName="SquareFeet">
+                    </div>
+                  </div>
+                </div>
+            <div class="row">
+            <h2>Booking and Pricing</h2>
+              <div class="col-md-6 custom-col">
+                <div class="form-group">
+                  <label for="price">Daily Price</label>
+                  <input id="price" class="form-control" type="number" formControlName="Price">
+                </div>
+                <div class="form-group">
+                  <label for="weekly-price">Weekly Price</label>
+                  <input id="weekly-price" class="form-control" type="number" formControlName="WeeklyPrice">
+                </div>
+                <div class="form-group">
+                  <label for="monthly-price">Monthly Price</label>
+                  <input id="monthly-price" class="form-control" type="number" formControlName="MonthlyPrice">
+                </div>
+                <div class="form-group">
+                  <label for="cleaning-fee">Cleaning Fee</label>
+                  <input id="cleaning-fee" class="form-control" type="number" formControlName="CleaningFee">
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="extra-people">Extra People Cost</label>
+                  <input id="extra-people" class="form-control" type="number" formControlName="ExtraPeople">
+                </div>
+                <div class="form-group">
+                  <label for="minimum-nights">Minimum Nights</label>
+                  <input id="minimum-nights" class="form-control" type="number" formControlName="MinimumNights">
+                </div>
+                <div class="form-group">
+                  <label for="maximum-nights">Maximum Nights</label>
+                  <input id="maximum-nights" class="form-control" type="number" formControlName="MaximumNights">
+                </div>
+              </div>
+                <h2>Other Options</h2>
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="license">Is driver's license required?</label>
+                      <select id="license" class="form-control" formControlName="RequiresLicense">
+                        <option *ngFor="let option of GeneralOptions" [value]="option.value">{{ option.label }}</option>
+                      </select>
+                    </div>
+                    <div class="form-group">
+                      <label for="transit">Transit</label>
+                      <select id="transit" class="form-control" formControlName="Transit">
+                        <option *ngFor="let option of TransitOptions" [value]="option">{{ option }}</option>
+                      </select>
+                    </div>
+                    <div class="form-group">
+                      <label for="cancellation-policy">Cancellation policy</label>
+                      <select id="cancellation-policy" class="form-control" formControlName="CancellationPolicy">
+                        <option *ngFor="let option of CancellationPolicyOptions" [value]="option">{{ option }}</option>
+                      </select>
+                    </div>
+                  </div>
+                    <div class="col-md-6">
+                      <div class="form-group">
+                        <label for="instantly-bookable">Instantly booked?</label>
+                        <select id="instantly-bookable" class="form-control" formControlName="InstantBookable">
+                          <option *ngFor="let option of GeneralOptions" [value]="option.value">{{ option.label }}</option>
+                        </select>
+                      </div>
+                      <div class="form-group">
+                        <label for="phone-verification">Required guest phone verification?</label>
+                        <select id="phone-verification" class="form-control" formControlName="RequireGuestPhoneVerification">
+                          <option *ngFor="let option of GeneralOptions" [value]="option.value">{{ option.label }}</option>
+                        </select>
+                      </div>
+                      <div class="form-group">
+                        <label for="location-exact">Is Location Exact</label>
+                        <select id="location-exact" class="form-control" formControlName="IsLocationExact">
+                          <option *ngFor="let option of GeneralOptions" [value]="option.value">{{ option.label }}</option>
+                        </select>
+                      </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="submit-button">
+            <button type="submit" class="btn btn-primary">Submit</button>
+          </div>        
+      </form>
     </section>
+
+  </div>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+
+</html>
   `,
   styleUrls: ['./edit-house.component.css']
 })
@@ -125,6 +244,13 @@ export class EditHouseComponent {
   DeleteError: string | undefined;
   images: File[] = [];
   Thumbnail: File | undefined;
+  PropertyOptions = ["Appartment","House","Villa","Motel","Hotel"];
+  CancellationPolicyOptions = ["None","Strict"];
+  TransitOptions = ["None","Metro","Bus","Metro and Bus"];
+  GeneralOptions = [
+    { label: 'Yes', value: true },
+    { label: 'No', value: false }
+  ];
   HouseForm = new FormGroup({
     Name: new FormControl('',Validators.required),
     Summary: new FormControl('',Validators.required),

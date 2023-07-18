@@ -11,63 +11,94 @@ import { House } from 'src/app/interfaces/house';
 import { HouseService } from 'src/app/services/house.service';
 import { PreviewHouseComponent } from '../preview-house/preview-house.component';
 import { EditHouseComponent } from '../edit-house/edit-house.component';
+import { AuthModel } from 'src/app/interfaces/auth-model';
 
 @Component({
   selector: 'app-host-profile',
   standalone: true,
   imports: [CommonModule,RouterModule,ReactiveFormsModule,PreviewHouseComponent,EditHouseComponent],
   template: `
-    <div class="left-buttons">
-      <a routerLink="../">
-        <button class="profile-button" type="button">Profile</button>
-      </a>
-      <a routerLink="../Email">
-          <button class="email-button" type="button">Email</button>
+<div class="container">
+  <div class="row">
+    <div class="col-md-5">
+      <div class="left-buttons">
+        <a routerLink="../">
+          <button class="btn btn-primary profile-button" type="button">Profile</button>
+        </a>
+        <a routerLink="../Email">
+          <button class="btn btn-primary email-button" type="button">Email</button>
         </a>
         <a routerLink="../Password">
-          <button class="password-button" type="button">Change Password</button>
+          <button class="btn btn-primary password-button" type="button">Change Password</button>
         </a>
         <a routerLink="../PersonalData">
-          <button class="personal-data-button" type="button">Personal Data</button>
+          <button class="btn btn-primary personal-data-button" type="button">Personal Data</button>
         </a>
+      </div>
     </div>
-    <section class="Host-Profile">
-    <h2 class="section-heading">Your Profile</h2>
-      <form [formGroup]="EditForm" (submit)="EditProfile()">
-      <label for="host-name">Your name as a host</label>
-      <input id="host-name" type="text" [placeholder]="Host?.HostName" formControlName="HostName">
-      <div class ="error"*ngIf="HostName_Error">
-          <div *ngFor="let message of HostName_Error.Errors">
-            <p>{{message}}</p>
+    <div class="col-md-9">
+      <section class="Host-Profile">
+        <h2 class="section-heading">Your Profile</h2>
+        <form [formGroup]="EditForm" (submit)="EditProfile()">
+          <div class="form-group">
+            <label for="host-name">Your name as a host</label>
+            <input id="host-name" class="form-control" type="text" [placeholder]="Host?.HostName" formControlName="HostName">
+            <div class="error" *ngIf="HostName_Error">
+              <div *ngFor="let message of HostName_Error.Errors">
+                <p>{{message}}</p>
+              </div>
+            </div>
           </div>
-        </div>
-      <label for="host-about">About you</label>
-      <input id="host-about" type="text" [placeholder]="Host?.HostAbout" formControlName="HostAbout">
-      <div class ="error"*ngIf="HostAbout_Error">
-          <div *ngFor="let message of HostAbout_Error.Errors">
-            <p>{{message}}</p>
+          <div class="form-group">
+            <label for="host-about">About you</label>
+              <div *ngIf="Host?.HostAbout != undefined">
+                <input id="host-about" class="form-control" type="text" [placeholder]="Host?.HostAbout" formControlName="HostAbout">
+              </div>
+              <div *ngIf="Host?.HostAbout === undefined">
+                <input id="host-about" class="form-control" type="text" placeholder="Please give us a description about you" formControlName="HostAbout">
+              </div> 
+            <div class="error" *ngIf="HostAbout_Error">
+              <div *ngFor="let message of HostAbout_Error.Errors">
+                <p>{{message}}</p>
+              </div>
+            </div>
           </div>
-        </div>
-      <label for="host-location">Your Location</label>
-      <input id="host-location" type="text" [placeholder]="Host?.HostLocation" formControlName="HostLocation">
-      <div class ="error"*ngIf="HostLocation_Error">
-          <div *ngFor="let message of HostLocation_Error.Errors">
-            <p>{{message}}</p>
+          <div class="form-group">
+            <label for="host-location">Your Location</label>
+            <div *ngIf="Host?.HostLocation != undefined">
+                <input id="host-location" class="form-control" type="text" [placeholder]="Host?.HostLocation" formControlName="HostLocation">
+              </div>
+              <div *ngIf="Host?.HostLocation === undefined">
+                 <input id="host-location" class="form-control" type="text" placeholder="Please enter you location" formControlName="HostLocation">
+              </div> 
+            <div class="error" *ngIf="HostLocation_Error">
+              <div *ngFor="let message of HostLocation_Error.Errors">
+                <p>{{message}}</p>
+              </div>
+            </div>
           </div>
-        </div>
-        <button type="submit" class="primary">Submit</button>
-      </form>
-    </section>
-    <div class="left-buttons">
-      <a [routerLink]="['AddHouse']">
-        <button class="house-button" type="button">Add a House</button>
-      </a>
-    <div class="houses">
-    <app-preview-house
-        *ngFor="let housingLocation of Houses"
-            [house]="housingLocation">
-      </app-preview-house>
+          <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+      </section>
     </div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="left-buttons">
+        <a [routerLink]="['AddHouse']">
+          <button class="btn btn-primary house-button" type="button">Add a House</button>
+        </a>
+      </div>
+      <div class="houses">
+        <app-preview-house *ngFor="let housingLocation of Houses" [house]="housingLocation"></app-preview-house>
+      </div>
+    </div>
+  </div>
+</div>
+
   `,
   styleUrls: ['./host-profile.component.css'] 
 })
@@ -92,8 +123,7 @@ export class HostProfileComponent {
     this.User = this.UserService.GetUserData();
     this.HouseService.GetHousesByHostId(this.Host?.Id).subscribe((response) =>{
       this.Houses = response;
-    })
-    
+    }); 
   }
   EditProfile(){
     const formValue = this.EditForm.value;
@@ -101,10 +131,9 @@ export class HostProfileComponent {
     const HostAbout = formValue.HostAbout || '';
     const HostLocation = formValue.HostLocation || '';
     this.HostService.EditHost(Hostname,HostAbout,HostLocation,this.User?.Id).subscribe((response) =>{
-                      console.log(response);
-                      if('HostName' in response){
-                        const HostData = response as Host;
-                        this.HostService.SetHostData(HostData);
+                      if('Token' in response){
+                        const token = response as AuthModel;
+                        localStorage.setItem('hosttoken',token.Token);
                         location.reload();
                       }
                       else{

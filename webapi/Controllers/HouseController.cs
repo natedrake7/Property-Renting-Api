@@ -17,15 +17,11 @@ namespace webapi.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<User> _userManager;
-        private readonly SignInManager<User> _signManager;
-        private readonly ILogger<HouseController> _logger;
 
-        public HouseController(ApplicationDbContext context, UserManager<User> userManager, SignInManager<User> signManager, ILogger<HouseController> logger)
+        public HouseController(ApplicationDbContext context, UserManager<User> userManager)
         {
             _context = context;
             _userManager = userManager;
-            _signManager = signManager;
-            _logger = logger;
         }
 
         // GET: UserHouses

@@ -8,6 +8,7 @@ using System.Text.Json;
 using webapi.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Hosting;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace webapi.Controllers
 {
@@ -17,18 +18,21 @@ namespace webapi.Controllers
         private readonly ApplicationDbContext _context;
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signManager;
-        public HostController(ApplicationDbContext context, UserManager<User> userManager, SignInManager<User> signManager)
+        private readonly JwtHandler _jwtHandler;
+        public HostController(ApplicationDbContext context, UserManager<User> userManager, SignInManager<User> signManager, JwtHandler jwtHandler)
         {
             _context = context;
             _userManager = userManager;
             _signManager = signManager;
+            _jwtHandler = jwtHandler;
         }
 
         // GET: UserHost of current user
         [HttpGet]
+        [Authorize(Roles = "Host")]
         public async Task<IActionResult> GetHost(string? Id)
         {
-            var user = await _userManager.FindByIdAsync(Id!); //Get current user
+            var user = await _userManager.FindByIdAsync(Id!);
             if (user == null)
                 return NotFound();
 
@@ -39,11 +43,16 @@ namespace webapi.Controllers
             if (host == null) //No need to check since we have authorization
                 return NotFound();
 
+            var SigningCredentials = _jwtHandler.GetSigningCredentials();
+            var claims =  _jwtHandler.GetClaims(host);
+            var tokenOptions = _jwtHandler.GenerateTokenOptions(SigningCredentials, claims);
+            var token = new JwtSecurityTokenHandler().WriteToken(tokenOptions);
+
             var options = new JsonSerializerOptions
             {
                 Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
             };
-            var json = JsonSerializer.Serialize(host, options);
+            var json = JsonSerializer.Serialize(new AuthModel {Token = token}, options);
             return Content(json, "application/json");
         }
 
@@ -149,13 +158,14 @@ namespace webapi.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        public async Task<IActionResult> Edit([FromBody] Models.Host Host)
+        [Authorize(Roles = "Host")]
+        public async Task<IActionResult> Edit(string?Id,[FromBody] HostEditModel Host)
         {
             var options = new JsonSerializerOptions
             {
                 Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
             };
-            var user = await _userManager.FindByIdAsync(Host.UserId);         
+            var user = await _userManager.FindByIdAsync(Id!);         
             if(user == null) 
                 return NotFound();
             var host = await _context.Hosts.FirstOrDefaultAsync(h => h.Id == user.HostId);
@@ -176,7 +186,7 @@ namespace webapi.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!UserHostExists(Host.Id))
+                    if (!UserHostExists(host.Id))
                     {
                         return NotFound();
                     }
@@ -185,7 +195,12 @@ namespace webapi.Controllers
                         throw;
                     }
                 }
-                var json2 = JsonSerializer.Serialize(Host, options);
+                var SigningCredentials = _jwtHandler.GetSigningCredentials();
+                var claims = _jwtHandler.GetClaims(host);
+                var tokenOptions = _jwtHandler.GenerateTokenOptions(SigningCredentials, claims);
+                var token = new JwtSecurityTokenHandler().WriteToken(tokenOptions);
+
+                var json2 = JsonSerializer.Serialize(new AuthModel { Token = token }, options);
                 return Content(json2, "application/json");
             }
             var ModelErrors = ModelState

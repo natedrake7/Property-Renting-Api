@@ -5,6 +5,7 @@ import { UserService } from 'src/app/services/user.service';
 import { User } from 'src/app/interfaces/user';
 import { FormControl,FormGroup,ReactiveFormsModule,Validators } from '@angular/forms';
 import { error } from 'src/app/interfaces/error';
+import { AuthModel } from 'src/app/interfaces/auth-model';
 
 @Component({
   selector: 'app-email',
@@ -77,11 +78,10 @@ export class EmailComponent {
     const Password = formValue.Password || '';
     const ConfirmPassword = formValue.ConfirmPassword || '';
     this.UserService.EditEmail(this.User?.Id,Email,Password,ConfirmPassword).subscribe((response) =>{
-      console.log(response);
-      if('UserName' in response)
+      if('Token' in response)
       {
-        const UserData = response as User;
-        this.UserService.SetUserData(UserData);
+        const token = response as AuthModel;
+        localStorage.setItem('usertoken',token.Token);
         location.reload();
       }
       else{

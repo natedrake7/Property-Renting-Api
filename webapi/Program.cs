@@ -3,6 +3,10 @@ using Microsoft.AspNetCore.Identity;
 using webapi.Models;
 using webapi.Data;
 using Microsoft.AspNetCore.Antiforgery;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text.Unicode;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
@@ -18,6 +22,7 @@ builder.Services.AddDefaultIdentity<User>(options => options.SignIn.RequireConfi
 builder.Services.AddScoped<RoleManager<IdentityRole>>();
 builder.Services.AddScoped<Roles>();
 builder.Services.AddScoped<IRoleInitializer, Roles>();
+builder.Services.AddScoped<JwtHandler>();
 
 builder.Services.AddCors(options =>
                  options.AddDefaultPolicy(builder =>
@@ -27,6 +32,28 @@ builder.Services.AddCors(options =>
                             .AllowAnyMethod();
                  })
                  );
+var jwtSettings = builder.Configuration.GetSection("JwtSettings");
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+}).
+AddJwtBearer(options =>
+{
+options.TokenValidationParameters = new TokenValidationParameters
+{
+    ValidateIssuer = true,
+    ValidateAudience = true,
+    //ValidateLifetime = true,
+    ValidateIssuerSigningKey = true,
+    ValidIssuer = jwtSettings["validIssuer"],
+    ValidAudience = jwtSettings["validAudience"],
+    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.GetSection("securityKey").Value!))
+
+    };
+});
+
 builder.Services.AddAntiforgery(options =>
 {
     options.HeaderName = "X-XSRF-TOKEN";
@@ -123,6 +150,10 @@ app.MapControllerRoute(
 app.MapControllerRoute(
     name: "GetHost",
     pattern: "{controller=Host}/{action=GetHost}/{id}");
+
+app.MapControllerRoute(
+    name: "EditHost",
+    pattern: "{controller=Host}/{action=Edit}/{id}");
 
 app.MapControllerRoute(
     name: "EditUser",

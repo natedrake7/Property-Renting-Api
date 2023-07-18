@@ -8,6 +8,7 @@ import { HttpClientModule,HttpClientXsrfModule } from '@angular/common/http';
 import { error } from 'src/app/interfaces/error';
 import { User } from 'src/app/interfaces/user';
 import { Host } from '../../interfaces/host';
+import { AuthModel } from 'src/app/interfaces/auth-model';
 
 @Component({
   selector: 'app-register',
@@ -153,19 +154,14 @@ export class RegisterComponent {
                               password,
                               confirmPassword,
                               isHost,hostname,hostlocation,hostabout).subscribe((response) => {
-                                          if('UserName' in response){
-                                            this.UserService.SetUserData(response as User);
-                                            if(this.UserService.GetUserData()?.IsHost){
-                                              this.HostService.RetrieveHostData(this.UserService.GetUserData()?.Id).subscribe((response) => {
-                                                if(typeof response  != 'string'){
-                                                  const data = response as Host;
-                                                  this.HostService.SetHostData(data);
-                                                  this.RoutingService.navigate(['/']);  
-                                                };
+                                          if('Token' in response){
+                                            const Auth = response as AuthModel;
+                                            localStorage.setItem('usertoken',Auth.Token);
+                                              this.HostService.RetrieveHostData().subscribe((response) => {
+                                                const HostAuth = response as AuthModel;
+                                                localStorage.setItem('hosttoken',HostAuth.Token);
                                               });
-                                            }
-                                            else
-                                              this.RoutingService.navigate(['/']);  
+                                            this.RoutingService.navigate(['/']);  
                                           }else{
                                             const ErrorResponse = response as error[];
                                             this.Username_Error = ErrorResponse.find(item => item.Variable === 'Username');
