@@ -6,6 +6,7 @@ import { HouseService } from 'src/app/services/house.service';
 import { UserService } from 'src/app/services/user.service';
 import { User } from 'src/app/interfaces/user';
 import { error } from 'src/app/interfaces/error';
+import * as FormData from 'form-data';
 
 @Component({
   selector: 'app-add-house',
@@ -49,8 +50,16 @@ import { error } from 'src/app/interfaces/error';
               <input id="house-space" class="form-control space-input" type="text" placeholder="Describe the space of the house" formControlName="Space">
             </div>
             <div class="form-group">
+              <label for="experiences-offered">Available Experiences</label>
+              <input id="experiences-offered" class="form-control space-input" type="text" placeholder="List available experiences" formControlName="ExperiencesOffered">
+            </div>
+            <div class="form-group">
               <label for="country">Country</label>
               <input id="country" class="form-control" type="text" placeholder="Enter the country where your house is" formControlName="Country">
+            </div>
+            <div class="form-group">
+              <label for="state">State</label>
+              <input id="state" class="form-control space-input" type="text" placeholder="Enter the state of your house" formControlName="State">
             </div>
             <div class="form-group">
               <label for="country-code">CountryCode</label>
@@ -286,29 +295,11 @@ export class AddHouseComponent {
   }
 
   AddPropertyListing(){
-    const formValue = this.HouseForm.value;
-    const Name = formValue.Name || '';
-    const Summary = formValue.Summary || '';
-    const Space = formValue.Space || '';
-    const ExperiencesOffered = formValue.ExperiencesOffered || '';
-    const NeighborhoodOverview = formValue.NeighborhoodOverview || '';
-    const Notes = formValue.Notes || '';
-    const Transit = formValue.Transit || '';
-    const Street = formValue.Street || ''
-    const Neighborhood = formValue.Neighborhood || '';
-    const City = formValue.City || '';
-    const State = formValue.State || '';
-    const ZipCode = formValue.Zipcode || '';
-    const Market = formValue.Market || '';
-    const CountryCode = formValue.CountryCode || '';
-    const Country = formValue.Country || '';
-    const IsLocationExact = formValue.IsLocationExact || false;
-    const PropertyType = formValue.PropertyType || '';
-
-    this.HouseService.CreateProperty(this.User?.Id,Name,Summary,this.Thumbnail,this.images).subscribe((response) => {
+    const ListingData = this.GetData();
+    this.HouseService.CreateProperty(ListingData).subscribe((response) => {
       console.log(response);
       if(response === 'ok'){
-        this.RoutingService.navigate(['/Profile','/Host']);
+        this.RoutingService.navigateByUrl('../');
       }
       else{
         console.log(response);
@@ -335,5 +326,46 @@ export class AddHouseComponent {
         this.images.push(file);
       }
     }
+  }
+  GetData():FormData{
+    const formValue = this.HouseForm.value;
+    const ListingData = new FormData();
+    ListingData.append('Name',formValue.Name || '');
+    ListingData.append('Summary',formValue.Summary);
+    ListingData.append('Space',formValue.Space || '');
+    ListingData.append('ExperiencesOffered',formValue.ExperiencesOffered || '');
+    ListingData.append('Notes',formValue.Notes || '');
+    ListingData.append('Transit',formValue.Transit);
+    ListingData.append('Street',formValue.Street || '');
+    ListingData.append('Neighborhood',formValue.Neighborhood || '');
+    ListingData.append('NeighborhoodOverview',formValue.NeighborhoodOverview || '');
+    ListingData.append('City',formValue.City || '');
+    ListingData.append('State',formValue.State || '');
+    ListingData.append('ZipCode',formValue.Zipcode || '');
+    ListingData.append('Market',formValue.Market || '');
+    ListingData.append('CountryCode',formValue.CountryCode || '');
+    ListingData.append('Country',formValue.Country || '');
+    ListingData.append('IsLocationExact',formValue.IsLocationExact);
+    ListingData.append('PropertyType', formValue.PropertyType || '');
+    ListingData.append('Bathrooms',formValue.Bathrooms);
+    ListingData.append('Bedrooms',formValue.Bedrooms);
+    ListingData.append('Beds',formValue.Beds);
+    ListingData.append('SquareFeet',formValue.SquareFeet);
+    ListingData.append('Price',formValue.Price);
+    ListingData.append('WeeklyPrice',formValue.WeeklyPrice);
+    ListingData.append('MonthlyPrice',formValue.MonthlyPrice);
+    ListingData.append('CleainingFee',formValue.CleaningFee);
+    ListingData.append('ExtraPeople',formValue.ExtraPeople);
+    ListingData.append('MinimumNights',formValue.MinimumNights);
+    ListingData.append('MaximumNights',formValue.MaximumNights);
+    ListingData.append('RequiresLicense',formValue.RequiresLicense);
+    ListingData.append('InstantBookable',formValue.InstantBookable);
+    ListingData.append('RequireGuestPhoneVerification',formValue.RequireGuestPhoneVerification);
+    ListingData.append('CancellationPolicy',formValue.CancellationPolicy);
+    ListingData.append('Thumbnail',this.Thumbnail!);
+    for(let i = 0;i < this.images.length!;i++){
+      ListingData.append('Images',this.images[i]);
+    }
+    return ListingData;
   }
 }

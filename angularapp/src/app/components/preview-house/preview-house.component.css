@@ -10,7 +10,7 @@
 }
 
 .thumbnail {
-  width: 200px;
+  width: 300px;
   height: auto;
 }
 
@@ -21,13 +21,27 @@
 .property-link {
   display: inline-block;
   margin-right: 10px;
-  color: blue;
-  text-decoration: underline;
+  color: white;
+  padding: 10px;
+  border: 1px solid #0d6efd;
+  background: none;
+  background-color: #0d6efd;
+  border-radius: 4px; /* Add border-radius to make the edges less sharp */
+  text-decoration: none; /* Remove default underline for better appearance */
+  transition: background-color 0.3s, color 0.3s; /* Add smooth transition effects */
 }
 
 .property-link:hover {
   text-decoration: none;
+  background-color: #0b5ed7;
+  border-color: #0b5ed7;
 }
+
+.maps-link{
+  height: auto;
+  width: 20px;
+}
+
 
 .deletecheck {
   margin-top: 20px;

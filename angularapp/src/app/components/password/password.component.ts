@@ -12,49 +12,80 @@ import { AuthModel } from 'src/app/interfaces/auth-model';
   standalone: true,
   imports: [CommonModule,RouterModule,ReactiveFormsModule],
   template: `
-    <div class="left-buttons">
-      <a routerLink="../">
-        <button class="profile-button" type="button">Profile</button>
-      </a>
-      <div *ngIf="User?.IsHost === true">
-         <a routerLink="../Host">
-          <button class="host-profile-button" type="button">Host Profile</button>
+  <!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Edit Listing</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <link rel="stylesheet" href="./password.component.css">
+</head>
+<body>
+  <div class="container layout">
+    <div class="row">
+      <div class="col-md-1 nav-buttons">
+        <a routerLink="../">
+          <button class="btn btn-primary profile-button" type="button">Back</button>
         </a>
-        </div>
-        <a routerLink="../Email">
-          <button class="email-button" type="button">Email</button>
+        <a routerLink="../">
+          <button class="btn btn-primary profile-button" type="button">Profile</button>
         </a>
-        <a routerLink="../PersonalData">
-          <button class="personal-data-button" type="button">Personal Data</button>
-        </a>
+        <div *ngIf="User?.IsHost === true">
+          <a routerLink="../Host">
+            <button class="btn btn-primary host-profile-button" type="button">Host Profile</button>
+          </a>
+          </div>
+          <a routerLink="../Email">
+            <button class="btn btn-primary email-button" type="button">Email</button>
+          </a>
+          <a routerLink="../PersonalData">
+            <button class="btn btn-primary personal-data-button" type="button">Personal Data</button>
+          </a>
+      </div>
+      <div class="col-md-3 password">
+        <section class="change-password">
+          <h2 class="section-heading">Change Password</h2>
+            <form [formGroup]="PasswordForm" (submit)="ChangePassword()">
+              <div class="form-group">
+                <label for="password">Password</label>
+                <input id="password" class="form-control" type="password" placeholder="Enter your old password" formControlName="OldPassword">        
+                <div class ="error"*ngIf="OldPassword_Error">
+                  <div *ngFor="let message of OldPassword_Error.Errors">
+                    <p>{{message}}</p>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="new-password">New Password</label>
+                <input id="new-password" class="form-control" type="password" placeholder="Enter your new password" formControlName="NewPassword">
+                <div class ="error"*ngIf="Password_Error">
+                  <div *ngFor="let message of Password_Error.Errors">
+                    <p>{{message}}</p>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="confirm-password">Confirm Password</label>
+                <input id="confirm-password" class="form-control" type="password" placeholder="Confirm your new password" formControlName="ConfirmPassword">
+                <div class ="error"*ngIf="ConfirmPassword_Error">
+                  <div *ngFor="let message of ConfirmPassword_Error.Errors">
+                    <p>{{message}}</p>
+                  </div>
+                </div>
+              </div>
+            <button type="submit" class="btn btn-primary primary">Submit</button>
+          </form>
+        </section>
+      </div>
     </div>
-    <section class="change-password">
-    <h2 class="section-heading">Change Password</h2>
-      <form [formGroup]="PasswordForm" (submit)="ChangePassword()">
-        <label for="password">Password</label>
-      <input id="password" type="password" placeholder="Enter your old password" formControlName="OldPassword">
-      <div class ="error"*ngIf="OldPassword_Error">
-          <div *ngFor="let message of OldPassword_Error.Errors">
-            <p>{{message}}</p>
-          </div>
-        </div>
-        <label for="new-password">New Password</label>
-      <input id="new-password" type="password" placeholder="Enter your new password" formControlName="NewPassword">
-      <div class ="error"*ngIf="Password_Error">
-          <div *ngFor="let message of Password_Error.Errors">
-            <p>{{message}}</p>
-          </div>
-        </div>
-        <label for="confirm-password">Confirm Password</label>
-      <input id="confirm-password" type="password" placeholder="Confirm your new password" formControlName="ConfirmPassword">
-      <div class ="error"*ngIf="ConfirmPassword_Error">
-          <div *ngFor="let message of ConfirmPassword_Error.Errors">
-            <p>{{message}}</p>
-          </div>
-        </div>
-        <button type="submit" class="primary">Submit</button>
-      </form>
-    </section>
+  </div>
+
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+
+</html>
   `,
   styleUrls: ['./password.component.css']
 })

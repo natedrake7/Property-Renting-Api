@@ -104,7 +104,7 @@
 
         public float ReviewScoresValue { get; set; }
 
-        public string? RequiresLicense { get; set; }
+        public bool RequiresLicense { get; set; }
 
         public bool InstantBookable { get; set; }
 

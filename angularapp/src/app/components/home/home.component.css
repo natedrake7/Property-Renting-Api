@@ -10,7 +10,7 @@
 
 .logout{
 border: white;
-background-color: #337ab7;
+background-color: #0d6efd;
 padding: 10px;
 border-radius: 8px;
 color: white;
@@ -18,21 +18,21 @@ margin-right: 10px;
 }
 
 .logout:hover{
-background-color: #1e5b91;
+background-color: #0b5ed7;
 color:black;
 cursor: pointer;
 }
 
 .user-profile{
 border: white;
-background-color: #337ab7;
+background-color: #0d6efd;
 padding: 10px;
 border-radius: 8px;
 color: white;
 margin-right: 10px;
 }
 .user-profile:hover{
-background-color: #1e5b91;
+background-color: #0b5ed7;
 color:black;
 cursor: pointer;
 }
@@ -45,7 +45,7 @@ margin-top: -30px;
 
 .register{
 border: white;
-background-color: #337ab7;
+background-color: #0d6efd;
 padding: 10px;
 border-radius: 8px;
 color: white;
@@ -53,14 +53,14 @@ margin-right: 10px;
 }
 
 .register:hover{
-background-color: #1e5b91;
+background-color: #0b5ed7;
 color:black;
 cursor: pointer;
 }
 
 .login{
 border: white;
-background-color: #337ab7;
+background-color: #0d6efd;
 padding: 10px;
 border-radius: 8px;
 color: white;
@@ -68,7 +68,7 @@ margin-right: 100px;
 }
 
 .login:hover{
-background-color: #1e5b91;
+background-color: #0b5ed7;
 color:black;
 cursor: pointer;
 }
@@ -94,25 +94,25 @@ input[type="text"] {
 }
 
 input[type="text"]:hover{
-  border:solid 1px #1e5b91;
+  border:solid 1px #0b5ed7;
   background: rgb(235, 235, 235);
 }
 
 input[type="text"]:focus{
-  border:solid 1px #1e5b91;
+  border:solid 1px #0b5ed7;
 }
 
 .searchbutton {
   padding: 10px;
-  border: solid 1px #337ab7;
-  background: #337ab7;
+  border: solid 1px #0d6efd;
+  background: #0d6efd;
   color: white;
   border-radius: 8px;
   width: auto;
 }
 
 .searchbutton:hover{
-  background-color: #1e5b91;
+  background-color: #0b5ed7;
   color:black;
   cursor: pointer;
 }

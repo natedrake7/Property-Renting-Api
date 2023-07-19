@@ -1,82 +1,25 @@
-/* Styles for the left-buttons container */
-.left-buttons {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  margin-bottom: 20px;
-}
-
-.left-buttons button {
-  margin-bottom: 10px;
-  padding: 10px 15px;
-  border: none;
-  border-radius: 4px;
-  background-color: #e6e6e6;
-  color: #333;
-  font-size: 16px;
-  cursor: pointer;
-}
-
-.left-buttons button:hover {
-  background-color: #ccc;
-}
-
-/* Styles for the personal-data section */
-.personal-data {
-  margin-bottom: 20px;
-}
-
-.personal-data h2 {
-  font-size: 20px;
-  margin-bottom: 10px;
-}
-
-.personal-data p {
-  margin-bottom: 5px;
-}
-
-.personal-data button {
-  margin-top: 10px;
-  padding: 10px 15px;
-  border: none;
-  border-radius: 4px;
-  background-color: #e6e6e6;
-  color: #333;
-  font-size: 16px;
-  cursor: pointer;
-}
-
-.personal-data button:hover {
-  background-color: #ccc;
-}
-
-/* Styles for the confirm-delete section */
-.confirm-delete {
-  margin-top: 20px;
-}
-
-.confirm-delete label {
-  display: block;
-  margin-bottom: 5px;
-}
-
-.confirm-delete input {
-  margin-bottom: 10px;
-  padding: 8px;
+.layout{
   border: 1px solid #ccc;
   border-radius: 4px;
+  background-color: #f5f5f5;
+  margin-top: 40px;
 }
 
-.confirm-delete .error {
-  margin-bottom: 10px;
+
+.nav-buttons{
+  justify-content: left;
+  margin-top: 50px;
+  margin-right: 50px;
+}
+
+.nav-buttons button{
+  margin-bottom: 25px;
+}
+
+.error{
   color: red;
 }
 
-.confirm-delete button.primary {
-  background-color: #337ab7;
-  color: #fff;
-}
-
-.confirm-delete button.primary:hover {
-  background-color: #23527c;
+.delete-header{
+  margin-top: 20px;
 }

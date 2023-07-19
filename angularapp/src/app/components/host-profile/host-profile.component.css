@@ -30,7 +30,7 @@
 }
 
 .add-house{
-  margin-bottom: 10px;
+  margin-top: 10px;
 }
 .buttons button{
   margin-bottom: 25px;
@@ -46,6 +46,7 @@
   border: 1px solid #ccc;
   border-radius: 4px;
   background-color: #f5f5f5;
+  margin-top: 40px;
 }
 
 .houses-container{

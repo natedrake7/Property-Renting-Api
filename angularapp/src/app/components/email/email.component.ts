@@ -12,49 +12,80 @@ import { AuthModel } from 'src/app/interfaces/auth-model';
   standalone: true,
   imports: [CommonModule,RouterModule,ReactiveFormsModule],
   template: `
-    <div class="left-buttons">
-      <a routerLink="../">
-        <button class="profile-button" type="button">Profile</button>
-      </a>
-      <div *ngIf="User?.IsHost === true">
-         <a routerLink="../Host">
-          <button class="host-profile-button" type="button">Host Profile</button>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <link rel="stylesheet" href="./email.component.css">
+</head>
+
+<body>
+  <div class="container layout">
+    <div class="row">
+      <div class="col-md-1 nav-buttons">
+        <a routerLink="../">
+            <button class="btn btn-primary" type="button">Back</button>
         </a>
-        </div>
-        <a routerLink="../Password">
-          <button class="password-button" type="button">Change Password</button>
+        <a routerLink="../">
+          <button class="btn btn-primary profile-button" type="button">Profile</button>
         </a>
-        <a routerLink="../PersonalData">
-          <button class="personal-data-button" type="button">Personal Data</button>
-        </a>
+        <div *ngIf="User?.IsHost === true">
+          <a routerLink="../Host">
+            <button class="btn btn-primary host-profile-button" type="button">Host Profile</button>
+          </a>
+          </div>
+          <a routerLink="../Password">
+            <button class="btn btn-primary password-button" type="button">Change Password</button>
+          </a>
+          <a routerLink="../PersonalData">
+            <button class="btn btn-primary personal-data-button" type="button">Personal Data</button>
+          </a>
+      </div>
+      <div class="col-md-3 email-col">
+        <section class="email-edit">
+          <h2 class="section-heading">Change Email</h2>
+            <form [formGroup]="EmailForm" (submit)="EditEmail()">
+              <div class="form-group">
+                <label for="email">Your Email</label>
+                <input id="email" class="form-control" type="email" [placeholder]="User?.Email" formControlName="Email">
+                <div class ="error"*ngIf="Email_Error">
+                  <div *ngFor="let message of Email_Error.Errors">
+                    <p>{{message}}</p>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="password">Password</label>
+                <input id="password" class="form-control" type="password" placeholder="Enter your password" formControlName="Password">        
+                <div class ="error"*ngIf="Password_Error">
+                  <div *ngFor="let message of Password_Error.Errors">
+                    <p>{{message}}</p>
+                  </div>
+                </div>
+            </div>  
+            <div class="form-group">
+              <label for="confirm-password">Confirm Password</label>
+              <input id="confirm-password" class="form-control" type="password" placeholder="Confirm your password" formControlName="ConfirmPassword">
+              <div class ="error"*ngIf="ConfPassword_Error">
+                <div *ngFor="let message of ConfPassword_Error.Errors">
+                  <p>{{message}}</p>
+                </div>
+              </div>
+            </div>
+              <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+        </section>
+      </div>
     </div>
-    <section class = "email-edit">
-    <h2 class="section-heading">Change Email</h2>
-      <form [formGroup]="EmailForm" (submit)="EditEmail()">
-      <label for="email">Your Email</label>
-      <input id="email" type="email" [placeholder]="User?.Email" formControlName="Email">
-      <div class ="error"*ngIf="Email_Error">
-          <div *ngFor="let message of Email_Error.Errors">
-            <p>{{message}}</p>
-          </div>
-        </div>
-        <label for="password">Password</label>
-      <input id="password" type="password" placeholder="Enter your password" formControlName="Password">
-      <div class ="error"*ngIf="Password_Error">
-          <div *ngFor="let message of Password_Error.Errors">
-            <p>{{message}}</p>
-          </div>
-        </div>
-        <label for="confirm-password">Confirm Password</label>
-      <input id="confirm-password" type="password" placeholder="Confirm your password" formControlName="ConfirmPassword">
-      <div class ="error"*ngIf="ConfPassword_Error">
-          <div *ngFor="let message of ConfPassword_Error.Errors">
-            <p>{{message}}</p>
-          </div>
-        </div>
-        <button type="submit" class="primary">Submit</button>
-      </form>
-    </section>
+  </div>
+
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  </body>
+
+</html>
   `,
   styleUrls: ['./email.component.css']
 })

@@ -25,9 +25,12 @@ import { HostService } from 'src/app/services/host.service';
 </head>
 
 <body>
-  <div class="container">
+  <div class="container layout">
     <div class="row">
       <div class="col-md-1 nav-buttons">
+          <a routerLink="../">
+            <button class="btn btn-primary" type="button">Back</button>
+          </a>
           <div *ngIf="HostService.GetHostStatus()">
             <a [routerLink]="['Host']">
               <button class="btn btn-primary" type="button">Host Profile</button>

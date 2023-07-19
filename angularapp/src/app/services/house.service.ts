@@ -1,10 +1,12 @@
 import { Injectable, inject } from '@angular/core';
 import { Images } from '../interfaces/images';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient,HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { House } from '../interfaces/house';
 import * as FormData from 'form-data';
 import { error } from '../interfaces/error';
+import jwt_decode from 'jwt-decode';
+
 
 @Injectable({
   providedIn: 'root'
@@ -20,15 +22,11 @@ export class HouseService {
   private EditHouseURL = 'https://localhost:7018/House/Edit/'
   private DeleteHouseURL = 'https://localhost:7018/House/Delete/'
   constructor(private http: HttpClient) { }
-  CreateProperty(UserId: string|undefined,Name: string | undefined,Summary: string | undefined,Thumbnail: File | undefined,Images: File[] | undefined):Observable<string|error[]>{
-    const HouseForm = new FormData();
-    HouseForm.append('Name',Name);
-    HouseForm.append('Summary',Summary);
-    HouseForm.append('Thumbnail',Thumbnail);
-    for(let i = 0;i < Images?.length!;i++){
-      HouseForm.append('Images',Images![i]);
-    }
-    return this.http.post<string|error[]>(this.CreatePropertyURL + UserId,HouseForm);
+  CreateProperty(Data : FormData | undefined):Observable<string|error[]>{
+    const token = this.GetToken('usertoken');
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
+    const AuthToken = this.GetToken('usertoken');
+    return this.http.post<string|error[]>(this.CreatePropertyURL + AuthToken!['Id'],Data,{headers:headers});
   }
 
 getAllHousingLocations(): Observable<House[]> {
@@ -69,4 +67,12 @@ DeleteHousebyId(Id:number,UserId:string | undefined):Observable<string>{
   DeleteData.append('UserId',UserId);
   return this.http.post<string>(this.DeleteHouseURL + Id,DeleteData);
 }
+
+  GetToken(TokenId: string):{[key: string]: string} | undefined
+  {
+    const AuthToken = localStorage.getItem(TokenId);
+    if(!AuthToken)
+      return undefined;
+    return jwt_decode(AuthToken) as { [key: string] : string };
+  }
 }

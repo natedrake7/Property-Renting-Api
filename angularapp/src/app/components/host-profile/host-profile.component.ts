@@ -46,7 +46,7 @@ import { AuthModel } from 'src/app/interfaces/auth-model';
             <button class="btn btn-primary personal-data-button" type="button">Personal Data</button>
           </a>
       </div>
-      <div class="col-md-6 profile-col">
+      <div class="col-md-3 profile-col">
         <section class="Host-Profile">
           <h2 class="section-heading">Your Profile</h2>
           <form [formGroup]="EditForm" (submit)="EditProfile()">
@@ -96,14 +96,14 @@ import { AuthModel } from 'src/app/interfaces/auth-model';
   <div class="container houses-container">
     <div class="row">
       <div class="col-md-12">
-        <div class="add-house">
-          <a [routerLink]="['AddHouse']">
-            <button class="btn btn-primary house-button" type="button">List Property</button>
-          </a>
-        </div>
         <div class="houses">
           <app-preview-house *ngFor="let housingLocation of Houses" [house]="housingLocation"></app-preview-house>
         </div>
+      </div>
+      <div class="add-house">
+          <a [routerLink]="['AddHouse']">
+            <button class="btn btn-primary house-button" type="button">List New Property</button>
+          </a>
       </div>
     </div>
   </div>

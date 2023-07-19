@@ -166,6 +166,7 @@ namespace webapi.Controllers
             var user = await _userManager.FindByIdAsync(Id!);
             if (user == null)
                 return NotFound();
+
             using var transaction = _context.Database.BeginTransaction();
             if (ModelState.IsValid)
             {
@@ -174,6 +175,37 @@ namespace webapi.Controllers
                 {
                     Name = House.Name,
                     Summary = House.Summary,
+                    Space = House.Space,
+                    ExperiencesOffered = House.ExperiencesOffered,
+                    Notes = (House.Notes != "") ? House.Notes : null,
+                    Transit = House.Transit,
+                    Street = House.Street,
+                    Neighbourhood = House.Neighborhood,
+                    City = House.City,
+                    State = House.State,
+                    Zipcode = House.ZipCode,
+                    Market = (House.Market != "") ? House.Market : null,
+                    Country = House.Country,
+                    CountryCode = House.CountryCode,
+                    NeighborhoodOverview = (House.NeighborhoodOverview != "") ? House.NeighborhoodOverview: null,
+                    IsLocationExact = House.IsLocationExact,
+                    PropertyType = House.PropertyType,
+                    Bathrooms = House.Bathrooms,
+                    Bedrooms = House.Bedrooms,
+                    Beds = House.Beds,
+                    SquareFeet = House.SquareFeet,
+                    Price = House.Price,
+                    WeeklyPrice = (House.WeeklyPrice != 0) ? House.WeeklyPrice : 7*House.Price,
+                    MonthlyPrice = (House.MonthlyPrice != 0) ? House.MonthlyPrice : 31*House.Price,
+                    CleaningFee = House.CleaningFee,
+                    GuestsIncluded = House.GuestsIncluded,
+                    ExtraPeople = House.ExtraPeople,
+                    MinimumNights = House.MinimumNights,
+                    MaximumNights = House.MaximumNights,
+                    RequiresLicense = House.RequiresLicense,
+                    RequireGuestPhoneVerification = House.RequireGuestPhoneVerification,
+                    InstantBookable = House.InstantBookable,
+                    CancellationPolicy = House.CancellationPolicy,
                     HostId = user.HostId
                 };
                 _context.Add(userHouse);
