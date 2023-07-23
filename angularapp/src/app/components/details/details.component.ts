@@ -11,20 +11,31 @@ import { Images } from 'src/app/interfaces/images';
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
   template: `
-  <article class="listing-containter">
-    <section class="listing-description">
-          <h2 class="listing-heading">{{housingLocation?.Name}}</h2>
-          <p class="listing-location">{{housingLocation?.City}}, {{housingLocation?.State}}</p>
-    </section>
-    <section class="listing-images">
-      <img *ngFor="let image of housingImages" class="listing-image" 
-      [src]="image.URL" alt="{{ image.Name }}">
-    </section>
-    <section class="listing-features">
-      <h2 class="section-heading">About this housing location</h2>
-      <p class="listing-description">{{housingLocation?.Description}}</p>
-    </section>
-  </article>
+  <div class="container layout">
+    <div class="row">
+      <div class="listing-description">
+            <h5 class="listing-heading">{{housingLocation?.Name}}</h5>
+            <p class="listing-location">{{housingLocation?.City}}, {{housingLocation?.State}}</p>
+      </div>
+      <div class="col-md-6">
+        <div class="image-container">
+          <div class="image-wrapper">
+              <img [src]="currentImage" alt="Image">
+              <div class="navigation-buttons">
+                <button class="btn btn-primary left-button" type="button" (click)="previousImage()">&lt;</button>
+                <button class="btn btn-primary right-button" type="button" (click)="nextImage()">&gt;</button>
+              </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <section class="listing-features">
+          <h2 class="section-heading">About this housing location</h2>
+          <p class="listing-description">{{housingLocation?.Description}}</p>
+        </section>
+      </div>
+    </div>
+</div>
 `,
   styleUrls: ['./details.component.css']
 })
@@ -32,8 +43,9 @@ export class DetailsComponent {
   housingService = inject(HouseService);
   route: ActivatedRoute = inject(ActivatedRoute);
   housingLocationId = -1;
+  currentIndex = 0;
   housingLocation: House | undefined;
-  housingImages: Images[] = [];
+  Images: Images[] = [];
   applyForm = new FormGroup({
     firstName: new FormControl(''),
     lastName: new FormControl(''),
@@ -46,8 +58,20 @@ export class DetailsComponent {
       .subscribe(housingLocation => {
         this.housingLocation = housingLocation;
         this.housingService.getHousingImagebyId(housingLocationId).subscribe(images => {
-          this.housingImages = images;
+          this.Images = images;
     })
   });
+
+  }
+  get currentImage(): string {
+    return this.Images[this.currentIndex].URL;
+  }
+
+  previousImage(): void {
+    this.currentIndex = (this.currentIndex - 1 + this.Images.length) % this.Images.length;
+  }
+
+  nextImage(): void {
+    this.currentIndex = (this.currentIndex + 1) % this.Images.length;
   }
 }

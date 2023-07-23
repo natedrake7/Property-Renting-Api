@@ -22,6 +22,10 @@
   border-radius: 30px;
 }
 
+.ratings{
+  margin-left: 250px;
+}
+
 .maps-link{
   height: auto;
   width: 20px;
@@ -29,6 +33,10 @@
 
 section.listing {
   background-color: #f5f5f5;
+}
+
+section.listing:hover{
+  background-color: #e9e7e7;
 }
 
 .text-right {
@@ -42,11 +50,13 @@ section.listing {
 .listing-location{
   margin-top: -10px;
   font-weight: bold;
+  margin-left: 10px;
 }
 
 .pricing{
   margin-top: -15px;
   font-weight: bold;
+  margin-left: 10px;
 }
 
 .property-link {

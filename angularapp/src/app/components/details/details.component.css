@@ -1,89 +1,60 @@
-.listing-container {
+.row {
   display: flex;
   align-items: flex-start;
 }
 
-.listing-heading {
-  width: 50%;
-  font-size: 48pt;
-  font-weight: bold;
-  margin-bottom: 15px;
+.listing-description {
+  flex-grow: 1;
 }
 
-.listing-images {
-  height: 600px;
-  width: 50%;
-  margin-top: 100px;
-  object-fit: contain;
-  border-radius: 30px;
-  float: center;
+.image-container {
+  position: relative;
+  display: flex;
+  align-items: left;
 }
 
-.listing-image {
-  width: 750px;
+.image-container img {
+  width: 100%;
   height: auto;
-  text-align: center;
-  border-radius: 30px;
 }
 
 
-.listing-location::before {
-  content: url('/assets/location-pin.svg') / '';
+.image-wrapper {
+  position: relative;
+  box-shadow: 0 0 0 0 rgba(0, 123, 255, 0);
+  transition: box-shadow 0.3s ease;
 }
 
-.listing-location {
-  font-size: 24pt;
-  margin-bottom: 15px;
+.image-wrapper:hover .right-button,
+.image-wrapper:hover .left-button {
+  opacity: 1; /* Show the buttons on hover */
+  background-color: #0d6efd;
 }
 
-.listing-features > .section-heading {
-  color: var(--secondary-color);
-  font-size: 24pt;
-  margin-bottom: 15px;
+.image-wrapper:hover {
+  box-shadow: 0 0 10px 5px rgba(0, 123, 255, 0.5); /* Blue aura on hover */
 }
 
-.listing-features {
-  margin-bottom: 20px;
+
+.navigation-buttons {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-between;
+  transform: translateY(-50%);
 }
 
-  .listing-features li {
-    font-size: 14pt;
-  }
-
-li {
-  list-style-type: none;
+.left-button,
+.right-button {
+  background-color: transparent;
+  border: transparent;
+  opacity: 0;
+  transition: background-color 0.3s ease; /* Add a transition effect for smooth color change */
 }
 
-.listing-apply .section-heading {
-  font-size: 18pt;
-  margin-bottom: 15px;
-}
-
-label, input {
-  display: block;
-}
-
-label {
-  color: var(--secondary-color);
-  font-weight: bold;
-  text-transform: uppercase;
-  font-size: 12pt;
-}
-
-input {
-  font-size: 16pt;
-  margin-bottom: 15px;
-  padding: 10px;
-  width: 400px;
-  border-top: none;
-  border-right: none;
-  border-left: none;
-  border-bottom: solid .3px;
-}
-
-@media (max-width: 1024px) {
-  .listing-photo {
-    width: 100%;
-    height: 400px;
-  }
+.right-button:hover,
+.left-button:hover{
+  background-color: #0b5ed7;
 }

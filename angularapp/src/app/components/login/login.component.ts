@@ -73,7 +73,7 @@ export class LoginComponent {
               const Auth = response2 as AuthModel;
               localStorage.setItem('hosttoken',Auth.Token);
             }
-            this.RoutingService.navigate(['/']);
+            this.RoutingService.navigate(['/']).then(() => location.reload());
           });
         }
         else {
