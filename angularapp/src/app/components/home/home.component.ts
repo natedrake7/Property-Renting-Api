@@ -4,8 +4,7 @@ import { HouseComponent } from '../house/house.component';
 import { House} from 'src/app/interfaces/house';
 import { HouseService } from 'src/app/services/house.service';
 import { Router, RouterModule } from '@angular/router';
-import { UserService } from 'src/app/services/user.service';
-import { error } from 'src/app/interfaces/error';
+import { SearchService } from 'src/app/services/search.service';
 
 @Component({
   selector: 'app-home',
@@ -21,8 +20,7 @@ import { error } from 'src/app/interfaces/error';
     </div>
   </div>
 </section>
-
-        `
+`
   ,
   styleUrls: ['./home.component.css']
 })
@@ -31,6 +29,8 @@ export class HomeComponent {
   filteredLocationList: House[] = [];
   housingService: HouseService = inject(HouseService);
   RoutingService: Router = inject(Router);
+  SearchService:SearchService = inject(SearchService);
+
   constructor() {
     this.housingService.getAllHousingLocations().subscribe(data => {
       this.filteredLocationList = data;
@@ -46,6 +46,9 @@ export class HomeComponent {
         })
       });
     });
+  }
+  ngOnInit() {
+    this.filterResults(this.SearchService.GetValue());
   }
   filterResults(text: string) {
     if (!text) {
