@@ -19,12 +19,31 @@
 .calendar{
   margin-top: 40px;
   font-weight: normal;
+  height: auto;
+  width: 200px;
+}
+
+.book-button{
+  margin-left: 425px;
+  width: 105px;
+  height: auto;
+}
+
+.total-cost{
+  font-weight: normal;
 }
 
 .property-image{
   width: 12%;
   height: auto;
 }
+
+.tenant-group{
+  width: 200px;
+  margin-top: -40px;
+}
+
+
 
 .book{
   border: 1px solid #ccc;

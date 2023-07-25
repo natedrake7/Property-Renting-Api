@@ -11,11 +11,13 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatInputModule} from '@angular/material/input';
 import { MatNativeDateModule } from '@angular/material/core';
+import { MatSelectModule } from '@angular/material/select';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-details',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule,RouterModule,MatFormFieldModule, MatInputModule, MatDatepickerModule, MatNativeDateModule],
+  imports: [CommonModule, ReactiveFormsModule,RouterModule,MatFormFieldModule, MatInputModule, MatDatepickerModule, MatNativeDateModule,MatSelectModule,MatIconModule],
   template: `
   <div class="container layout">
     <div class="row">
@@ -131,6 +133,7 @@ import { MatNativeDateModule } from '@angular/material/core';
           </div>
         </section>
         <hr style="border: 1px solid gray;border-radius: 12px;">
+        <div class="row">
           <div class="book">
             <h5>{{housingLocation?.Price}}€
               <span class="price">/Night</span>
@@ -138,18 +141,37 @@ import { MatNativeDateModule } from '@angular/material/core';
                   Ratings!
               </span>
               </h5>
-              <mat-form-field>
-                <mat-label>Enter a date range</mat-label>
-                <mat-date-range-input [formGroup]="range" [rangePicker]="picker" [min]="startDate">
-                  <input matStartDate formControlName="start" placeholder="Start date">
-                  <input matEndDate formControlName="end" placeholder="End date">
-                </mat-date-range-input>
-                <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
-                <mat-date-range-picker #picker ></mat-date-range-picker>
-                <mat-error *ngIf="range.controls.start.hasError('matStartDateInvalid')">Invalid start date</mat-error>
-                <mat-error *ngIf="range.controls.end.hasError('matEndDateInvalid')">Invalid end date</mat-error>
-              </mat-form-field>
-            <button class="btn btn-primary book-button" [routerLink]="['Login']">Book Now!</button>
+                <div class="col-md-6">
+                    <mat-form-field class="calendar">
+                      <mat-label>Enter a date range</mat-label>
+                      <mat-date-range-input [formGroup]="BookDates" [rangePicker]="picker" [min]="startDate">
+                        <input matStartDate formControlName="start" placeholder="Start date">
+                        <input matEndDate formControlName="end" placeholder="End date">
+                      </mat-date-range-input>
+                      <mat-datepicker-toggle  matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                      <mat-date-range-picker #picker ></mat-date-range-picker>
+                      <mat-error *ngIf="BookDates.controls.start.hasError('matStartDateInvalid')">Invalid start date</mat-error>
+                      <mat-error *ngIf="BookDates.controls.end.hasError('matEndDateInvalid')">Invalid end date</mat-error>
+                    </mat-form-field>
+                    <div class="form-group" [formGroup]="Visitors">
+                      <mat-form-field appearance="fill" class="tenant-group">
+                        <mat-select id="tenants" class="tenants" formControlName="Count" placeholder="Visitors">
+                          <mat-option *ngFor="let option of VisitorOptions" [value]="option">{{ option }}</mat-option>
+                        </mat-select>
+                        <mat-icon matSuffix></mat-icon>
+                      </mat-form-field>
+                    </div>
+                    <div *ngIf="ShowTotalCost()">
+                        <h5>Total Cost: 
+                          <p class="total-cost">
+                            {{TotalCost()}}€ for {{GetNumberOfDays()}} days.
+                          </p></h5>
+                    </div>
+              </div>
+              <div class="col-md-6">
+                <button class="btn btn-primary book-button" (click)="RedirectToBookPage()">Book Now!</button>
+              </div>
+          </div>
         </div>
     </div>
 </div>
@@ -166,14 +188,13 @@ export class DetailsComponent {
   housingLocation: House | undefined;
   Images: Images[] = [];
   Host: Host | undefined;
-  applyForm = new FormGroup({
-    firstName: new FormControl(''),
-    lastName: new FormControl(''),
-    email: new FormControl('')
-  });
-  range = new FormGroup({
+  VisitorOptions = [1,2,3,4,5]
+  BookDates = new FormGroup({
     start: new FormControl<Date | null>(null),
     end: new FormControl<Date | null>(null),
+  });
+  Visitors = new FormGroup({
+    Count: new FormControl(0)
   });
   constructor() {
     const housingLocationId = parseInt(this.route.snapshot.params['id'], 10);
@@ -198,5 +219,25 @@ export class DetailsComponent {
 
   nextImage(): void {
     this.currentIndex = (this.currentIndex + 1) % this.Images.length;
+  }
+  RedirectToBookPage(){
+
+  }
+  ShowTotalCost():boolean{
+    const Dates = this.BookDates.value;
+    const Visitors = this.Visitors.value;
+    if(Dates.start && Dates.end && Visitors.Count)
+      return true;
+    return false;
+  }
+  TotalCost():number{
+    const Days = this.GetNumberOfDays();
+    const Visitors = this.Visitors.value;
+    return this.housingLocation!.Price*Visitors.Count!*Days;
+  }
+  GetNumberOfDays():number{
+    const Dates = this.BookDates.value;
+    const Days = (Dates.end!.getTime() - Dates.start!.getTime()) / (1000 * 3600 * 24);
+    return Days;
   }
 }
