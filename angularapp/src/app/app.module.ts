@@ -10,6 +10,7 @@ import { UserService } from './services/user.service';
 import { HttpClientModule, HttpClientXsrfModule } from '@angular/common/http';
 import { provideRouter } from '@angular/router';
 import { JwtModule } from '@auth0/angular-jwt';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations'; 
 import routeConfig from './routes';
 
 export function TokenGetter(){
@@ -24,10 +25,12 @@ export function TokenGetter(){
     HttpClientModule,
     HttpClientXsrfModule,
     BrowserModule,
+    BrowserAnimationsModule,
     AppRoutingModule,
     HomeComponent,
     LoginComponent,
     DetailsComponent,
+  
     JwtModule.forRoot({
       config: {
         tokenGetter: TokenGetter,

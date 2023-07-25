@@ -1,17 +1,21 @@
 import { Component,inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterModule } from '@angular/router';
 import { HouseService } from 'src/app/services/house.service';
 import { House} from 'src/app/interfaces/house';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Images } from 'src/app/interfaces/images';
 import { HostService } from 'src/app/services/host.service';
 import { Host } from 'src/app/interfaces/host';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import {MatFormFieldModule} from '@angular/material/form-field';
+import {MatInputModule} from '@angular/material/input';
+import { MatNativeDateModule } from '@angular/material/core';
 
 @Component({
   selector: 'app-details',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule,RouterModule,MatFormFieldModule, MatInputModule, MatDatepickerModule, MatNativeDateModule],
   template: `
   <div class="container layout">
     <div class="row">
@@ -29,6 +33,19 @@ import { Host } from 'src/app/interfaces/host';
               </div>
           </div>
         </div>
+          <hr style="border: 1px solid gray;border-radius: 12px;">
+          <h2>                  
+            <span class="image">
+              <img class="property-image" src="../../../assets/property.png" alt="logo" aria-hidden="true">
+            </span>
+            Experiences Offered
+          </h2>
+          <p *ngIf="housingLocation?.ExperiencesOffered">
+            {{housingLocation?.ExperiencesOffered}}
+          </p>
+          <p *ngIf="!housingLocation?.ExperiencesOffered">
+            Please contact the host to receive the available experiences of the property.
+          </p>
       </div>
       <div class="col-md-6">
         <section class="listing-features">
@@ -77,31 +94,70 @@ import { Host } from 'src/app/interfaces/host';
           </div>
           <hr style="border: 1px solid gray;border-radius: 12px;">
           <div class="row">
-            <h5>Property Type: {{housingLocation?.PropertyType}}</h5>
-            <p *ngIf="housingLocation?.PropertyType === 'Apartment'">
-              Your own apartment in a complex,with access to the shared areas.
-            </p>
-            <p *ngIf="housingLocation?.PropertyType === 'Villa'">
-              Your own Villa with access to all of its luxuries.
-            </p>
-            <p *ngIf="housingLocation?.PropertyType === 'House'">
-              Your own House with access to all of the estate.
-            </p>
-            <p *ngIf="housingLocation?.PropertyType === 'Hotel'">
-              Your own hotel room with access to the whole hotel and its services.
-            </p>
-            <p *ngIf="housingLocation?.PropertyType === 'Motel'">
-              Your own motel room with access to the whole motel and its services.
-            </p>
+            <div class="property-type">
+              <h5>Property Type: {{housingLocation?.PropertyType}}</h5>
+              <p *ngIf="housingLocation?.PropertyType === 'Apartment'">
+                Your own apartment in a complex,with access to the shared areas.
+              </p>
+              <p *ngIf="housingLocation?.PropertyType === 'Villa'">
+                Your own Villa with access to all of its luxuries.
+              </p>
+              <p *ngIf="housingLocation?.PropertyType === 'House'">
+                Your own House with access to all of the estate.
+              </p>
+              <p *ngIf="housingLocation?.PropertyType === 'Hotel'">
+                Your own hotel room with access to the whole hotel and its services.
+              </p>
+              <p *ngIf="housingLocation?.PropertyType === 'Motel'">
+                Your own motel room with access to the whole motel and its services.
+              </p>
+            </div>
+            <div class="cancellation-policy">
+              <h5>Cancellation Policy: {{housingLocation?.CancellationPolicy}}</h5>
+              <p *ngIf="housingLocation?.CancellationPolicy === 'None'">
+                You can cancel your reservation anytime you want.
+              </p>
+              <p *ngIf="housingLocation?.CancellationPolicy === 'Strict'">
+                Please contact the host to receive more information about the cancellation date.
+              </p>
+            </div>
+          </div>
+          <hr style="border: 1px solid gray;border-radius: 12px;">
+          <h2>About This Property</h2>
+          <div class="row">
+          <p>{{housingLocation?.Summary}}</p>
+          <h5>The Space</h5>
+          <p>{{housingLocation?.Space}}</p>
           </div>
         </section>
-      </div>
+        <hr style="border: 1px solid gray;border-radius: 12px;">
+          <div class="book">
+            <h5>{{housingLocation?.Price}}€
+              <span class="price">/Night</span>
+              <span class="ratings"> 
+                  Ratings!
+              </span>
+              </h5>
+              <mat-form-field>
+                <mat-label>Enter a date range</mat-label>
+                <mat-date-range-input [formGroup]="range" [rangePicker]="picker" [min]="startDate">
+                  <input matStartDate formControlName="start" placeholder="Start date">
+                  <input matEndDate formControlName="end" placeholder="End date">
+                </mat-date-range-input>
+                <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-date-range-picker #picker ></mat-date-range-picker>
+                <mat-error *ngIf="range.controls.start.hasError('matStartDateInvalid')">Invalid start date</mat-error>
+                <mat-error *ngIf="range.controls.end.hasError('matEndDateInvalid')">Invalid end date</mat-error>
+              </mat-form-field>
+            <button class="btn btn-primary book-button" [routerLink]="['Login']">Book Now!</button>
+        </div>
     </div>
 </div>
 `,
   styleUrls: ['./details.component.css']
 })
 export class DetailsComponent {
+  public startDate: Date = new Date(Date.now());
   housingService = inject(HouseService);
   route: ActivatedRoute = inject(ActivatedRoute);
   HostService: HostService = inject(HostService);
@@ -114,8 +170,11 @@ export class DetailsComponent {
     firstName: new FormControl(''),
     lastName: new FormControl(''),
     email: new FormControl('')
-  })
-
+  });
+  range = new FormGroup({
+    start: new FormControl<Date | null>(null),
+    end: new FormControl<Date | null>(null),
+  });
   constructor() {
     const housingLocationId = parseInt(this.route.snapshot.params['id'], 10);
     this.Host = this.HostService.GetHostData();

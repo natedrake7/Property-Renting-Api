@@ -16,6 +16,31 @@
   height: 80px;
 }
 
+.calendar{
+  margin-top: 40px;
+  font-weight: normal;
+}
+
+.property-image{
+  width: 12%;
+  height: auto;
+}
+
+.book{
+  border: 1px solid #ccc;
+  padding: 10px;
+  border-radius: 12px;
+  height: auto;
+  transform: translateZ(10px);
+}
+
+.price{
+  font-weight: normal;
+}
+.ratings{
+  margin-left: 340px;
+}
+
 .image{
   width: 25%;
   height: auto;
