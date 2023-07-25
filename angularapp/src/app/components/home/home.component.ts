@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, Input, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HouseComponent } from '../house/house.component';
 import { House} from 'src/app/interfaces/house';
@@ -25,6 +25,7 @@ import { SearchService } from 'src/app/services/search.service';
   styleUrls: ['./home.component.css']
 })
 export class HomeComponent {
+  @Input() searchstring: string = "";
   housingLocationList: House[] = [];
   filteredLocationList: House[] = [];
   housingService: HouseService = inject(HouseService);
@@ -45,19 +46,11 @@ export class HomeComponent {
             house.ThumbnailURL = "empty";
         })
       });
+      this.filterSearch();
     });
   }
-  ngOnInit() {
-    this.filterResults(this.SearchService.GetValue());
-  }
-  filterResults(text: string) {
-    if (!text) {
-      this.filteredLocationList = this.housingLocationList;
-    }
-    text = text.toLowerCase();
-    this.filteredLocationList = this.housingLocationList.filter(
-      housingLocation => housingLocation?.City.toLowerCase().includes(text)
-    );
+  filterSearch() {
+    this.filteredLocationList = this.SearchService.filterByCity(this.filteredLocationList);
   }
 
 }

@@ -3,13 +3,13 @@ import { ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule,FormGroup,FormControl,Validators } from '@angular/forms';
 import { User } from 'src/app/interfaces/user';
-import { error } from 'src/app/interfaces/error';
 import { UserService } from 'src/app/services/user.service';
 import { HouseService } from 'src/app/services/house.service';
 import { RouterModule,Router } from '@angular/router';
 import { House } from 'src/app/interfaces/house';
 import { Images } from 'src/app/interfaces/images';
 import { ImageService } from 'src/app/services/image.service';
+import * as FormData from 'form-data';
 
 @Component({
   selector: 'app-edit-house',
@@ -301,7 +301,7 @@ export class EditHouseComponent {
   DeleteError: string | undefined;
   images: File[] = [];
   Thumbnail: File | undefined;
-  PropertyOptions = ["Appartment","House","Villa","Motel","Hotel"];
+  PropertyOptions = ["Apartment","House","Villa","Motel","Hotel"];
   CancellationPolicyOptions = ["None","Strict"];
   TransitOptions = ["None","Metro","Bus","Metro and Bus"];
   GeneralOptions = [
@@ -324,7 +324,7 @@ export class EditHouseComponent {
     Market: new FormControl('',Validators.required),
     CountryCode: new FormControl('',Validators.required),
     Country: new FormControl('',Validators.required),
-    IsLocationExact: new FormControl(false),
+    IsLocationExact: new FormControl(''),
     PropertyType: new FormControl('',Validators.required),
     Bathrooms: new FormControl('',Validators.required),
     Bedrooms: new FormControl('',Validators.required),
@@ -364,14 +364,12 @@ export class EditHouseComponent {
       }
     }
     EditListing(){
-      const EditForm = this.HouseForm.value;
-      const Name = EditForm.Name || '';
-      const Summary = EditForm.Summary || '';
-      this.HouseService.EditHouseById(this.House?.Id,Name,Summary,this.images).subscribe((response) =>{
+      const EditForm = this.GetData();
+      this.HouseService.EditHouseById(this.House?.Id!,EditForm).subscribe((response) =>{
         if(response === 'ok')
           location.reload();
         else{ //Error handle
-
+          console.log(response);
         }
 
       })
@@ -400,5 +398,47 @@ export class EditHouseComponent {
       this.ImageService.SetThumbnail(this.House?.Id,this.Images[this.currentIndex].Id).subscribe(() => {
         location.reload();
       })
+    }
+    GetData():FormData{
+      const formValue = this.HouseForm.value;
+      const ListingData = new FormData();
+      ListingData.append('Name',formValue.Name || '');
+      ListingData.append('Summary',formValue.Summary|| '');
+      ListingData.append('Space',formValue.Space || '');
+      ListingData.append('ExperiencesOffered',formValue.ExperiencesOffered || '');
+      ListingData.append('Notes',formValue.Notes || '');
+      ListingData.append('Transit',formValue.Transit|| '');
+      ListingData.append('Street',formValue.Street || '');
+      ListingData.append('Neighborhood',formValue.Neighborhood || '');
+      ListingData.append('NeighborhoodOverview',formValue.NeighborhoodOverview || '');
+      ListingData.append('City',formValue.City || '');
+      ListingData.append('State',formValue.State || '');
+      ListingData.append('ZipCode',formValue.Zipcode || '');
+      ListingData.append('Market',formValue.Market || '');
+      ListingData.append('CountryCode',formValue.CountryCode || '');
+      ListingData.append('Country',formValue.Country || '');
+      ListingData.append('IsLocationExact',formValue.IsLocationExact || false);
+      ListingData.append('PropertyType', formValue.PropertyType || '');
+      ListingData.append('Bathrooms',formValue.Bathrooms || 0);
+      ListingData.append('Bedrooms',formValue.Bedrooms || 0);
+      ListingData.append('Beds',formValue.Beds || 0);
+      ListingData.append('SquareFeet',formValue.SquareFeet || 0);
+      ListingData.append('Price',formValue.Price || 0);
+      ListingData.append('WeeklyPrice',formValue.WeeklyPrice || 0);
+      ListingData.append('MonthlyPrice',formValue.MonthlyPrice || 0);
+      ListingData.append('CleainingFee',formValue.CleaningFee || 0);
+      ListingData.append('ExtraPeople',formValue.ExtraPeople || 0);
+      ListingData.append('MinimumNights',formValue.MinimumNights || 0);
+      ListingData.append('MaximumNights',formValue.MaximumNights || 0);
+      ListingData.append('RequiresLicense',formValue.RequiresLicense || false);
+      ListingData.append('InstantBookable',formValue.InstantBookable || false);
+      ListingData.append('RequireGuestPhoneVerification',formValue.RequireGuestPhoneVerification || false);
+      ListingData.append('CancellationPolicy',formValue.CancellationPolicy || '');
+      if(this.images.length > 0){
+        for(let i = 0;i < this.images.length!;i++){
+          ListingData.append('Images',this.images[i]);
+        }
+      }
+      return ListingData;
     }
   }

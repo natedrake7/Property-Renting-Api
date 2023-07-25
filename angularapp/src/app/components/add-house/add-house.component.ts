@@ -248,7 +248,7 @@ export class AddHouseComponent {
   Images_Error: error | undefined;
   images: File[] = [];
   Thumbnail: File | undefined;
-  PropertyOptions = ["Appartment","House","Villa","Motel","Hotel"];
+  PropertyOptions = ["Apartment","House","Villa","Motel","Hotel"];
   CancellationPolicyOptions = ["None","Strict"];
   TransitOptions = ["None","Metro","Bus","Metro and Bus"];
   GeneralOptions = [

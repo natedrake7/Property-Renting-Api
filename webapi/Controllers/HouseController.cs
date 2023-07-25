@@ -276,9 +276,73 @@ namespace webapi.Controllers
             {
                 try
                 {
-                    //Will need to update as i increase the number of values user can change
-                    existingHouse.Name = House.Name;
-                    existingHouse.Summary = House.Summary;
+                    if(existingHouse.Name != House.Name && House.Name != null)
+                        existingHouse.Name = House.Name;
+                    if(existingHouse.Summary != House.Summary && House.Summary != null)
+                        existingHouse.Summary = House.Summary;
+                    if(existingHouse.Space != House.Space && House.Space != null)
+                        existingHouse.Space = House.Space;
+                    if(existingHouse.ExperiencesOffered != House.ExperiencesOffered && House.ExperiencesOffered != null)
+                        existingHouse.ExperiencesOffered = House.ExperiencesOffered;
+                    if(existingHouse.Notes != House.Notes && House.Notes != null)
+                        existingHouse.Notes = House.Notes;
+                    if(existingHouse.Transit != House.Transit && House.Transit != null)
+                        existingHouse.Transit = House.Transit;
+                    if (existingHouse.Street != House.Street && House.Street != null)
+                        existingHouse.Street = House.Street;
+                    if (existingHouse.Neighbourhood != House.Neighborhood && House.Neighborhood != null)
+                        existingHouse.Neighbourhood = House.Neighborhood;
+                    if (existingHouse.NeighborhoodOverview != House.NeighborhoodOverview && House.NeighborhoodOverview != null)
+                        existingHouse.NeighborhoodOverview = House.NeighborhoodOverview;
+                    if (existingHouse.City != House.City && House.City != null)
+                        existingHouse.City = House.City;
+                    if (existingHouse.State != House.State && House.State != null)
+                        existingHouse.State = House.State;
+                    if (existingHouse.Zipcode != House.ZipCode && House.ZipCode != null)
+                        existingHouse.Zipcode = House.ZipCode;
+                    if (existingHouse.Market != House.Market && House.Market != null)
+                        existingHouse.Market = House.Market;
+                    if (existingHouse.CountryCode != House.CountryCode && House.CountryCode != null)
+                        existingHouse.CountryCode = House.CountryCode;
+                    if (existingHouse.Country != House.Country && House.Country != null)
+                        existingHouse.Country = House.Country;
+                    if (existingHouse.IsLocationExact != House.IsLocationExact && House.IsLocationExact != false)
+                        existingHouse.IsLocationExact = House.IsLocationExact;
+                    if (existingHouse.PropertyType != House.PropertyType && House.PropertyType != null)
+                        existingHouse.PropertyType = House.PropertyType;
+                    if (existingHouse.Bathrooms != House.Bathrooms && House.Bathrooms != 0)
+                        existingHouse.Bathrooms = House.Bathrooms;
+                    if (existingHouse.Bedrooms != House.Bedrooms && House.Bedrooms != 0)
+                        existingHouse.Bedrooms = House.Bedrooms;
+                    if (existingHouse.Beds != House.Beds && House.Beds != 0)
+                        existingHouse.Beds = House.Beds;
+                    if (existingHouse.SquareFeet != House.SquareFeet && House.SquareFeet != 0)
+                        existingHouse.SquareFeet = House.SquareFeet;
+                    if (existingHouse.Price != House.Price && House.Price != 0)
+                        existingHouse.Price = House.Price;
+                    if (existingHouse.WeeklyPrice != House.WeeklyPrice && House.WeeklyPrice != 0)
+                        existingHouse.WeeklyPrice = House.WeeklyPrice;
+                    if (existingHouse.MonthlyPrice != House.MonthlyPrice && House.MonthlyPrice != 0)
+                        existingHouse.MonthlyPrice = House.MonthlyPrice;
+                    if (existingHouse.CleaningFee != House.CleaningFee && House.CleaningFee != 0)
+                        existingHouse.CleaningFee = House.CleaningFee;
+                    if (existingHouse.GuestsIncluded != House.GuestsIncluded && House.GuestsIncluded != 0)
+                        existingHouse.GuestsIncluded = House.GuestsIncluded;
+                    if (existingHouse.ExtraPeople != House.ExtraPeople && House.ExtraPeople != 0)
+                        existingHouse.ExtraPeople = House.ExtraPeople;
+                    if (existingHouse.MinimumNights != House.MinimumNights && House.MinimumNights != 0)
+                        existingHouse.MinimumNights = House.MinimumNights;
+                    if (existingHouse.MaximumNights != House.MaximumNights && House.MaximumNights != 0)
+                        existingHouse.MaximumNights = House.MaximumNights;
+                    if (existingHouse.RequiresLicense != House.RequiresLicense && House.RequiresLicense != false)
+                        existingHouse.RequiresLicense = House.RequiresLicense;
+                    if (existingHouse.InstantBookable != House.InstantBookable && House.InstantBookable != false)
+                        existingHouse.InstantBookable = House.InstantBookable;
+                    if (existingHouse.CancellationPolicy != House.CancellationPolicy && House.CancellationPolicy != null)
+                        existingHouse.CancellationPolicy = House.CancellationPolicy;
+                    if (existingHouse.RequireGuestPhoneVerification != House.RequireGuestPhoneVerification && House.RequireGuestPhoneVerification != false)
+                        existingHouse.RequireGuestPhoneVerification = House.RequireGuestPhoneVerification;
+
                     await _context.SaveChangesAsync();
 
                     if(House.Images != null)
