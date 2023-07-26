@@ -43,5 +43,8 @@ namespace webapi.Models
 
         [StringLength(1000)]
         public string? HostAbout { get; set; }
+
+        [Required(ErrorMessage = "Your profile must have a pic!")]
+        public IFormFile? ProfilePic { get; set; }
     }
 }

@@ -13,14 +13,16 @@ import jwt_decode from 'jwt-decode';
 })
 
 export class HouseService {
-  private GetHouses = 'https://localhost:7018/House/Index'
-  private GetHouse = 'https://localhost:7018/House/Details/'
-  private ImageURL = 'https://localhost:7018/House/GetImages/'
-  private ThumbnailURL = 'https://localhost:7018/House/GetThumbnail/'
-  private CreatePropertyURL = 'https://localhost:7018/House/Create/'
-  private GetHostHousesURL = 'https://localhost:7018/Host/GetHouses/'
-  private EditHouseURL = 'https://localhost:7018/House/Edit/'
-  private DeleteHouseURL = 'https://localhost:7018/House/Delete/'
+  private GetHouses = 'https://localhost:7018/House/Index';
+  private GetHouse = 'https://localhost:7018/House/Details/';
+  private ImageURL = 'https://localhost:7018/House/GetImages/';
+  private ThumbnailURL = 'https://localhost:7018/House/GetThumbnail/';
+  private CreatePropertyURL = 'https://localhost:7018/House/Create/';
+  private GetHostHousesURL = 'https://localhost:7018/Host/GetHouses/';
+  private EditHouseURL = 'https://localhost:7018/House/Edit/';
+  private DeleteHouseURL = 'https://localhost:7018/House/Delete/';
+  private BookPropertyURL = 'https://localhost:7018/House/BookProperty/';
+  private GetPropertyDatesURL = 'https://localhost:7018/House/GetPropertyDates/';
   constructor(private http: HttpClient) { }
   CreateProperty(Data : FormData | undefined):Observable<string|error[]>{
     const token = this.GetToken('usertoken');
@@ -58,6 +60,19 @@ DeleteHousebyId(Id:number,UserId:string | undefined):Observable<string>{
   const DeleteData = new FormData();
   DeleteData.append('UserId',UserId);
   return this.http.post<string>(this.DeleteHouseURL + Id,DeleteData);
+}
+
+BookPropertyById(Id:number | undefined,Data: FormData| undefined):Observable<string|error[]>{
+  const token = localStorage.getItem('usertoken');
+  const AuthToken = this.GetToken('usertoken');
+  const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
+  Data?.append('UserId',AuthToken!['Id']);
+  console.log(AuthToken!['Id']);
+  return this.http.post<string | error[]>(this.BookPropertyURL + Id,Data,{headers:headers});
+}
+
+GetPropertyDates(Id:number | undefined):Observable<string | string[]>{
+  return this.http.get<string | string[]>(this.GetPropertyDatesURL + Id);
 }
 
   GetToken(TokenId: string):{[key: string]: string} | undefined

@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Text.Json.Serialization;
 
 namespace airbnb.Controllers
 {
@@ -48,11 +49,12 @@ namespace airbnb.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Register([FromBody]RegisterModel Input)
+        public async Task<IActionResult> Register([FromForm]RegisterModel Input)
         {
             var options = new JsonSerializerOptions
             {
-                Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+                Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
+                ReferenceHandler = ReferenceHandler.Preserve
             };
             using var transaction = _context.Database.BeginTransaction();
             if (ModelState.IsValid)
@@ -106,9 +108,19 @@ namespace airbnb.Controllers
                             HostLocation = Input.HostLocation
                          };
 
-                         _context.Add(userHost);
+                        _context.Add(userHost);
+                        await _context.SaveChangesAsync();
 
+                        var hostImage = new HostImage()
+                        {
+                            HostId = userHost.Id,
+                            Name = "Profile",
+                            Image = ConvertFileToBytes(Input.ProfilePic!)
+                        };
+
+                        _context.Add(hostImage);
                          await _context.SaveChangesAsync(); //save changes to host
+
                         user.Host = userHost; //set host navigation property
                         user.HostId = userHost.Id; //and foreign key in user instance
                         await _userManager.AddToRoleAsync(user, "Host");
@@ -504,6 +516,14 @@ namespace airbnb.Controllers
                 throw new NotSupportedException("The default UI requires a user store with email support.");
             }
             return (IUserEmailStore<User>)_userStore;
+        }
+        public byte[] ConvertFileToBytes(IFormFile file)
+        {
+            using (var memoryStream = new MemoryStream())
+            {
+                file.CopyTo(memoryStream);
+                return memoryStream.ToArray();
+            }
         }
     }
 }

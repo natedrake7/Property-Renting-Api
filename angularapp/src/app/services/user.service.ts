@@ -5,6 +5,7 @@ import { Observable } from 'rxjs';
 import { User } from '../interfaces/user';
 import { AuthModel } from '../interfaces/auth-model';
 import { HttpHeaders } from '@angular/common/http';
+import * as FormData from 'form-data';
 import jwt_decode from 'jwt-decode';
 
 @Injectable({
@@ -17,29 +18,14 @@ export class UserService {
   private EditURL = "https://localhost:7018/User/Edit/";
   private EditEmailURL = "https://localhost:7018/User/EditEmail";
   private ChangePasswordURL = "https://localhost:7018/User/ChangePassword/";
-  private DeleteURL = "https://localhost:7018/User/Delete/"
-  private DeleteConfirmedURL = "https://localhost:7018/User/DeleteConfirmed/"
+  private DeleteURL = "https://localhost:7018/User/Delete/";
+  private DeleteConfirmedURL = "https://localhost:7018/User/DeleteConfirmed/";
   private User: User = {};
 
   constructor(private http: HttpClient) { }
 
-  Register(UserName: string | undefined, FirstName: string | undefined,
-    LastName: string | undefined, Email: string | undefined, PhoneNumber: string | undefined,
-    Password: string | undefined, ConfirmPassword: string | undefined, IsHost: boolean | undefined,HostName: string | undefined,HostAbout:string|undefined,HostLocation: string|undefined): Observable<AuthModel | error[]> {
-    const registrationData = {
-      UserName,
-      FirstName,
-      LastName,
-      Email,
-      PhoneNumber,
-      Password,
-      ConfirmPassword,
-      IsHost,
-      HostName,
-      HostAbout,
-      HostLocation
-    };
-    return this.http.post<AuthModel | error[]>(this.RegisterURL, registrationData);
+  Register(Data: FormData | undefined): Observable<AuthModel | error[]> {
+    return this.http.post<AuthModel | error[]>(this.RegisterURL,Data);
   }
   Login(UserName: string | undefined, Password: string | undefined, RememberMe: boolean | false): Observable<AuthModel | error[]> {
     const LoginData = { UserName, Password, RememberMe };

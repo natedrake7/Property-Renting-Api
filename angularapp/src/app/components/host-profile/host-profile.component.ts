@@ -12,6 +12,8 @@ import { HouseService } from 'src/app/services/house.service';
 import { PreviewHouseComponent } from '../preview-house/preview-house.component';
 import { EditHouseComponent } from '../edit-house/edit-house.component';
 import { AuthModel } from 'src/app/interfaces/auth-model';
+import { Images } from 'src/app/interfaces/images';
+import * as FormData from 'form-data';
 
 @Component({
   selector: 'app-host-profile',
@@ -91,6 +93,17 @@ import { AuthModel } from 'src/app/interfaces/auth-model';
           </form>
         </section>
       </div>
+      <div class="col-md-6">
+        <div class="pic-container">
+          <h4>Change Profile Picture</h4>
+          <div class="profile-container">
+                <img class="profile-pic"*ngIf="ProfilePic" [src]=" ProfilePic.URL" alt="No Profile Picture Available">
+          </div>
+          <div class="form-group">
+              <input id="image-upload" type="file" (change)="OnImageUpload($event)" accept="image/*" multiple>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
   <div class="container houses-container">
@@ -122,6 +135,9 @@ export class HostProfileComponent {
   HostName_Error: error | undefined;
   HostAbout_Error: error | undefined;
   HostLocation_Error: error | undefined;
+  imageError: string | undefined;
+  ProfilePic: Images | undefined;
+  ImageUpload: File | undefined;
   Host: Host | undefined;
   User: User | undefined;
   Houses: House[] | undefined;
@@ -134,16 +150,17 @@ export class HostProfileComponent {
   constructor(){
     this.Host = this.HostService.GetHostData();
     this.User = this.UserService.GetUserData();
-    this.HouseService.GetHousesByHostId(this.Host?.Id).subscribe((response) =>{
-      this.Houses = response;
-    }); 
+    this.HostService.RetrieveHostImage().subscribe((image) =>{
+      console.log(image);
+      this.ProfilePic = image;
+      this.HouseService.GetHousesByHostId(this.Host?.Id).subscribe((response) =>{
+        this.Houses = response;
+      }); 
+    });
   }
   EditProfile(){
-    const formValue = this.EditForm.value;
-    const Hostname = formValue.HostName || '';
-    const HostAbout = formValue.HostAbout || '';
-    const HostLocation = formValue.HostLocation || '';
-    this.HostService.EditHost(Hostname,HostAbout,HostLocation,this.User?.Id).subscribe((response) =>{
+    const Data = this.GetData();
+    this.HostService.EditHost(Data).subscribe((response) =>{
                       if('Token' in response){
                         const token = response as AuthModel;
                         localStorage.setItem('hosttoken',token.Token);
@@ -156,5 +173,23 @@ export class HostProfileComponent {
                         this.HostLocation_Error = Host_Error.find(item => item.Variable === 'HostLocation');
                       }
     });
+  }
+  GetData(){
+    const Data = new FormData();
+    const formValue = this.EditForm.value;
+    Data.append('HostName',formValue.HostName || '');
+    Data.append('HostAbout',formValue.HostAbout || '');
+    Data.append('HostLocation',formValue.HostLocation || '');
+    Data.append('ProfilePic',this.ImageUpload);
+
+    return Data;
+  }
+  OnImageUpload(event:any){
+    const file = event.target.files[0];
+    if (file) {
+      this.ImageUpload = file; 
+    } else {
+      this.imageError = 'No image selected.';
+    }
   } 
 }

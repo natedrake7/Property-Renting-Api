@@ -23,6 +23,76 @@ namespace webapi.Controllers
             _context = context;
             _userManager = userManager;
         }
+        public async Task<IActionResult> GetPropertyDates(int Id)
+        {
+            var options = new JsonSerializerOptions
+            {
+                Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+            };
+            var House = await (from h in _context.Houses
+                               where h.Id == Id
+                               select h).FirstOrDefaultAsync();
+            if (House == null)
+                return NotFound("House not found!");
+            var Calendar = await (from c in _context.UserCalendars
+                                  where c.HouseId == Id
+                                  select c).ToListAsync();
+            if (Calendar == null)
+            {
+                var json = JsonSerializer.Serialize("empty", options);
+                return Content(json, "application/json");
+            }
+            var DatesList = new List<DateTime>();
+            for(int i = 0; i < Calendar.Count; i++) 
+                DatesList.Add(Calendar[i].Date);
+
+            var json2 = JsonSerializer.Serialize(DatesList, options);
+            return Content(json2, "application/json");
+        }
+        public async Task<IActionResult> BookProperty(int Id, [FromForm]BookModel bookmodel)
+        {
+            var options = new JsonSerializerOptions
+            {
+                Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+            };
+            var user = await _userManager.FindByIdAsync(bookmodel.UserId!);
+            if(user == null)
+                return NotFound("User not found!");
+
+            var House = await (from h in _context.Houses
+                               where h.Id == Id
+                               select h).FirstOrDefaultAsync();
+            if (House == null)
+                return NotFound("House not found!");
+            if(!ModelState.IsValid)
+            {
+                var ModelErrors = ModelState
+                                .Where(entry => entry.Value!.Errors.Count > 0)
+                                .Select(entry => new
+                                {
+                                    Variable = entry.Key,
+                                    Errors = entry.Value!.Errors.Select(error => error.ErrorMessage)
+                                })
+                                .ToList();
+                var json = JsonSerializer.Serialize(ModelErrors, options);
+                return Content(json, "application/json");
+            }
+            for(int i = 0;i < bookmodel.DaysCount;i++) 
+            {
+                var Calendar = new Calendar()
+                {
+                    HouseId = Id,
+                    Date = bookmodel.StartDate.AddDays(i),
+                    Price = bookmodel.TotalPrice / bookmodel.DaysCount,
+                    Available = false,
+                    UserId = bookmodel.UserId
+                };
+                _context.Add(Calendar);
+            }
+            await _context.SaveChangesAsync();
+            var json2 = JsonSerializer.Serialize("ok", options);
+            return Content(json2, "application/json");
+        }
 
         // GET: UserHouses
         [AllowAnonymous]

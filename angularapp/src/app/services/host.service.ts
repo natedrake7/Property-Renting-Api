@@ -5,6 +5,8 @@ import { Host } from '../interfaces/host';
 import { error } from '../interfaces/error';
 import jwt_decode from 'jwt-decode';
 import { AuthModel } from '../interfaces/auth-model';
+import { Images } from '../interfaces/images';
+import * as FormData from 'form-data';
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +14,8 @@ import { AuthModel } from '../interfaces/auth-model';
 export class HostService {
   private HostURL = "https://localhost:7018/Host/Create";
   private HostDataURL = "https://localhost:7018/Host/GetHost/";
-  private EditHostURL = "https://localhost:7018/Host/Edit/"
+  private EditHostURL = "https://localhost:7018/Host/Edit/";
+  private RetriveHostPicURL = "https://localhost:7018/Host/GetImage/";
   private Host: Host = {};
   constructor(private http: HttpClient) { }
   CreateHost(HostName: string | undefined, HostAbout: string | undefined, HostLocation: string | undefined, UserId: string | undefined): Observable<error[] | Host> {
@@ -24,16 +27,11 @@ export class HostService {
     };
     return this.http.post<error[] | Host>(this.HostURL, HostData);
   }
-  EditHost(HostName: string | undefined, HostAbout: string | undefined, HostLocation: string | undefined, UserId: string | undefined): Observable<AuthModel | error[]> {
-    const HostData = {
-      HostName,
-      HostAbout,
-      HostLocation
-    };
+  EditHost(Data: FormData | undefined): Observable<AuthModel | error[]> {
     const Authtoken = this.GetToken('usertoken');
     const token = localStorage.getItem('usertoken');
     const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
-    return this.http.post<AuthModel | error[]>(this.EditHostURL + Authtoken['Id'], HostData,{headers : headers});
+    return this.http.post<AuthModel | error[]>(this.EditHostURL + Authtoken['Id'], Data,{headers : headers});
   }
 
   GetHostData(): Host | undefined {
@@ -51,6 +49,13 @@ export class HostService {
     if (!this.GetToken('hosttoken'))
     return false
   return true;
+  }
+
+  RetrieveHostImage():Observable<Images>{
+    const token = localStorage.getItem('usertoken');
+    const AuthToken = this.GetToken('hosttoken');
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
+    return this.http.get<Images>(this.RetriveHostPicURL + AuthToken['Id'],{headers: headers});
   }
 
   RetrieveHostData(): Observable<AuthModel | error[]> {

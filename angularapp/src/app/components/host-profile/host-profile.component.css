@@ -1,3 +1,19 @@
+.profile-pic{
+  max-width: 200px;
+  height: auto;
+  border-radius: 12px;
+}
+
+.profile-container{
+  margin-top: 20px;
+  margin-bottom: 30px;
+  width: 200px;
+}
+
+.pic-container{
+  margin-left: 230px;
+}
+
 .preview-house {
   margin-bottom: 20px;
   padding: 10px;

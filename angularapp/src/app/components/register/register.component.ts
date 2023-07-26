@@ -6,8 +6,7 @@ import { UserService } from 'src/app/services/user.service';
 import { HostService } from 'src/app/services/host.service';
 import { HttpClientModule,HttpClientXsrfModule } from '@angular/common/http';
 import { error } from 'src/app/interfaces/error';
-import { User } from 'src/app/interfaces/user';
-import { Host } from '../../interfaces/host';
+import * as FormData from 'form-data';
 import { AuthModel } from 'src/app/interfaces/auth-model';
 
 @Component({
@@ -94,7 +93,16 @@ import { AuthModel } from 'src/app/interfaces/auth-model';
                 <p>{{message}}</p>
               </div>
             </div>
+            <div class="form-group">
+              <label for="thumbnail">Upload Profile Picture</label>
+              <input id="thumbnail" class="form-control" type="file" (change)="OnImageUpload($event)" accept="image/*">
+              <div class="error" *ngIf="ProfilePic_Error">
+                <div *ngFor="let message of ProfilePic_Error.Errors">
+                  <p>{{message}}</p>
+                </div>
+              </div>
             </div>
+          </div>
           <button type="submit" class="primary">Register</button>
         </form>
     </section>
@@ -115,6 +123,9 @@ export class RegisterComponent {
   HostName_Error: error | undefined;
   HostLocation_Error : error | undefined;
   HostAbout_Error : error | undefined;
+  ProfilePic: File | undefined;
+  imageError: string | undefined;
+  ProfilePic_Error: error|undefined;
 
   HostRegistrationForm: boolean = false;
 
@@ -134,26 +145,9 @@ export class RegisterComponent {
   })
   async registerUser()
   {
-    const formValue = this.RegisterForm.value;
-    const userName = formValue.UserName || ''; // Use empty string if null or undefined
-    const firstName = formValue.FirstName || '';
-    const lastName = formValue.LastName || '';
-    const email = formValue.Email || '';
-    const phoneNumber = formValue.PhoneNumber || '';
-    const password = formValue.Password || '';
-    const confirmPassword = formValue.ConfirmPassword || '';
-    const isHost = formValue.IsHost || false;
-    const hostname =  formValue.HostName || '';
-    const hostlocation =  formValue.HostLocation || '';
-    const hostabout =  formValue.HostAbout  || '';
-    this.UserService.Register(userName,
-                              firstName,
-                              lastName,
-                              email,
-                              phoneNumber,
-                              password,
-                              confirmPassword,
-                              isHost,hostname,hostlocation,hostabout).subscribe((response) => {
+    const Data = this.GetData();
+    this.UserService.Register(Data).subscribe((response) => {
+                                          console.log(response);
                                           if('Token' in response){
                                             const Auth = response as AuthModel;
                                             localStorage.setItem('usertoken',Auth.Token);
@@ -174,6 +168,33 @@ export class RegisterComponent {
                                             this.HostName_Error = ErrorResponse.find(item => item.Variable === 'HostName');
                                             this.HostAbout_Error = ErrorResponse.find(item => item.Variable === 'HostAbout');
                                             this.HostLocation_Error = ErrorResponse.find(item => item.Variable === 'HostLocation');
+                                            this.ProfilePic_Error = ErrorResponse.find(item => item.Variable === 'ProfilePic');
                                           };});
+  }
+
+  GetData(){
+    const Data = new FormData();
+    const formValue = this.RegisterForm.value;
+    Data.append('Username',formValue.UserName || '');
+    Data.append('FirstName',formValue.FirstName || '');
+    Data.append('LastName',formValue.LastName || '');
+    Data.append('Email',formValue.Email || '');
+    Data.append('PhoneNumber',formValue.PhoneNumber || '');
+    Data.append('Password',formValue.Password || '');
+    Data.append('ConfirmPassword',formValue.ConfirmPassword || '');
+    Data.append('IsHost',formValue.IsHost || false);
+    Data.append('Hostname',formValue.HostName || '');
+    Data.append('Hostlocation',formValue.HostLocation || '');
+    Data.append('Hostabout',formValue.HostAbout || '');
+    Data.append('ProfilePic',this.ProfilePic);
+    return Data;
+  }
+  OnImageUpload(event:any){
+    const file = event.target.files[0];
+    if (file) {
+      this.ProfilePic = file; 
+    } else {
+      this.imageError = 'No image selected.';
+    }
   }
 }

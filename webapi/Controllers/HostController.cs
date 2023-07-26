@@ -9,6 +9,8 @@ using webapi.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Hosting;
 using System.IdentityModel.Tokens.Jwt;
+using NuGet.Common;
+using System.Text.Json.Serialization;
 
 namespace webapi.Controllers
 {
@@ -54,6 +56,37 @@ namespace webapi.Controllers
             };
             var json = JsonSerializer.Serialize(new AuthModel {Token = token}, options);
             return Content(json, "application/json");
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetImage(int Id)
+        {
+            var host = await(from h in _context.Hosts
+                             where h.Id == Id
+                             select h).FirstOrDefaultAsync();
+
+            if (host == null) 
+              return NotFound("Host not found!");
+
+            var ProfilePic = await(from h in _context.HostImages
+                                   where h.HostId == Id
+                                   select h).FirstOrDefaultAsync();
+            if(ProfilePic == null)
+                return NotFound("Host has no profile pic!");
+            if (ProfilePic!.URL == null) //If host has input the images as jpg or png files
+            {
+                string base64image = Convert.ToBase64String(ProfilePic.Image!); //Convert them
+                string imageDataUrl = $"data:image/png;base64,{base64image}"; //Get the URL
+                ProfilePic.URL = imageDataUrl; //Add it to the URL name
+            }
+            var options = new JsonSerializerOptions
+            {
+                ReferenceHandler = ReferenceHandler.Preserve,
+                Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+            };
+            var json = JsonSerializer.Serialize(ProfilePic,options);
+            return Content(json, "application/json");
+
         }
 
         [HttpGet]
@@ -158,8 +191,7 @@ namespace webapi.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        [Authorize(Roles = "Host")]
-        public async Task<IActionResult> Edit(string?Id,[FromBody] HostEditModel Host)
+        public async Task<IActionResult> Edit(string?Id,[FromForm] HostEditModel Host)
         {
             var options = new JsonSerializerOptions
             {
@@ -173,16 +205,38 @@ namespace webapi.Controllers
                 return NotFound();
             if (ModelState.IsValid)
             {
+                using var transaction = _context.Database.BeginTransaction();
                 try
                 {
-                    if (host.HostName != Host.HostName && Host.HostName != "")
+                    if (host.HostName != Host.HostName && Host.HostName != null)
                         host.HostName = Host.HostName;
-                    if (host.HostAbout != Host.HostAbout && Host.HostAbout != "")
+                    if (host.HostAbout != Host.HostAbout && Host.HostAbout != null)
                         host.HostAbout = Host.HostAbout;
-                    if (host.HostLocation != Host.HostLocation && Host.HostLocation != "")
+                    if (host.HostLocation != Host.HostLocation && Host.HostLocation != null)
                         host.HostLocation = Host.HostLocation;
                     _context.Update(host);
                     await _context.SaveChangesAsync();
+
+                    if(Host.ProfilePic != null)
+                    {
+                        var previousImage = await(from h in _context.HostImages
+                                                  where h.HostId == host.Id
+                                                  select h).FirstOrDefaultAsync();
+                        if (previousImage == null) 
+                            return NotFound("No profile pic was found");
+                        _context.Remove(previousImage);
+                        await _context.SaveChangesAsync();
+
+                        var hostImage = new HostImage()
+                        {
+                            HostId = host.Id,
+                            Name = "Profile",
+                            Image = ConvertFileToBytes(Host.ProfilePic!)
+                        };
+                        _context.Add(hostImage);
+                        await _context.SaveChangesAsync(); //save changes to host
+                    }
+                    transaction.Commit();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -268,6 +322,14 @@ namespace webapi.Controllers
         private bool UserHostExists(int id)
         {
             return (_context.Hosts?.Any(e => e.Id == id)).GetValueOrDefault();
+        }
+        public byte[] ConvertFileToBytes(IFormFile file)
+        {
+            using (var memoryStream = new MemoryStream())
+            {
+                file.CopyTo(memoryStream);
+                return memoryStream.ToArray();
+            }
         }
     }
 }
