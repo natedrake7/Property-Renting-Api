@@ -105,9 +105,11 @@ namespace airbnb.Controllers
                             HostSince = DateTime.Now,
                             HostName = Input.HostName,
                             HostAbout = Input.HostAbout,
-                            HostLocation = Input.HostLocation
+                            HostLocation = Input.HostLocation,
+                            Languages = Input.Languages,
+                            Profession = Input.Profession,
+                            HostIdentityVerified = Input.HostIdentityVerified,
                          };
-
                         _context.Add(userHost);
                         await _context.SaveChangesAsync();
 
@@ -117,7 +119,6 @@ namespace airbnb.Controllers
                             Name = "Profile",
                             Image = ConvertFileToBytes(Input.ProfilePic!)
                         };
-
                         _context.Add(hostImage);
                          await _context.SaveChangesAsync(); //save changes to host
 
@@ -128,12 +129,17 @@ namespace airbnb.Controllers
                      else
                        await _userManager.AddToRoleAsync(user, "Tenant");
 
-                     await _userManager.UpdateAsync(user); //Update user values (HostId changed)
-                     await _signInManager.RefreshSignInAsync(user);
+                    await _userManager.UpdateAsync(user); //Update user values (HostId changed)
+                    await _signInManager.RefreshSignInAsync(user);
 
-                     transaction.Commit();
-                     var json2 = JsonSerializer.Serialize(user, options);
-                     return Content(json2, "application/json");
+                    transaction.Commit();
+                    var SigningCredentials = _jwthandler.GetSigningCredentials();
+                    var claims = await _jwthandler.GetClaims(user);
+                    var tokenOptions = _jwthandler.GenerateTokenOptions(SigningCredentials, claims);
+                    var token = new JwtSecurityTokenHandler().WriteToken(tokenOptions);
+
+                    var json2 = JsonSerializer.Serialize(new AuthModel { Token = token }, options);
+                    return Content(json2, "application/json");
                 }
                 foreach (var error in result.Errors)
                 {

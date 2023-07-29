@@ -1,13 +1,13 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 
 namespace webapi.Models
 {
     public class Host
     {
         public int Id { get; set; }
-        public string? UserId { get; set; }
 
-        public string? HostUrl { get; set; }
+        public string? UserId { get; set; }
 
         [Required, Display(Name = "Name"), StringLength(30)]
         public string? HostName { get; set; }
@@ -21,17 +21,13 @@ namespace webapi.Models
         [Required, StringLength(1000)]
         public string? HostAbout { get; set; }
 
-        public string? HostResponseTime { get; set; }
+        [Required(ErrorMessage = "Please state the languages you know")]
+        public string? Languages { get; set; }
 
-        public string? HostResponseRate { get; set; }
+        [Required]
+        public string? Profession { get; set; }
 
-        public string? HostAcceptanceRate { get; set; }
-
-        public bool HostIsSuperhost { get; set; }
-
-        public string? HostThumbnailUrl { get; set; }
-
-        public string? HostPictureUrl { get; set; }
+        public bool? HostIdentityVerified { get; set; }
 
         public string? HostNeighbourhood { get; set; }
 
@@ -39,11 +35,6 @@ namespace webapi.Models
 
         public int HostTotalListingsCount { get; set; }
 
-        public string? HostVerifications { get; set; }
-
-        public bool HostHasProfilePic { get; set; }
-
-        public bool HostIdentityVerified { get; set; }
 
         public ICollection<House>? Houses { get; set; }
 

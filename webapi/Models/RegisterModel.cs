@@ -46,5 +46,13 @@ namespace webapi.Models
 
         [Required(ErrorMessage = "Your profile must have a pic!")]
         public IFormFile? ProfilePic { get; set; }
+
+        public string? Languages { get; set; }
+
+        public string? Profession { get; set; }
+
+        public bool HostIdentityVerified { get; set; }
+
+        public string? HostNeighbourhood { get; set; }
     }
 }

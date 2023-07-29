@@ -94,6 +94,33 @@ import { AuthModel } from 'src/app/interfaces/auth-model';
               </div>
             </div>
             <div class="form-group">
+              <label for="host-languages">Your Languages</label>
+                <input id="host-languages" type="text" placeholder="Enter your proficient languages" formControlName="HostLanguages">
+                    <div class ="error"*ngIf="HostAbout_Error">
+                <div *ngFor="let message of HostAbout_Error.Errors">
+                  <p>{{message}}</p>
+                </div>
+              </div>
+          </div>
+          <div class="form-group">
+              <label for="host-profession">Your Profession</label>
+                <input id="host-profession" type="text" placeholder="Enter your current profession" formControlName="HostProfession">
+                    <div class ="error"*ngIf="HostAbout_Error">
+                <div *ngFor="let message of HostAbout_Error.Errors">
+                  <p>{{message}}</p>
+                </div>
+              </div>
+          </div>
+          <div class="form-group">
+              <label for="host-verification">Your Verification</label>
+                <input id="host-verification" type="checkbox" formControlName="HostIdentityVerified">
+                    <div class ="error"*ngIf="HostAbout_Error">
+                <div *ngFor="let message of HostAbout_Error.Errors">
+                  <p>{{message}}</p>
+                </div>
+              </div>
+          </div>
+            <div class="form-group">
               <label for="thumbnail">Upload Profile Picture</label>
               <input id="thumbnail" class="form-control" type="file" (change)="OnImageUpload($event)" accept="image/*">
               <div class="error" *ngIf="ProfilePic_Error">
@@ -113,6 +140,7 @@ export class RegisterComponent {
   UserService = inject(UserService);
   HostService = inject(HostService);
   RoutingService: Router = inject(Router);
+  ProfilePic: File | undefined;
   Username_Error: error|undefined;
   Firstname_Error: error|undefined;
   Lastname_Error: error|undefined;
@@ -123,9 +151,10 @@ export class RegisterComponent {
   HostName_Error: error | undefined;
   HostLocation_Error : error | undefined;
   HostAbout_Error : error | undefined;
-  ProfilePic: File | undefined;
-  imageError: string | undefined;
   ProfilePic_Error: error|undefined;
+  Languages_Error: error | undefined;
+  Profession_Error: error | undefined;
+  imageError: string | undefined;
 
   HostRegistrationForm: boolean = false;
 
@@ -142,6 +171,9 @@ export class RegisterComponent {
     HostName: new FormControl(''),
     HostLocation: new FormControl(''),
     HostAbout: new FormControl(''),
+    Languages: new FormControl(''),
+    Profession: new FormControl(''),
+    HostIdentityVerified: new FormControl(false),
   })
   async registerUser()
   {
@@ -168,6 +200,8 @@ export class RegisterComponent {
                                             this.HostName_Error = ErrorResponse.find(item => item.Variable === 'HostName');
                                             this.HostAbout_Error = ErrorResponse.find(item => item.Variable === 'HostAbout');
                                             this.HostLocation_Error = ErrorResponse.find(item => item.Variable === 'HostLocation');
+                                            this.Languages_Error = ErrorResponse.find(item => item.Variable === 'Languages');
+                                            this.Profession_Error = ErrorResponse.find(item => item.Variable === 'Profession');
                                             this.ProfilePic_Error = ErrorResponse.find(item => item.Variable === 'ProfilePic');
                                           };});
   }
@@ -183,10 +217,15 @@ export class RegisterComponent {
     Data.append('Password',formValue.Password || '');
     Data.append('ConfirmPassword',formValue.ConfirmPassword || '');
     Data.append('IsHost',formValue.IsHost || false);
-    Data.append('Hostname',formValue.HostName || '');
-    Data.append('Hostlocation',formValue.HostLocation || '');
-    Data.append('Hostabout',formValue.HostAbout || '');
+    Data.append('HostName',formValue.HostName || '');
+    Data.append('HostLocation',formValue.HostLocation || '');
+    Data.append('HostAbout',formValue.HostAbout || '');
+    Data.append('Languages',formValue.Languages || '');
+    Data.append('Languages',formValue.Languages || '');
+    Data.append('Profession',formValue.Profession || '');
+    Data.append('HostIdentityVerified',formValue.HostIdentityVerified);
     Data.append('ProfilePic',this.ProfilePic);
+
     return Data;
   }
   OnImageUpload(event:any){

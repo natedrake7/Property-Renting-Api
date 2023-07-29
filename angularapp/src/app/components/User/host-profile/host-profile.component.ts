@@ -89,6 +89,38 @@ import * as FormData from 'form-data';
                 </div>
               </div>
             </div>
+            <div class="form-group">
+              <label for="host-languages">Your Languages</label>
+              <div *ngIf="Host?.Languages != undefined">
+                <input id="host-languages" type="text" class="form-control" [placeholder]="Host?.Languages" formControlName="Languages">
+              </div>
+              <div *ngIf="Host?.Languages === undefined">
+                <input id="host-languages" type="text" class="form-control" placeholder="Enter your proficient languages" formControlName="Languages">
+              </div>
+              <div class ="error"*ngIf="HostAbout_Error">
+                <div *ngFor="let message of HostAbout_Error.Errors">
+                  <p>{{message}}</p>
+                </div>
+              </div>
+          </div>
+          <div class="form-group">
+              <label for="host-profession">Your Profession</label>
+              <div *ngIf="Host?.Profession != undefined">
+                <input id="host-profession" type="text" class="form-control" [placeholder]="Host?.Profession" formControlName="Profession">
+              </div>
+              <div *ngIf="Host?.Profession === undefined">
+                <input id="host-profession" type="text" class="form-control" placeholder="Enter your current profession" formControlName="Profession">
+              </div>
+                <div class ="error"*ngIf="HostAbout_Error">
+                  <div *ngFor="let message of HostAbout_Error.Errors">
+                    <p>{{message}}</p>
+                  </div>
+              </div>
+          </div>
+          <div class="form-group">
+              <label for="host-verification">Your Verification</label>
+              <input id="host-verification" type="checkbox" formControlName="HostIdentityVerified">
+          </div>
             <button type="submit" class="btn btn-primary">Submit</button>
           </form>
         </section>
@@ -146,12 +178,14 @@ export class HostProfileComponent {
     HostName: new FormControl('', Validators.required),
     HostAbout: new FormControl('',Validators.required),
     HostLocation: new FormControl('',Validators.required),
+    Languages: new FormControl(''),
+    Profession: new FormControl(''),
+    HostIdentityVerified: new FormControl(false),
   })
   constructor(){
     this.Host = this.HostService.GetHostData();
     this.User = this.UserService.GetUserData();
     this.HostService.RetrieveHostImage().subscribe((image) =>{
-      console.log(image);
       this.ProfilePic = image;
       this.HouseService.GetHousesByHostId(this.Host?.Id).subscribe((response) =>{
         this.Houses = response;
@@ -161,6 +195,7 @@ export class HostProfileComponent {
   EditProfile(){
     const Data = this.GetData();
     this.HostService.EditHost(Data).subscribe((response) =>{
+      console.log(response);
                       if('Token' in response){
                         const token = response as AuthModel;
                         localStorage.setItem('hosttoken',token.Token);
@@ -180,6 +215,9 @@ export class HostProfileComponent {
     Data.append('HostName',formValue.HostName || '');
     Data.append('HostAbout',formValue.HostAbout || '');
     Data.append('HostLocation',formValue.HostLocation || '');
+    Data.append('Languages',formValue.Languages || '');
+    Data.append('Profession',formValue.Profession || '');
+    Data.append('HostIdentityVerified',formValue.HostIdentityVerified || '');
     Data.append('ProfilePic',this.ImageUpload);
 
     return Data;

@@ -3,4 +3,7 @@ export interface Host {
   HostName?: string;
   HostAbout?: string;
   HostLocation?: string;
+  Languages?: string;
+  Profession?: string;
+  HostIdentityVerified?: boolean; 
 }

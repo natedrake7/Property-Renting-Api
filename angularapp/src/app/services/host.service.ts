@@ -57,6 +57,8 @@ export class HostService {
     this.Host.HostName = token['username'];
     this.Host.HostAbout = token['About'];
     this.Host.HostLocation = token['Location'];
+    this.Host.Languages = token['Languages'];
+    this.Host.Profession = token['Profession'];
     return this.Host;
   }
   

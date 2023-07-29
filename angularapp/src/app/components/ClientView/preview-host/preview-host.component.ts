@@ -37,13 +37,50 @@ import { Host } from 'src/app/interfaces/host';
             </div>
           </div>
           <div class="col-md-8">
-              <h2>General information for :
-                 <span class="host-name">
-                  {{Host?.HostName!}}          
-                 </span>
-              </h2>
+            <h2>General information for :
+              <span class="host-name">
+                {{Host?.HostName!}}          
+              </span>
+            </h2>
+            <div class="row">
+              <div class="col-md-4">
+                <div class="listing-block">
+                  <p class="host-info">
+                    <span class="image">
+                      <img class="image" src="../../../../assets/globe.png" alt="logo" aria-hidden="true">
+                    </span>
+                    <span class="bedrooms">
+                      {{Host?.Languages}}
+                    </span>
+                  </p>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="listing-block">
+                  <p class="host-info">
+                    <span class="image">
+                      <img class="image" src="../../../../assets/profession.png" alt="logo" aria-hidden="true">
+                    </span>
+                    <span class="bedrooms">
+                      {{Host?.Profession}}
+                    </span>
+                  </p>
+                </div>
+                </div>
+            </div>
+            <hr style="border: 1px solid gray;border-radius: 12px;">
+            <h5>About</h5>
+            <p>{{Host?.HostAbout}}</p>
+            <hr style="border: 1px solid gray;border-radius: 12px;">
+            <h5>Location</h5>
+            <p>{{Host?.HostLocation}} <span class="host-location"> 
+              <a href="https://www.google.com/maps/search/?api=1&query={{Host?.HostLocation}}" target="_blank">
+                <img class="maps-link"src="../../../../assets/google_maps.png" alt="Link to Address" />
+            </a>
+            </span></p>
           </div>
     </div>
+  </div>
   `,
   styleUrls: ['./preview-host.component.css']
 })

@@ -59,6 +59,10 @@ namespace webapi.Models
                 claims.Add(new Claim("About", host.HostAbout?? ""));
             if (host.HostLocation != null)
                 claims.Add(new Claim("Location", host.HostLocation?? "") );
+            if (host.Languages != null)
+                claims.Add(new Claim("Languages", host.Languages ?? ""));
+            if (host.Profession != null)
+                claims.Add(new Claim("Profession", host.Profession ?? ""));
 
             return claims;
         }

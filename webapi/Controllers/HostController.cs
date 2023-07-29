@@ -147,6 +147,13 @@ namespace webapi.Controllers
                         host.HostAbout = Host.HostAbout;
                     if (host.HostLocation != Host.HostLocation && Host.HostLocation != null)
                         host.HostLocation = Host.HostLocation;
+                    if (host.Languages != Host.Languages && Host.Languages != null)
+                        host.Languages = Host.Languages;
+                    if (host.Profession != Host.Profession && Host.Profession != null)
+                        host.Profession = Host.Profession;
+                    if (host.HostIdentityVerified != Host.HostIdentityVerified && Host.HostIdentityVerified != null)
+                        host.HostIdentityVerified = Host.HostIdentityVerified;
+
                     _context.Update(host);
                     await _context.SaveChangesAsync();
 
