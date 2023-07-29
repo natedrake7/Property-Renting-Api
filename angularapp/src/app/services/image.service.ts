@@ -15,5 +15,4 @@ private EditThumbnailURL = 'https://localhost:7018/House/SetThumbnail/';
   SetThumbnail(id:number | undefined,ImageId : number):Observable<string>{
     return this.http.post<string>(this.EditThumbnailURL + id,ImageId);
   }
-
 }

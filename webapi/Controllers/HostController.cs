@@ -86,7 +86,6 @@ namespace webapi.Controllers
             };
             var json = JsonSerializer.Serialize(ProfilePic,options);
             return Content(json, "application/json");
-
         }
 
         [HttpGet]
@@ -108,88 +107,22 @@ namespace webapi.Controllers
         // GET: UserHosts/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null || _context.Hosts == null)
-            {
-                return NotFound();
-            }
 
-            var user = await _userManager.GetUserAsync(User);//Get current user
+            var host = await (from h in _context.Hosts //get the host with the matching id
+                              where h.Id == id
+                              select h).FirstOrDefaultAsync();
 
-            if (user == null) //if there is no user(Authentication should take care of that)
-                LocalRedirect("/Identity/Account/Login"); //Redirect to login page
+            if (host == null) //No need to check since we have authorization
+                return NotFound("Host not found!");
 
-
-            var userHost = await _context.Hosts //Get the host corresponding to the user
-                .FirstOrDefaultAsync(m => m.Id == id);
-
-            if (userHost == null) //if null,return no host (Authentication should take care of that too)
-                return NotFound();
-
-            var Images = from i in _context.HostImages //find the images of the current host
-                         where i.HostId == user!.HostId
-                         select i;
-
-            var images = Images.ToList(); //Get the images
-            if (images == null) //if host has no images
-            {
-                return View();
-            }
-            foreach (var image in images)
-            {
-                if (image!.URL == null) //If host has input the images as jpg or png files
-                {
-                    string base64image = Convert.ToBase64String(image.Image!); //Convert them
-                    string imageDataUrl = $"data:image/png;base64,{base64image}"; //Get the URL
-                    image.URL = imageDataUrl; //Add it to the URL name
-                }
-            }
-            //Return a Model
-
-            return View();
-        }
-
-        // POST: UserHosts/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        public async Task<IActionResult> Create([FromBody] Models.Host userHost)
-        {
             var options = new JsonSerializerOptions
             {
                 Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
             };
-            var user = await _userManager.FindByIdAsync(userHost.UserId!);
-
-            if (ModelState.IsValid)
-            {
-                _context.Add(userHost);
-                userHost.UserId = user!.Id; //set foreign key
-                userHost.HostSince = DateTime.Now;
-
-                await _context.SaveChangesAsync(); //save changes to host
-
-                user.Host = userHost; //set host navigation property
-                user.HostId = userHost.Id; //and foreign key in user instance
-
-                await _userManager.UpdateAsync(user); //Update user values (HostId changed)
-                await _signManager.RefreshSignInAsync(user); //Refresh the sign in for changes to take effect
-                var json2 = JsonSerializer.Serialize(userHost, options);
-                return Content(json2, "application/json");
-            }
-            var ModelErrors = ModelState
-                                .Where(entry => entry.Value!.Errors.Count > 0)
-                                .Select(entry => new {
-                                    Variable = entry.Key,
-                                    Errors = entry.Value!.Errors.Select(error => error.ErrorMessage)
-                                })
-                                .ToList();
-            var json = JsonSerializer.Serialize(ModelErrors, options);
+            var json = JsonSerializer.Serialize(host, options);
             return Content(json, "application/json");
         }
 
-        // POST: UserHosts/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         public async Task<IActionResult> Edit(string?Id,[FromForm] HostEditModel Host)
         {
@@ -323,6 +256,7 @@ namespace webapi.Controllers
         {
             return (_context.Hosts?.Any(e => e.Id == id)).GetValueOrDefault();
         }
+
         public byte[] ConvertFileToBytes(IFormFile file)
         {
             using (var memoryStream = new MemoryStream())

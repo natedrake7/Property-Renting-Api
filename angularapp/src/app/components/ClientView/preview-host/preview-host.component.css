@@ -1,0 +1,39 @@
+.center-container {
+    display: flex;
+    justify-content: center;
+    height: 100vh;
+  }
+
+  .custom-row-width {
+    width: 1200px; /* Set the desired width */
+    margin: 0 auto; /* Center the row within its parent container */
+  }
+
+
+.general{
+    border: 1px solid #ccc;
+    padding: 10px;
+    border-radius: 12px;
+    height: auto;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.profile-pic{
+    width: 150px;
+    height: 150px;
+    margin-bottom: 10px;
+    border-radius: 50%; 
+    object-fit: cover;
+  }
+
+  .host-center{
+    margin-left: 40px;
+  }
+
+  .misc{
+    margin-top: 20px;
+  }
+
+  .etc{
+    text-align: right;
+  }

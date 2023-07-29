@@ -60,10 +60,15 @@ import { error } from 'src/app/interfaces/error';
           <h5>Host Name</h5>
             <p>{{Host?.HostName}}</p>
           <h5>Host Location</h5>
-            <p>{{Host?.HostLocation}}</p>
+            <p>{{Host?.HostLocation}} <span class="host-location"> 
+              <a href="https://www.google.com/maps/search/?api=1&query={{Host?.HostLocation}}" target="_blank">
+                <img class="maps-link"src="../../../../assets/google_maps.png" alt="Link to Address" />
+            </a>
+            </span>
+          </p>
           <h5>Host Biography</h5>
             <p>{{Host?.HostAbout}}</p>
-          <p>Learn More about the host <a [routerLink]="['HostPage']">here</a>
+          <p>Learn More about the host <a [routerLink]="['../PreviewHost',Host!.Id]">here</a>
       </div>
       <div class="col-md-6">
         <section class="listing-features">
@@ -262,12 +267,12 @@ export class DetailsComponent {
   Visitors = new FormGroup({
     Count: new FormControl(0)
   });
+  
   constructor() {
     this.StartingDate_Error = {Variable: '',Errors: ''};
     this.EndingDate_Error = {Variable: '',Errors: ''};
     this.Visitors_Error = {Variable: '',Errors: ''};
     const housingLocationId = parseInt(this.route.snapshot.params['id'], 10);
-    this.Host = this.HostService.GetHostData();
     this.housingService.getHousingLocationById(housingLocationId)
       .subscribe(housingLocation => {
         this.housingLocation = housingLocation;
@@ -276,14 +281,19 @@ export class DetailsComponent {
           this.housingService.GetPropertyDates(this.housingLocation?.Id).subscribe((response)=>{
             if(typeof response != 'string')
               this.BookedDates = response as string[];
-            this.HostService.RetrieveHostImage().subscribe((image) =>{
-              this.ProfilePic = image;
-            });
+              this.HostService.RetrivePublicHostDatabyId(this.housingLocation?.HostId!).subscribe((host) =>{
+                this.Host = host;
+                  this.HostService.RetrieveHostImageById(this.housingLocation?.HostId!).subscribe((image) =>{
+                    this.ProfilePic = image;
+                });
+              })
           });
         }
     );
   });
   }
+  /*Image preview functions*/
+
   get currentImage(): string{
     const currentImage = this.Images[this.currentIndex]?.URL ?? '';
     return currentImage;
@@ -296,6 +306,7 @@ export class DetailsComponent {
   nextImage(): void {
     this.currentIndex = (this.currentIndex + 1) % this.Images.length;
   }
+  /*Submit Form function*/
   ShowForm(){
     const Date = this.BookDates.value;
     const Visitors = this.Visitors.value;
@@ -333,6 +344,7 @@ export class DetailsComponent {
     if(!error)
       this.SumbitForm = !this.SumbitForm;
   }
+
   ShowTotalCost():boolean{
     const Dates = this.BookDates.value;
     const Visitors = this.Visitors.value;
@@ -340,19 +352,23 @@ export class DetailsComponent {
       return true;
     return false;
   }
+
   TotalCost():number{
     const Days = this.GetNumberOfDays();
     const Visitors = this.Visitors.value;
     return this.housingLocation!.Price*Visitors.Count!*Days;
   }
+
   GetNumberOfDays():number{
     const Dates = this.BookDates.value;
     const Days = (Dates.end!.getTime() - Dates.start!.getTime()) / (1000 * 3600 * 24);
     return Days;
   }
+
   GetVisitors():number{
     return this.Visitors.value.Count!;
   }
+
   BookProperty(){
     const Data = new FormData();
     const Date = this.BookDates.value;
@@ -368,6 +384,7 @@ export class DetailsComponent {
       }
     });
   }
+
   FilterDate(date:Date):boolean{
     if(date <= new Date(Date.now()))
       return false;
@@ -375,6 +392,7 @@ export class DetailsComponent {
       return false;
     return true;
   }
+
   LogoutConfirm(){this.LogoutBoolean = !this.LogoutBoolean;}
   Logout(){
     if (this.UserService.GetUserStatus())

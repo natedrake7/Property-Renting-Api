@@ -15,6 +15,10 @@
   flex-grow: 1;
 }
 
+.host-location{
+  margin-left: 5px;
+}
+
 .listing-block {
   border: 1px solid #ccc;
   padding: 10px;
