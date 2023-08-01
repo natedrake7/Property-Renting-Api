@@ -1,18 +1,16 @@
-﻿namespace webapi.Models
+﻿using System.Text.Json.Serialization;
+
+namespace webapi.Models
 {
     public class House
     {
         public int Id { get; set; }
-
-        public string? ListingUrl { get; set; }
 
         public string? Name { get; set; }
 
         public string? Summary { get; set; }
 
         public string? Space { get; set; }
-
-        public string? Description { get; set; }
 
         public string? ExperiencesOffered { get; set; }
 
@@ -27,8 +25,6 @@
         public string? Street { get; set; }
 
         public string? Neighbourhood { get; set; }
-
-        public string? NeighbourhoodGroupCleansed { get; set; }
 
         public string? City { get; set; }
 
@@ -114,8 +110,57 @@
 
         public float ReviewsPerMonth { get; set; }
 
+        [JsonIgnore]
         public Host? Host { get; set; }
 
-        public ICollection<HouseImage>? Images { get; set; }
+        public List<HouseImage>? Images { get; set; }
+
+        public List<Review>? Reviews { get; set; }
+
+        public House(House house,List<HouseImage> images,List<Review> reviews,float meanScoresRating,float meanCleaniness, float meanCheckin, float meanCommuncation,float meanValue)
+        {
+            Id = house.Id;
+            Name = house.Name;
+            Summary = house.Summary;
+            Space  = house.Space;
+            ExperiencesOffered = house.ExperiencesOffered;
+            NeighborhoodOverview = house.NeighborhoodOverview;
+            Notes = house.Notes;
+            Transit = house.Transit;
+            HostId = house.HostId;
+            Street = house.Street;
+            Neighbourhood = house.Neighbourhood;
+            City = house.City;
+            State = house.State;
+            Zipcode = house.Zipcode;
+            Country = house.Country;
+            CountryCode = house.CountryCode;
+            IsLocationExact = house.IsLocationExact;
+            PropertyType = house.PropertyType;
+            Bathrooms = house.Bathrooms;
+            Bedrooms = house.Bedrooms;
+            Beds = house.Beds;
+            SquareFeet = house.SquareFeet;
+            Price = house.Price;
+            WeeklyPrice = house.WeeklyPrice;
+            MonthlyPrice = house.MonthlyPrice;
+            CleaningFee = house.CleaningFee;
+            ExtraPeople = house.ExtraPeople;
+            MinimumNights = house.MinimumNights;
+            MaximumNights = house.MaximumNights;
+            RequiresLicense = house.RequiresLicense;
+            InstantBookable = house.InstantBookable;
+            RequireGuestPhoneVerification = house.RequireGuestPhoneVerification;
+            CancellationPolicy = house.CancellationPolicy;
+            ReviewScoresRating = meanScoresRating;
+            ReviewScoresCleanliness = meanCleaniness;
+            ReviewScoresCheckin = meanCheckin;
+            ReviewScoresCommunication = meanCommuncation;
+            ReviewScoresValue = meanValue;
+            Reviews = new List<Review>(reviews);
+            Images = new List<HouseImage>(images);
+        }
+
+        public House() { }
     }
 }

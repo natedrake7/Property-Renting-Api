@@ -4,20 +4,24 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { HostService } from 'src/app/services/host.service';
 import { Images } from 'src/app/interfaces/images';
 import { Host } from 'src/app/interfaces/host';
+import { House } from 'src/app/interfaces/house';
+import { HouseService } from 'src/app/services/house.service';
+import { HouseComponent } from '../house/house.component';
+import { PreviewHostHouseComponent } from '../preview-host-house/preview-host-house.component';
 
 @Component({
   selector: 'app-preview-host',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule,PreviewHostHouseComponent],
   template: `
     <div class="container center-container">
       <div class="row custom-row-width">
-          <div class="col-md-4">
+          <div class="col-md-4 host-general">
             <div class="general">
               <div class="row">
                 <div class="col-md-6">
                   <span class="host-pic">
-                    <img class="profile-pic" [src]="ProfilePic!.URL">
+                    <img class="profile-pic" [src]="ProfilePic?.URL">
                   </span>
                   <h5>{{Host?.HostName}} 
                     <span class="host-center"> Host
@@ -35,8 +39,14 @@ import { Host } from 'src/app/interfaces/host';
                 </div>
               </div>
             </div>
+            <div class="certs">
+              <div class="col-md-6">
+                <h5>Certifications:</h5>
+                <p class="certifications">Host is certified!</p>
+              </div>
+            </div>
           </div>
-          <div class="col-md-8">
+          <div class="col-md-8 host-info-col">
             <h2>General information for :
               <span class="host-name">
                 {{Host?.HostName!}}          
@@ -79,6 +89,13 @@ import { Host } from 'src/app/interfaces/host';
             </a>
             </span></p>
           </div>
+          <div class="col-md-12">
+          <hr style="border: 1px solid gray;border-radius: 12px;">
+          <h5>Some of host's properties:</h5>
+          <div class="row">
+            <app-preview-host-house class="properties" *ngFor="let house of Houses" [house]="house"></app-preview-host-house>
+          </div>
+        </div>
     </div>
   </div>
   `,
@@ -87,15 +104,24 @@ import { Host } from 'src/app/interfaces/host';
 export class PreviewHostComponent {
   route: ActivatedRoute = inject(ActivatedRoute);
   HostService: HostService = inject(HostService);
+  HouseService: HouseService = inject(HouseService);
   ProfilePic: Images | undefined;
   Host: Host | undefined;
+  Id: number | undefined;
+  Houses: House[] = [];
   constructor(){
-    const Id = parseInt(this.route.snapshot.params['id'], 10);
-    this.HostService.RetrivePublicHostDatabyId(Id).subscribe((host) =>{
+    this.Id = parseInt(this.route.snapshot.params['id'], 10);
+    this.HostService.RetrivePublicHostDatabyId(this.Id).subscribe((host) =>{
       this.Host = host;
-      this.HostService.RetrieveHostImageById(Id).subscribe((image) => {
-        this.ProfilePic = image;
-      })
-    })
+      this.HouseService.GetHousesByHostId(this.Id).subscribe((houses) => {
+          this.Houses = houses;
+      });
+    });
+  }
+
+  ngOnInit(){
+    this.HostService.RetrieveHostImageById(this.Id!).subscribe((image) => {
+      this.ProfilePic = image;
+    });
   }
 }

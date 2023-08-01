@@ -376,7 +376,7 @@ export class EditHouseComponent {
 
     }
     get currentImage(): string {
-      return this.Images[this.currentIndex].URL;
+      return this.Images[this.currentIndex]?.URL;
     }
   
     previousImage(): void {

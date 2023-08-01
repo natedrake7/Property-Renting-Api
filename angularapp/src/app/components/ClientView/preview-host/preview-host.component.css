@@ -1,7 +1,6 @@
 .center-container {
     display: flex;
     justify-content: center;
-    height: 100vh;
   }
 
   .custom-row-width {
@@ -9,13 +8,36 @@
     margin: 0 auto; /* Center the row within its parent container */
   }
 
+  .host-general{
+    height: 400px;
+  }
+
+  .host-info-col{
+    height: 400px;
+  }
+
+.properties{
+  width: 250px;
+  height: auto;
+  margin-top: 20px;
+}
 
 .general{
     border: 1px solid #ccc;
     padding: 10px;
     border-radius: 12px;
-    height: auto;
+    height: 250px;
+    width: auto;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.certs{
+  margin-top: 40px;
+  border: 1px solid #ccc;
+  padding: 10px;
+  border-radius: 12px;
+  height: 100px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
 .image{

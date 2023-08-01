@@ -1,3 +1,5 @@
+import { Images } from "./images";
+
 export interface House {
   Id: number;
   ListingUrl: string;
@@ -55,6 +57,8 @@ export interface House {
   CancellationPolicy: string;
   RequireGuestPhoneVerification: boolean;
   ReviewsPerMonth: number;
+  Images: Images[];
+  BookedDates: string[];
   ThumbnailURL: string;
   Image: number[];
 }

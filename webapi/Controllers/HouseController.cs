@@ -23,6 +23,8 @@ namespace webapi.Controllers
             _context = context;
             _userManager = userManager;
         }
+
+        [HttpGet]
         public async Task<IActionResult> GetPropertyDates(int Id)
         {
             var options = new JsonSerializerOptions
@@ -49,6 +51,8 @@ namespace webapi.Controllers
             var json2 = JsonSerializer.Serialize(DatesList, options);
             return Content(json2, "application/json");
         }
+
+        [HttpPost]
         public async Task<IActionResult> BookProperty(int Id, [FromForm]BookModel bookmodel)
         {
             var options = new JsonSerializerOptions
@@ -96,6 +100,7 @@ namespace webapi.Controllers
 
         // GET: UserHouses
         [AllowAnonymous]
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
             var Houses = await _context.Houses.ToListAsync();
@@ -106,7 +111,9 @@ namespace webapi.Controllers
             var json = JsonSerializer.Serialize(Houses, options);
             return Content(json, "application/json");
         }
+
         [AllowAnonymous]
+        [HttpGet]
         public async Task<IActionResult> GetImages(int? id)
         {
             var images = await (from i in _context.HouseImages //find the images of the current host
@@ -132,6 +139,7 @@ namespace webapi.Controllers
         }
 
         [AllowAnonymous]
+        [HttpGet]
         public async Task<IActionResult> GetThumbnail(int? id)
         {
             var image = await (from i in _context.HouseImages
@@ -179,26 +187,38 @@ namespace webapi.Controllers
         }
         
         [AllowAnonymous]
+        [HttpGet]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null || _context.Houses == null)
-                return NotFound();
-
-            var user = await _userManager.GetUserAsync(User);
-
-            if (user == null)
-                LocalRedirect("/Identity/Account/Login");
+                return NotFound("House with given Id not found!");
 
             var userHouse = await _context.Houses
                                  .FirstOrDefaultAsync(m => m.Id == id);
 
             if (userHouse == null)
-                return NotFound();
+                return NotFound("No house with that Id exists!");
 
 
             var reviews = (from r in _context.UserReviews //get the reviews for the current house
                            where r.HouseId == id
                            select r).ToList();
+
+            var images = await (from i in _context.HouseImages //find the images of the current host
+                                where i.HouseId == id
+                                select i).ToListAsync();
+            if (images == null)
+                return NotFound();
+
+            foreach (var image in images)
+            {
+                if (image!.URL == null) //If host has input the images as jpg or png files
+                {
+                    string base64image = Convert.ToBase64String(image.Image!); //Convert them
+                    string imageDataUrl = $"data:image/png;base64,{base64image}"; //Get the URL
+                    image.URL = imageDataUrl; //Add it to the URL name
+                }
+            }
 
             float sumScoresRating = 0, sumCleaniness = 0, sumCheckin = 0, sumCommuncation = 0, sumValue = 0;
             foreach (var review in reviews) //for each review
@@ -218,10 +238,10 @@ namespace webapi.Controllers
 
             var options = new JsonSerializerOptions
             {
-                Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
-                NumberHandling = JsonNumberHandling.AllowNamedFloatingPointLiterals,
-                ReferenceHandler = ReferenceHandler.Preserve
+                Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
             };
+
+            House house = new (userHouse,images,reviews,meanScoresRating,meanCleaniness,meanCheckin,meanCommuncation,meanValue);
             var json = JsonSerializer.Serialize(userHouse, options);
             return Content(json, "application/json");
         }
@@ -319,6 +339,7 @@ namespace webapi.Controllers
                 return Content(json, "application/json");
             }
         }
+
         public byte[] ConvertFileToBytes(IFormFile file)
         {
             using (var memoryStream = new MemoryStream())
@@ -327,6 +348,7 @@ namespace webapi.Controllers
                 return memoryStream.ToArray();
             }
         }
+
         [HttpPost]
         public async Task<IActionResult> Edit(int id,[FromForm] HouseEdit House)
         {

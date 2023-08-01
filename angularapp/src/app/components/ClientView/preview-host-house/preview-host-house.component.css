@@ -1,0 +1,28 @@
+.listing {
+    background: var(--accent-color);
+    border-radius: 30px;
+    padding-bottom: 30px;
+  }
+  
+  .listing-heading {
+    color: var(--primary-color);
+    padding: 10px 20px 0 20px;
+  }
+  
+  .thumbnail-container{
+    display: flex;
+    justify-content:center;
+  }
+  
+  .thumbnail {
+    height: auto;
+    width: 250px;
+    object-fit: cover;
+    border-radius: 30px;
+  }
+
+  .details{
+    margin-top: 10px;
+    font-weight: bold;
+}
+  

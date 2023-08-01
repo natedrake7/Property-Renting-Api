@@ -1,4 +1,6 @@
-﻿namespace webapi.Models
+﻿using System.Text.Json.Serialization;
+
+namespace webapi.Models
 {
     public class HouseImage
     {
@@ -12,6 +14,7 @@
 
         public int HouseId { get; set; }
 
+        [JsonIgnore]
         public House? House { get; set; }
     }
 }
