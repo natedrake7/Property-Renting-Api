@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using Microsoft.EntityFrameworkCore;
+using System.Text.Json.Serialization;
 
 namespace webapi.Models
 {
@@ -116,6 +117,8 @@ namespace webapi.Models
         public List<HouseImage>? Images { get; set; }
 
         public List<Review>? Reviews { get; set; }
+
+        public List<Calendar>? BookedDates { get; set; }
 
         public House(House house,List<HouseImage> images,List<Review> reviews,float meanScoresRating,float meanCleaniness, float meanCheckin, float meanCommuncation,float meanValue)
         {

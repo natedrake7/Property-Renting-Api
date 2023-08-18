@@ -120,6 +120,37 @@
   margin-left: 10px;
 }
 
+.rating-container {
+  position: relative;
+  width: 50px;
+  height: auto;
+}
+
+.review-button{
+  margin-top: 40px;
+  margin-left: 110px;
+  width: 150px;
+  height: auto;
+}
+
+.review-header{
+  margin-bottom: 20px;
+}
+
+.rating-arrow {
+  position: absolute;
+  top: 50%;
+  right: 5px;
+  transform: translateY(-50%);
+  font-size: 18px;
+  color: #aaa;
+  pointer-events: none;
+}
+
+.rating-container:hover .rating-arrow{
+  transform: translateY(-50%) rotateX(180deg);
+}
+
 .error{
   color: red;
 }

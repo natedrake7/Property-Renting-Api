@@ -98,6 +98,60 @@ namespace webapi.Controllers
             return Content(json2, "application/json");
         }
 
+        [HttpPost]
+        public async Task<IActionResult> SubmitReview(int Id,[FromForm]ReviewModel review)
+        {
+            var options = new JsonSerializerOptions
+            {
+                Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+            };
+            var user  =  await _userManager.FindByIdAsync(review.UserId!);
+            if(user == null)
+            {
+               var json = JsonSerializer.Serialize("UserError", options);
+               return Content(json, "application/json");
+            }
+            var Calendar = await (from c in _context.UserCalendars
+                                  where c.HouseId == Id && c.UserId == user.Id
+                                  select c).FirstOrDefaultAsync();
+
+            if (Calendar == null)
+            {
+                var json = JsonSerializer.Serialize("UserError", options);
+                return Content(json, "application/json");
+            }
+
+            if (!ModelState.IsValid)
+            {
+                var ModelErrors = ModelState
+                                .Where(entry => entry.Value!.Errors.Count > 0)
+                                .Select(entry => new
+                                {
+                                    Variable = entry.Key,
+                                    Errors = entry.Value!.Errors.Select(error => error.ErrorMessage)
+                                })
+                                .ToList();
+                var json = JsonSerializer.Serialize(ModelErrors, options);
+                return Content(json, "application/json");
+            }
+            var Review = new Review()
+            {
+                HouseId = Id,
+                Date = DateTime.Now,
+                ReviewerName = user.FirstName,
+                UserId = review.UserId,
+                ReviewScoresRating = review.Rating,
+                ReviewScoresCleanliness = review.Cleaniness,
+                ReviewScoresCommunication = review.Communication,
+                ReviewScoresLocation = review.Location,
+                Comments = review.Text
+            };
+            _context.Add(Review);
+            await _context.SaveChangesAsync();
+            var json1 = JsonSerializer.Serialize("ok", options);
+            return Content(json1, "application/json");
+        }
+
         // GET: UserHouses
         [AllowAnonymous]
         [HttpGet]
@@ -190,6 +244,11 @@ namespace webapi.Controllers
         [HttpGet]
         public async Task<IActionResult> Details(int? id)
         {
+            var options = new JsonSerializerOptions
+            {
+                Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+            };
+
             if (id == null || _context.Houses == null)
                 return NotFound("House with given Id not found!");
 
@@ -209,7 +268,7 @@ namespace webapi.Controllers
                                 select i).ToListAsync();
             if (images == null)
                 return NotFound();
-
+          
             foreach (var image in images)
             {
                 if (image!.URL == null) //If host has input the images as jpg or png files
@@ -235,11 +294,6 @@ namespace webapi.Controllers
             float meanCheckin = sumCheckin / reviews.Count;
             float meanCommuncation = sumCommuncation / reviews.Count;
             float meanValue = sumValue / reviews.Count;
-
-            var options = new JsonSerializerOptions
-            {
-                Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
-            };
 
             House house = new (userHouse,images,reviews,meanScoresRating,meanCleaniness,meanCheckin,meanCommuncation,meanValue);
             var json = JsonSerializer.Serialize(userHouse, options);

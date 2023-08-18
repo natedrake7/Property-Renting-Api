@@ -179,7 +179,6 @@ export class RegisterComponent {
   {
     const Data = this.GetData();
     this.UserService.Register(Data).subscribe((response) => {
-                                          console.log(response);
                                           if('Token' in response){
                                             const Auth = response as AuthModel;
                                             localStorage.setItem('usertoken',Auth.Token);

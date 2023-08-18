@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace webapi.Models
 {
@@ -12,32 +13,29 @@ namespace webapi.Models
 
         public string? UserId { get; set; }
 
-        [Required, Display(Name = "Your Name"), StringLength(20)]
+        [Required, StringLength(20)]
         public string? ReviewerName { get; set; }
 
-        [Required, Display(Name = "Your Review"), StringLength(1000)]
+        [Required, StringLength(1000)]
         public string? Comments { get; set; }
 
-        [Required, Display(Name = "Your Rating"), RegularExpression(@"^\d+(\.\d{1})?$", ErrorMessage = "Please enter a valid rating with one decimal place.")]
+        [Required]
         public float ReviewScoresRating { get; set; }
 
-        [Display(Name = "How Clean was the house?"), RegularExpression(@"^\d+(\.\d{1})?$", ErrorMessage = "Please enter a valid rating with one decimal place.")]
         public float ReviewScoresCleanliness { get; set; }
 
-        [Display(Name = "How Clean was the house?"), RegularExpression(@"^\d+(\.\d{1})?$", ErrorMessage = "Please enter a valid rating with one decimal place.")]
         public float ReviewScoresCheckin { get; set; }
 
-        [Display(Name = "Was the communcation with the host good?"), RegularExpression(@"^\d+(\.\d{1})?$", ErrorMessage = "Please enter a valid rating with one decimal place.")]
         public float ReviewScoresCommunication { get; set; }
 
-        [Display(Name = "Was the location good?"), RegularExpression(@"^\d+(\.\d{1})?$", ErrorMessage = "Please enter a valid rating with one decimal place.")]
         public float ReviewScoresLocation { get; set; }
 
-        [Display(Name = "Was the experience worth the cost?"), RegularExpression(@"^\d+(\.\d{1})?$", ErrorMessage = "Please enter a valid rating with one decimal place.")]
         public float ReviewScoresValue { get; set; }
 
+        [JsonIgnore]
         public House? House { get; set; }
 
+        [JsonIgnore]
         public User? User { get; set; }
     }
 }

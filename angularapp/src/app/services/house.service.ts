@@ -23,6 +23,7 @@ export class HouseService {
   private DeleteHouseURL = 'https://localhost:7018/House/Delete/';
   private BookPropertyURL = 'https://localhost:7018/House/BookProperty/';
   private GetPropertyDatesURL = 'https://localhost:7018/House/GetPropertyDates/';
+  private SumbitReviewURL = 'https://localhost:7018/House/SubmitReview/';
   constructor(private http: HttpClient) { }
   CreateProperty(Data : FormData | undefined):Observable<string|error[]>{
     const token = this.GetToken('usertoken');
@@ -67,12 +68,20 @@ BookPropertyById(Id:number | undefined,Data: FormData| undefined):Observable<str
   const AuthToken = this.GetToken('usertoken');
   const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
   Data?.append('UserId',AuthToken!['Id']);
-  console.log(AuthToken!['Id']);
   return this.http.post<string | error[]>(this.BookPropertyURL + Id,Data,{headers:headers});
 }
 
 GetPropertyDates(Id:number | undefined):Observable<string | string[]>{
   return this.http.get<string | string[]>(this.GetPropertyDatesURL + Id);
+}
+
+SumbitReview(Id:number | undefined, Data: FormData | undefined):Observable<string | error[]>{
+  const token = localStorage.getItem('usertoken');
+  const AuthToken = this.GetToken('usertoken');
+  const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
+  if(AuthToken != undefined)
+   Data?.append('UserId',AuthToken!['Id']);
+  return this.http.post<string | error[]>(this.SumbitReviewURL + Id,Data,{headers:headers});
 }
 
   GetToken(TokenId: string):{[key: string]: string} | undefined

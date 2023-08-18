@@ -238,6 +238,83 @@ import { error } from 'src/app/interfaces/error';
               </div>
             </div>
           </div>
+          <hr style="border: 1px solid gray;border-radius: 12px;">
+          <div class="row">
+            <h5 class="review-header">Have you been here?Leave a review.</h5>
+            <form [formGroup]="Review" (ngSubmit)="SubmitReview()">
+              <div class="form-group">
+                  <textarea
+                    id="reviewText"
+                    class="form-control"
+                    rows="4"
+                    formControlName="Text"
+                    placeholder="Please review the property..."
+                  ></textarea>
+              </div>
+              <div class ="error"*ngIf="ReviewText_Error">
+                <p>{{ReviewText_Error.Errors}}</p>
+              </div>
+              <div class="row">
+              <div class="col-md-3">
+                  <div class="form-group">
+                    <label for="rating">Rating</label>
+                    <div class ="rating-container">
+                      <select id="rating" class="form-control" formControlName="Rating">
+                        <option *ngFor="let option of RatingOptions" [value]="option">{{ option }}</option>
+                      </select>
+                      <div class="rating-arrow">&#9660;</div>
+                    </div>
+                  </div>
+                  <div class ="error"*ngIf="ReviewRating_Error">
+                    <p>{{ReviewRating_Error.Errors}}</p>
+                  </div>
+                  <div class="form-group">
+                    <label for="rating">Communication</label>
+                    <div class ="rating-container">
+                      <select id="rating" class="form-control" formControlName="Communication">
+                        <option *ngFor="let option of RatingOptions" [value]="option">{{ option }}</option>
+                      </select>
+                      <div class="rating-arrow">&#9660;</div>
+                    </div>
+                  </div>
+                  <div class ="error"*ngIf="ReviewCommunication_Error">
+                    <p>{{ReviewCommunication_Error.Errors}}</p>
+                  </div>
+                </div>
+                <div class="col-md-3">
+                  <div class="form-group">
+                    <label for="rating">Cleaniness</label>
+                    <div class ="rating-container">
+                      <select id="rating" class="form-control" formControlName="Cleaniness">
+                        <option *ngFor="let option of RatingOptions" [value]="option">{{ option }}</option>
+                      </select>
+                      <div class="rating-arrow">&#9660;</div>
+                    </div>
+                  </div>
+                  <div class ="error"*ngIf="ReviewClean_Error">
+                    <p>{{ReviewClean_Error.Errors}}</p>
+                  </div>
+                  <div class="form-group">
+                    <label for="rating">Location</label>
+                    <div class ="rating-container">
+                      <select id="rating" class="form-control" formControlName="Location">
+                        <option *ngFor="let option of RatingOptions" [value]="option">{{ option }}</option>
+                      </select>
+                      <div class="rating-arrow">&#9660;</div>
+                    </div>
+                  </div>
+                  <div class ="error"*ngIf="ReviewLocation_Error">
+                    <p>{{ReviewLocation_Error.Errors}}</p>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <button type="submit" class="btn btn-primary review-button">Submit Review</button>
+                </div>
+              </div>
+            </form>
+            <div class ="error"*ngIf="ReviewUser_Error">
+              <p>{{ReviewUser_Error.Errors}}</p>
+            </div>
         </div>
     </div>
 </div>
@@ -253,6 +330,12 @@ export class DetailsComponent {
   StartingDate_Error: error;
   EndingDate_Error: error;
   Visitors_Error: error;
+  ReviewUser_Error: error;
+  ReviewText_Error: error | undefined;
+  ReviewRating_Error: error | undefined;
+  ReviewClean_Error: error | undefined;
+  ReviewCommunication_Error: error | undefined;
+  ReviewLocation_Error: error | undefined;
   housingLocationId = -1;
   currentIndex = 0;
   housingLocation: House | undefined;
@@ -260,7 +343,8 @@ export class DetailsComponent {
   Host: Host | undefined;
   ProfilePic: Images | undefined;
   BookedDates:string[] = [];
-  VisitorOptions = [1,2,3,4,5]
+  VisitorOptions = [1,2,3,4,5];
+  RatingOptions = [1,2,3,4,5];
   SumbitForm : boolean = false;
   LogoutBoolean:boolean = false;
   BookDates = new FormGroup({
@@ -270,20 +354,34 @@ export class DetailsComponent {
   Visitors = new FormGroup({
     Count: new FormControl(0)
   });
+  Review = new FormGroup({
+    Rating: new FormControl(-1),
+    Cleaniness: new FormControl(-1),
+    Communication: new FormControl(-1),
+    Location: new FormControl(-1),
+    Text: new FormControl('')
+  });
   
   constructor() {
     this.StartingDate_Error = {Variable: '',Errors: ''};
     this.EndingDate_Error = {Variable: '',Errors: ''};
     this.Visitors_Error = {Variable: '',Errors: ''};
+    this.ReviewUser_Error = {Variable: '',Errors: ''};
     const housingLocationId = parseInt(this.route.snapshot.params['id'], 10);
     this.housingService.getHousingLocationById(housingLocationId).subscribe(housingLocation => {
         this.housingLocation = housingLocation;
+        this.housingService.GetPropertyDates(housingLocation.Id).subscribe( response => {
+          if(typeof response != "string")
+          {
+            this.BookedDates = response;
+          }
           this.HostService.RetrivePublicHostDatabyId(this.housingLocation?.HostId!).subscribe((host) =>{
-            this.Host = host;
+             this.Host = host;
               this.HostService.RetrieveHostImageById(this.housingLocation?.HostId!).subscribe((image) =>{
                 this.ProfilePic = image;
                 });
               })
+        })
   });
   }
   /*Image preview functions*/
@@ -301,6 +399,36 @@ export class DetailsComponent {
     this.currentIndex = (this.currentIndex + 1) % this.housingLocation!.Images?.length;
   }
 
+ /*Submit Review*/
+
+  SubmitReview(){
+    const Data = new FormData();
+    const Review = this.Review.value;
+    Data.append('Rating',Review.Rating);
+    Data.append('Cleaniness',Review.Cleaniness);
+    Data.append('Communication',Review.Communication);
+    Data.append('Location',Review.Location);
+    Data.append('Text',Review.Text);
+    this.housingService.SumbitReview(this.housingLocation?.Id,Data).subscribe((response) => {
+      console.log(response);
+      if(response === 'UserError')
+      {
+        this.ReviewUser_Error.Variable = "User";
+        this.ReviewUser_Error.Errors = "You must have booked this property in the past or be an authenticated user to submit a review!";
+      }
+      else if(response != "ok")
+      {
+        const Errors = response as error[];
+        this.ReviewText_Error = Errors.find(item => item.Variable === 'Text');
+        this.ReviewRating_Error = Errors.find(item => item.Variable === 'Rating');
+        this.ReviewClean_Error = Errors.find(item => item.Variable === 'Cleaniness');
+        this.ReviewCommunication_Error = Errors.find(item => item.Variable === 'Communication');
+        this.ReviewLocation_Error = Errors.find(item => item.Variable === 'Location');
+      }
+      else
+        location.reload();
+    })
+  }
   /*Submit Form function*/
 
   ShowForm(){
@@ -374,7 +502,10 @@ export class DetailsComponent {
     Data.append('VisitorsCount',Visitors.Count);
     Data.append('TotalPrice',this.TotalCost());
     Data.append('DaysCount',this.GetNumberOfDays());
-    this.housingService.BookPropertyById(this.housingLocation?.Id,Data);
+    this.housingService.BookPropertyById(this.housingLocation?.Id,Data).subscribe(response =>{
+      if(response === "ok")
+        location.reload();
+    });
   }
 
   FilterDate(date:Date):boolean{
