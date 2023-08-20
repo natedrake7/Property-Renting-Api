@@ -110,7 +110,7 @@
   border: 1px solid #ccc;
   padding: 10px;
   border-radius: 12px;
-  width: 400px;
+  width: 340px;
   height: auto;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
@@ -126,4 +126,13 @@
 
 .review-rating{
   font-weight: bold;
+}
+
+.review-comments{
+  margin-top: 20px;
+}
+
+.date{
+  font-size: small;
+  margin-left: 100px;
 }

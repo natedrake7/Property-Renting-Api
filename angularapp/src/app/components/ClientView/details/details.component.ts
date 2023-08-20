@@ -1,5 +1,5 @@
 import { Component,inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule,DatePipe } from '@angular/common';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { HouseService } from 'src/app/services/house.service';
 import { House} from 'src/app/interfaces/house';
@@ -22,6 +22,7 @@ import { error } from 'src/app/interfaces/error';
   selector: 'app-details',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule,RouterModule,MatFormFieldModule, MatInputModule, MatDatepickerModule, MatNativeDateModule,MatSelectModule,MatIconModule,MatDialogModule],
+  providers: [DatePipe],
   template: `
     
   <div class="container layout">
@@ -332,7 +333,7 @@ import { error } from 'src/app/interfaces/error';
         <div *ngFor="let review of housingLocation?.Reviews">
           <div class="reviews">
             <div class="review-contents">
-              <h5 class="reviewer-name">{{review.ReviewerName}},</h5>
+              <h5 class="reviewer-name">{{review.ReviewerName}}, <span class="date"> Date: {{ review.Date | date: 'dd/MM/yyyy' }}</span></h5>
               <p class="review-comments">{{review.Comments}}</p>
                 <div class="score">Property: <span class="review-rating">{{review.ReviewScoresRating}}<i class="fas fa-star"></i></span></div>
                 <div class="score"> Location: <span class="review-rating">{{review.ReviewScoresLocation}}<i class="fas fa-star"></i></span></div>

@@ -153,6 +153,10 @@
   margin-left: 20px;
 }
 
+.review-comments{
+  margin-top: 20px;
+}
+
 
 .reviewer-name{
   font-weight: normal;
@@ -193,6 +197,11 @@
 
 .rating-container:hover .rating-arrow{
   transform: translateY(-50%) rotateX(180deg);
+}
+
+.date{
+  font-size: small;
+  margin-left: 100px;
 }
 
 .error{

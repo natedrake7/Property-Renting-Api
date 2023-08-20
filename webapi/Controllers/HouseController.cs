@@ -146,7 +146,9 @@ namespace webapi.Controllers
                 ReviewScoresLocation = review.Location,
                 Comments = review.Text
             };
+
             _context.Add(Review);
+
             await _context.SaveChangesAsync();
             var house = await(from h in _context.Houses
                               where h.Id == Id
@@ -158,7 +160,9 @@ namespace webapi.Controllers
                                 select r).ToListAsync();
             if (reviews == null)
                 return NotFound("House has no reviews!");
+
             float sumScoresRating = 0, sumCleaniness = 0, sumLocation = 0, sumCommuncation = 0;
+
             foreach (var review_val in reviews)
             {
                 sumScoresRating += review_val.ReviewScoresRating; //get the total sum 
@@ -166,12 +170,14 @@ namespace webapi.Controllers
                 sumCommuncation += review_val.ReviewScoresCommunication;
                 sumLocation += review_val.ReviewScoresLocation;
             }
+
             house.ReviewScoresRating = sumScoresRating / reviews.Count; //get the mean for each rating value
             house.ReviewScoresCleanliness = sumCleaniness / reviews.Count;
             house.ReviewScoresCommunication = sumCommuncation / reviews.Count;
             house.ReviewScoresLocation = sumLocation / reviews.Count;
 
             await _context.SaveChangesAsync();
+
             var json1 = JsonSerializer.Serialize("ok", options);
             return Content(json1, "application/json");
         }

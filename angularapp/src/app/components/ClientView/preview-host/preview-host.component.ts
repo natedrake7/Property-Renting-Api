@@ -102,7 +102,7 @@ import { PreviewHostHouseComponent } from '../preview-host-house/preview-host-ho
               <div *ngIf="firstReview">
               <div class="reviews">
                 <div class="review-contents">
-                  <h5 class="reviewer-name">{{review.ReviewerName}},</h5>
+                  <h5 class="reviewer-name">{{review.ReviewerName}}, <span class="date"> Date: {{ review.Date | date: 'dd/MM/yyyy' }}</span></h5>
                   <p class="review-comments">{{review.Comments}}</p>
                     <div class="score">Property: <span class="review-rating">{{review.ReviewScoresRating}}<i class="fas fa-star"></i></span></div>
                     <div class="score"> Location: <span class="review-rating">{{review.ReviewScoresLocation}}<i class="fas fa-star"></i></span></div>
