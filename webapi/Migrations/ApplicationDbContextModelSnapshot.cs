@@ -191,7 +191,7 @@ namespace webapi.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("UserCalendars");
+                    b.ToTable("UserCalendars", (string)null);
                 });
 
             modelBuilder.Entity("webapi.Models.Host", b =>
@@ -249,7 +249,7 @@ namespace webapi.Migrations
                         .IsUnique()
                         .HasFilter("[UserId] IS NOT NULL");
 
-                    b.ToTable("Hosts");
+                    b.ToTable("Hosts", (string)null);
                 });
 
             modelBuilder.Entity("webapi.Models.HostImage", b =>
@@ -276,7 +276,7 @@ namespace webapi.Migrations
 
                     b.HasIndex("HostId");
 
-                    b.ToTable("HostImages");
+                    b.ToTable("HostImages", (string)null);
                 });
 
             modelBuilder.Entity("webapi.Models.House", b =>
@@ -447,7 +447,7 @@ namespace webapi.Migrations
 
                     b.HasIndex("HostId");
 
-                    b.ToTable("Houses");
+                    b.ToTable("Houses", (string)null);
                 });
 
             modelBuilder.Entity("webapi.Models.HouseImage", b =>
@@ -474,7 +474,7 @@ namespace webapi.Migrations
 
                     b.HasIndex("HouseId");
 
-                    b.ToTable("HouseImages");
+                    b.ToTable("HouseImages", (string)null);
                 });
 
             modelBuilder.Entity("webapi.Models.Review", b =>
@@ -528,7 +528,7 @@ namespace webapi.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("UserReviews");
+                    b.ToTable("UserReviews", (string)null);
                 });
 
             modelBuilder.Entity("webapi.Models.User", b =>

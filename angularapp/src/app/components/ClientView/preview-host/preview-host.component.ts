@@ -1,18 +1,18 @@
 import { Component,inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { ActivatedRoute, Router } from '@angular/router';
+import { CommonModule,DatePipe } from '@angular/common';
+import { ActivatedRoute } from '@angular/router';
 import { HostService } from 'src/app/services/host.service';
 import { Images } from 'src/app/interfaces/images';
 import { Host } from 'src/app/interfaces/host';
 import { House } from 'src/app/interfaces/house';
 import { HouseService } from 'src/app/services/house.service';
-import { HouseComponent } from '../house/house.component';
 import { PreviewHostHouseComponent } from '../preview-host-house/preview-host-house.component';
 
 @Component({
   selector: 'app-preview-host',
   standalone: true,
   imports: [CommonModule,PreviewHostHouseComponent],
+  providers: [DatePipe],
   template: `
     <div class="container center-container">
       <div class="row custom-row-width">
@@ -30,11 +30,11 @@ import { PreviewHostHouseComponent } from '../preview-host-house/preview-host-ho
                 </div>
                 <div class="col-md-6">
                   <div class="misc">
-                    <h5 class="etc"> Reviews!</h5>
+                    <h5 class="etc">{{GetRatingsCount()}} Total Reviews</h5>
                     <hr style="border: 1px solid gray;border-radius: 12px;">
-                    <h5 class="etc">Rating!</h5>
+                    <h5 class="etc">{{GetHostRating()}}<i class="fas fa-star"></i></h5>
                     <hr style="border: 1px solid gray;border-radius: 12px;">
-                    <h5 class="etc">Time!</h5>
+                    <h5 class="etc"><p>Host Since: {{ Host?.HostSince | date: 'dd/MM/yyyy' }}</p></h5>
                   </div>
                 </div>
               </div>
@@ -95,9 +95,29 @@ import { PreviewHostHouseComponent } from '../preview-host-house/preview-host-ho
           <div class="row">
             <app-preview-host-house class="properties" *ngFor="let house of Houses" [house]="house"></app-preview-host-house>
           </div>
+          <hr style="border: 1px solid gray;border-radius: 12px;">
+          <h5>Reviews of the host's properties:</h5>
+          <div class="reviews-container" *ngFor="let house of Houses">
+            <div *ngFor="let review of house.Reviews;let firstReview = first">
+              <div *ngIf="firstReview">
+              <div class="reviews">
+                <div class="review-contents">
+                  <h5 class="reviewer-name">{{review.ReviewerName}},</h5>
+                  <p class="review-comments">{{review.Comments}}</p>
+                    <div class="score">Property: <span class="review-rating">{{review.ReviewScoresRating}}<i class="fas fa-star"></i></span></div>
+                    <div class="score"> Location: <span class="review-rating">{{review.ReviewScoresLocation}}<i class="fas fa-star"></i></span></div>
+                    <div class="score"> Host communication: <span class="review-rating">{{review.ReviewScoresCommunication}}<i class="fas fa-star"></i></span></div>
+                    <div class="score">Cleaninless: <span class="review-rating">{{review.ReviewScoresCleanliness}}<i class="fas fa-star"></i></span></div>        
+                </div>
+              </div>
+              </div>
+            </div>
+          </div>
         </div>
     </div>
   </div>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
   `,
   styleUrls: ['./preview-host.component.css']
 })
@@ -105,6 +125,7 @@ export class PreviewHostComponent {
   route: ActivatedRoute = inject(ActivatedRoute);
   HostService: HostService = inject(HostService);
   HouseService: HouseService = inject(HouseService);
+  DatePipe: DatePipe = inject(DatePipe);
   ProfilePic: Images | undefined;
   Host: Host | undefined;
   Id: number | undefined;
@@ -123,5 +144,21 @@ export class PreviewHostComponent {
     this.HostService.RetrieveHostImageById(this.Id!).subscribe((image) => {
       this.ProfilePic = image;
     });
+  }
+  GetHostRating():number{
+    var Rating = 0;
+    for(let i = 0;i < this.Houses.length;i++)
+    {
+      Rating += this.Houses[i].ReviewScoresRating;
+    }
+    return Rating /= this.Houses.length;
+  }
+  GetRatingsCount():number{
+    var Count = 0;
+    for(let i = 0;i < this.Houses.length;i++)
+    {
+      Count += this.Houses[i].Reviews.length;
+    }
+    return Count;
   }
 }

@@ -11,17 +11,19 @@ import { HouseService } from 'src/app/services/house.service';
   template: `
   <section class="listing">
     <div class="row">
+    <div class="details">
+      {{house.ReviewScoresRating}}<i class="fas fa-star"></i>,{{house.Name}}
+    </div>
       <a [routerLink]="['/details/', house.Id]">
         <div class="thumbnail-container">
           <img class="thumbnail"*ngIf="house.ThumbnailURL" [src]=" house.ThumbnailURL" alt="No Thumbnail Available">
         </div>
       </a>
-      <div class="details">
-        <p class="name">{{house.Name}}</p>
-        <p class="rating">Rating!</p>
-      </div>
     </div>
-    </section>`,
+    </section>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    `,
   styleUrls: ['./preview-host-house.component.css']
 })
 export class PreviewHostHouseComponent {

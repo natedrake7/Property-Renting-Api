@@ -118,9 +118,7 @@ namespace webapi.Models
 
         public List<Review>? Reviews { get; set; }
 
-        public List<Calendar>? BookedDates { get; set; }
-
-        public House(House house,List<HouseImage> images,List<Review> reviews,float meanScoresRating,float meanCleaniness, float meanCheckin, float meanCommuncation,float meanValue)
+        public House(House house,List<HouseImage> images,List<Review> reviews)
         {
             Id = house.Id;
             Name = house.Name;
@@ -155,11 +153,10 @@ namespace webapi.Models
             InstantBookable = house.InstantBookable;
             RequireGuestPhoneVerification = house.RequireGuestPhoneVerification;
             CancellationPolicy = house.CancellationPolicy;
-            ReviewScoresRating = meanScoresRating;
-            ReviewScoresCleanliness = meanCleaniness;
-            ReviewScoresCheckin = meanCheckin;
-            ReviewScoresCommunication = meanCommuncation;
-            ReviewScoresValue = meanValue;
+            ReviewScoresRating = house.ReviewScoresRating;
+            ReviewScoresCleanliness = house.ReviewScoresCleanliness;
+            ReviewScoresCommunication = house.ReviewScoresCommunication;
+            ReviewScoresLocation = house.ReviewScoresLocation;
             Reviews = new List<Review>(reviews);
             Images = new List<HouseImage>(images);
         }

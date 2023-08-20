@@ -148,6 +148,30 @@ namespace webapi.Controllers
             };
             _context.Add(Review);
             await _context.SaveChangesAsync();
+            var house = await(from h in _context.Houses
+                              where h.Id == Id
+                              select h).FirstOrDefaultAsync();
+            if (house == null)
+                return NotFound("Requested house not found!");
+            var reviews = await(from r in _context.UserReviews
+                                where r.HouseId ==  Id
+                                select r).ToListAsync();
+            if (reviews == null)
+                return NotFound("House has no reviews!");
+            float sumScoresRating = 0, sumCleaniness = 0, sumLocation = 0, sumCommuncation = 0;
+            foreach (var review_val in reviews)
+            {
+                sumScoresRating += review_val.ReviewScoresRating; //get the total sum 
+                sumCleaniness += review_val.ReviewScoresCleanliness;
+                sumCommuncation += review_val.ReviewScoresCommunication;
+                sumLocation += review_val.ReviewScoresLocation;
+            }
+            house.ReviewScoresRating = sumScoresRating / reviews.Count; //get the mean for each rating value
+            house.ReviewScoresCleanliness = sumCleaniness / reviews.Count;
+            house.ReviewScoresCommunication = sumCommuncation / reviews.Count;
+            house.ReviewScoresLocation = sumLocation / reviews.Count;
+
+            await _context.SaveChangesAsync();
             var json1 = JsonSerializer.Serialize("ok", options);
             return Content(json1, "application/json");
         }
@@ -163,6 +187,30 @@ namespace webapi.Controllers
                 Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
             };
             var json = JsonSerializer.Serialize(Houses, options);
+            return Content(json, "application/json");
+        }
+
+
+        [AllowAnonymous]
+        [HttpGet]
+        public async Task<IActionResult> GetThumbnail(int? id)
+        {
+            var image = await (from i in _context.HouseImages
+                               where i.HouseId == id && i.Name == "Thumbnail"
+                               select i).FirstOrDefaultAsync();
+            if (image == null)
+                return NotFound();
+            if (image!.URL == null) //If host has input the images as jpg or png files
+            {
+                string base64image = Convert.ToBase64String(image.Image!); //Convert them
+                string imageDataUrl = $"data:image/png;base64,{base64image}"; //Get the URL
+                image.URL = imageDataUrl; //Add it to the URL name
+            }
+            var options = new JsonSerializerOptions
+            {
+                Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+            };
+            var json = JsonSerializer.Serialize(image, options);
             return Content(json, "application/json");
         }
 
@@ -189,29 +237,6 @@ namespace webapi.Controllers
                 Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
             };
             var json = JsonSerializer.Serialize(images, options);
-            return Content(json, "application/json");
-        }
-
-        [AllowAnonymous]
-        [HttpGet]
-        public async Task<IActionResult> GetThumbnail(int? id)
-        {
-            var image = await (from i in _context.HouseImages
-                               where i.HouseId == id && i.Name == "Thumbnail"
-                               select i).FirstOrDefaultAsync();
-            if (image == null)
-                return NotFound();
-            if (image!.URL == null) //If host has input the images as jpg or png files
-            {
-                string base64image = Convert.ToBase64String(image.Image!); //Convert them
-                string imageDataUrl = $"data:image/png;base64,{base64image}"; //Get the URL
-                image.URL = imageDataUrl; //Add it to the URL name
-            }
-            var options = new JsonSerializerOptions
-            {
-                Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
-            };
-            var json = JsonSerializer.Serialize(image, options);
             return Content(json, "application/json");
         }
 
@@ -279,24 +304,8 @@ namespace webapi.Controllers
                 }
             }
 
-            float sumScoresRating = 0, sumCleaniness = 0, sumCheckin = 0, sumCommuncation = 0, sumValue = 0;
-            foreach (var review in reviews) //for each review
-            {
-                sumScoresRating += review.ReviewScoresRating; //get the total sum 
-                sumCleaniness += review.ReviewScoresCleanliness;
-                sumCheckin += review.ReviewScoresCheckin;
-                sumCommuncation += review.ReviewScoresCommunication;
-                sumValue += review.ReviewScoresValue;
-            }
-
-            float meanScoresRating = sumScoresRating / reviews.Count; //get the mean for each rating value
-            float meanCleaniness = sumCleaniness / reviews.Count;
-            float meanCheckin = sumCheckin / reviews.Count;
-            float meanCommuncation = sumCommuncation / reviews.Count;
-            float meanValue = sumValue / reviews.Count;
-
-            House house = new (userHouse,images,reviews,meanScoresRating,meanCleaniness,meanCheckin,meanCommuncation,meanValue);
-            var json = JsonSerializer.Serialize(userHouse, options);
+            House house = new (userHouse,images,reviews);
+            var json = JsonSerializer.Serialize(house, options);
             return Content(json, "application/json");
         }
 

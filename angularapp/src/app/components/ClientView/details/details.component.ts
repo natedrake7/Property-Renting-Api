@@ -23,11 +23,18 @@ import { error } from 'src/app/interfaces/error';
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule,RouterModule,MatFormFieldModule, MatInputModule, MatDatepickerModule, MatNativeDateModule,MatSelectModule,MatIconModule,MatDialogModule],
   template: `
+    
   <div class="container layout">
     <div class="row">
       <div class="listing-description">
             <h3 class="listing-heading">{{housingLocation?.Name}}</h3>
-            <p class="listing-location">ReviewHere!,{{housingLocation?.City}}, {{housingLocation?.State}},{{housingLocation?.Country}}</p>
+            <p class="listing-location">
+              <span class="star-rating"> 
+                <i class="fas fa-star"></i> 
+                {{housingLocation?.ReviewScoresRating}},
+              </span>
+              {{housingLocation?.City}}, {{housingLocation?.State}},{{housingLocation?.Country}}
+            </p>
       </div>
       <div class="col-md-6">
         <div class="image-container">
@@ -171,7 +178,8 @@ import { error } from 'src/app/interfaces/error';
             <h5>{{housingLocation?.Price}}€
               <span class="price">/Night</span>
               <span class="ratings"> 
-                  Ratings!
+                {{housingLocation?.ReviewScoresRating}}
+                <i class="fas fa-star"></i> 
               </span>
               </h5>
                 <div class="col-md-6">
@@ -239,7 +247,7 @@ import { error } from 'src/app/interfaces/error';
             </div>
           </div>
           <hr style="border: 1px solid gray;border-radius: 12px;">
-          <div class="row">
+          <div class="row review-box">
             <h5 class="review-header">Have you been here?Leave a review.</h5>
             <form [formGroup]="Review" (ngSubmit)="SubmitReview()">
               <div class="form-group">
@@ -315,9 +323,29 @@ import { error } from 'src/app/interfaces/error';
             <div class ="error"*ngIf="ReviewUser_Error">
               <p>{{ReviewUser_Error.Errors}}</p>
             </div>
+        </div>    
+    </div>
+    <hr style="border: 1px solid gray;border-radius: 12px;">
+    <div class="row">
+      <h5>Some of the property's reviews:</h5>
+      <div class="reviews-container">
+        <div *ngFor="let review of housingLocation?.Reviews">
+          <div class="reviews">
+            <div class="review-contents">
+              <h5 class="reviewer-name">{{review.ReviewerName}},</h5>
+              <p class="review-comments">{{review.Comments}}</p>
+                <div class="score">Property: <span class="review-rating">{{review.ReviewScoresRating}}<i class="fas fa-star"></i></span></div>
+                <div class="score"> Location: <span class="review-rating">{{review.ReviewScoresLocation}}<i class="fas fa-star"></i></span></div>
+                <div class="score"> Host communication: <span class="review-rating">{{review.ReviewScoresCommunication}}<i class="fas fa-star"></i></span></div>
+                <div class="score">Cleaninless: <span class="review-rating">{{review.ReviewScoresCleanliness}}<i class="fas fa-star"></i></span></div>        
+            </div>
+          </div>
         </div>
+      </div>
     </div>
 </div>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 `,
   styleUrls: ['./details.component.css']
 })

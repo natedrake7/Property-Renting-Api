@@ -1,3 +1,6 @@
+.layout{
+  margin-bottom: 100px;
+}
 .row {
   display: flex;
   align-items: flex-start;
@@ -75,7 +78,7 @@
   font-weight: normal;
 }
 .ratings{
-  margin-left: 340px;
+  margin-left: 380px;
 }
 
 .image{
@@ -120,20 +123,61 @@
   margin-left: 10px;
 }
 
+.reviews-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.review-box{
+  border: 1px solid #ccc;
+  padding: 10px;
+  border-radius: 12px;
+  height: auto;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+}
+
+
+.reviews{
+  margin-top: 20px;
+  border: 1px solid #ccc;
+  padding: 10px;
+  border-radius: 12px;
+  width: 340px;
+  height: auto;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.review-contents{
+  margin-left: 20px;
+}
+
+
+.reviewer-name{
+  font-weight: normal;
+}
+
+.review-rating{
+  font-weight: bold;
+}
+
 .rating-container {
   position: relative;
   width: 50px;
   height: auto;
+  
 }
 
 .review-button{
-  margin-top: 40px;
+  margin-top: 180px;
   margin-left: 110px;
   width: 150px;
   height: auto;
 }
 
 .review-header{
+  margin-top: 20px;
   margin-bottom: 20px;
 }
 

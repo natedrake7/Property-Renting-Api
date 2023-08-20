@@ -1,4 +1,5 @@
 import { Images } from "./images";
+import { Review } from "./review";
 
 export interface House {
   Id: number;
@@ -58,6 +59,7 @@ export interface House {
   RequireGuestPhoneVerification: boolean;
   ReviewsPerMonth: number;
   Images: Images[];
+  Reviews: Review[];
   BookedDates: string[];
   ThumbnailURL: string;
   Image: number[];

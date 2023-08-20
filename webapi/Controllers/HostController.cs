@@ -96,6 +96,23 @@ namespace webapi.Controllers
                           select h).ToListAsync();
             if(Houses == null) 
                 return NotFound();
+            foreach(var House in Houses)
+            {
+                var reviews = (from r in _context.UserReviews //get the reviews for the current house
+                               where r.HouseId == House.Id
+                               select r).ToList();
+
+                House.Reviews = reviews;
+                float sumScoresRating = 0;
+
+                foreach (var review in reviews) //for each review
+                {
+                    sumScoresRating += review.ReviewScoresRating; //get the total sum
+                }
+
+                float meanScoresRating = sumScoresRating / reviews.Count; //get the mean for each rating value
+                House.ReviewScoresRating = meanScoresRating;
+            }
             var options = new JsonSerializerOptions
             {
                 Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
@@ -114,7 +131,6 @@ namespace webapi.Controllers
 
             if (host == null) //No need to check since we have authorization
                 return NotFound("Host not found!");
-
             var options = new JsonSerializerOptions
             {
                 Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping

@@ -18,7 +18,8 @@ import { RouterModule } from '@angular/router';
       <div class="details">
         <p class="listing-location">{{ house.City}}, {{ house.State }},
           <span class="ratings"> 
-            Ratings here!
+            {{house.ReviewScoresRating}}
+            <i class="fas fa-star"></i> 
         </span>
         </p>
         <p class="listing-location">{{house.Street}},{{house.Neighbourhood}},
@@ -32,7 +33,9 @@ import { RouterModule } from '@angular/router';
         <a class="property-link" [routerLink]="['/details/', house.Id]">Book Now</a>
       </div>
     </div>
-    </section>`,
+    </section>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    `,
   styleUrls: ['./house.component.css']
 })
 export class HouseComponent {

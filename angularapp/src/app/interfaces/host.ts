@@ -6,4 +6,5 @@ export interface Host {
   Languages?: string;
   Profession?: string;
   HostIdentityVerified?: boolean; 
+  HostSince?: string;
 }
