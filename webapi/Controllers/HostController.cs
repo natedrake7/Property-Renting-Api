@@ -115,7 +115,8 @@ namespace webapi.Controllers
             }
             var options = new JsonSerializerOptions
             {
-                Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+                Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
+                NumberHandling = JsonNumberHandling.AllowNamedFloatingPointLiterals
             };
             var json = JsonSerializer.Serialize(Houses, options);
             return Content(json, "application/json");

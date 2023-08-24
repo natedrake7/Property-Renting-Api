@@ -365,6 +365,10 @@ namespace webapi.Controllers
                     RequireGuestPhoneVerification = House.RequireGuestPhoneVerification,
                     InstantBookable = House.InstantBookable,
                     CancellationPolicy = House.CancellationPolicy,
+                    ReviewScoresCleanliness = 0,
+                    ReviewScoresCommunication = 0,
+                    ReviewScoresLocation = 0,
+                    ReviewScoresRating = 0,
                     HostId = user.HostId
                 };
                 _context.Add(userHouse);

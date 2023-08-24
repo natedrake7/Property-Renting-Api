@@ -27,7 +27,7 @@ import { UserService } from 'src/app/services/user.service';
     <div class="row">
       <div class="col-md-6">
         <h2 class="listing-heading">{{ house.Name }}</h2>
-        <a [routerLink]="['/details/', house.Id]">
+        <a class="image-link" [routerLink]="['/details/', house.Id]">
           <img class="thumbnail"*ngIf="house.ThumbnailURL" [src]=" house.ThumbnailURL" alt="No Thumbnail Available">
         </a>
         <p class="listing-location">{{ house.City}}, {{ house.State }}</p>
@@ -39,37 +39,47 @@ import { UserService } from 'src/app/services/user.service';
         </p>
         <a class="property-link" [routerLink]="['/details/', house.Id]">Preview Property Page</a>
         <a class="property-link" [routerLink]="['EditHouse', house.Id]">Edit Property Page</a>       
-        <button class="property-link" type="button" (click)="RemoveProperty()">Remove Property</button>
+        <button class="btn btn-primary property-link" type="button" (click)="RemoveProperty()">Remove Property</button>
+        <div class="deletecheck" *ngIf="DeleteConfirmation">
+          <p class="message red">Are you sure you want to delete this property?</p>
+          <p class="message red">This action cannot be revoked!</p>
+          <button class="btn btn-primary delete-button" type="button" (click)="RemovePropertyConfirmed()">Yes</button>
+          <button class="btn btn-primary delete-button" type="button" (click)="RemoveProperty()">No</button>
+        </div>
       </div>
       <div class="col-md-6">
         <div class="row">
-          <h2>General Information</h2>
-          <div class="col-md-6">
+          <h2 class="header text-center">General Information</h2>
+          <div class="col-md-4">
             <h5>Property Type </h5>
             <p>{{house.PropertyType}}</p>
             <h5>Property Size </h5>
             <p>{{house.SquareFeet}}</p>
           </div>
-          <div class="col-md-6">
+          <div class="col-md-4">
             <h5>House Summary </h5>
             <p>{{house.Summary}}</p>
             <h5>House Space </h5>
             <p>{{house.Space}}</p>
           </div>
+          <div class="col-md-4">
+            <h5>Overall Rating </h5>
+            <p>{{house.ReviewScoresRating}}<i class="fas fa-star"></i></p>
+            <h5>Location Rating </h5>
+            <p>{{house.ReviewScoresLocation}}<i class="fas fa-star"></i></p>
+            <h5>Cleanliness Rating </h5>
+            <p>{{house.ReviewScoresCleanliness}}<i class="fas fa-star"></i></p>
+            <h5>Communication Rating </h5>
+            <p>{{house.ReviewScoresCommunication}}<i class="fas fa-star"></i></p>
+          </div>
         </div>
-
       </div>
-        <div class="deletecheck" *ngIf="DeleteConfirmation">
-          <p class="message red">Are you sure you want to delete this property?</p>
-          <p class="message red">This action cannot be revoked!</p>
-          <button class="delete-button" type="button" (click)="RemovePropertyConfirmed()">Yes</button>
-          <button class="delete-button" type="button" (click)="RemoveProperty()">No</button>
-        </div>
     </div>
   </section>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 </html>
   `,
   styleUrls: ['./preview-house.component.css']

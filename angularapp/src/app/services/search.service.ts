@@ -15,20 +15,18 @@ export class SearchService {
 
   filterByCity(HouseList:House[]): House[] {
     this.Value = this.GetValue();
-    if(this.Value != null)
-      this.text = this.Value;
-    if (!this.text) {
+    if(this.Value == null)
+    {
       this.filteredLocationList = HouseList;
       return this.filteredLocationList
     }
-    this.text  = this.text .toLowerCase();
+    this.text = this.Value .toLowerCase();
     this.filteredLocationList = HouseList.filter(
-      housingLocation => housingLocation?.City.toLowerCase().includes(this.text)
+      housingLocation => housingLocation?.City.toLowerCase().includes(this.text) ||
+                         housingLocation?.Country.toLowerCase().includes(this.text) ||
+                         housingLocation?.Neighbourhood.toLowerCase().includes(this.text) ||
+                         housingLocation?.Street.toLowerCase().includes(this.text)
     );
     return this.filteredLocationList;
-  }
-  
-  filterByCountry(){
-
   }
 }

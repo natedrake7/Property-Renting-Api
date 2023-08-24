@@ -46,9 +46,9 @@ import { HostService } from 'src/app/services/host.service';
             <button class="btn btn-primary" type="button">Personal Data</button>
           </a>
         </div>
-      <div class="col-md-3 profile-col">
+      <div class="col-md-6 profile-col">
         <section class="Profile">
-          <h2>Your Profile</h2>
+          <h2 class="profile-header">Your Profile</h2>
           <form [formGroup]="EditForm" (submit)="EditProfile()">
             <div class="row">
                 <div class="form-group">
@@ -95,11 +95,22 @@ import { HostService } from 'src/app/services/host.service';
               <div class="form-group">
               <label for="description">Description</label>
               <div *ngIf="User?.Bio != null">
-                <input id="description" class="form-control" type="text" [placeholder]="User?.Bio" formControlName="Bio">
+              <textarea
+                    id="description"
+                    class="form-control"
+                    rows="4"
+                    formControlName="Bio"
+                    [placeholder]="User?.Bio"
+              ></textarea>
               </div>
               <div *ngIf="User?.Bio == null">
-                <input id="description-null" class="form-control" type="text" placeholder="Enter your Description"
-                  formControlName="Bio">
+              <textarea
+                    id="description"
+                    class="form-control"
+                    rows="4"
+                    formControlName="Bio"
+                    placeholder="Please describe yourself..."
+              ></textarea>
               </div>
             </div>
             <button type="submit" class="btn btn-primary">Submit</button>

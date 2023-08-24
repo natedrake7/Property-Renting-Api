@@ -1,14 +1,18 @@
 .layout{
   border: 1px solid #ccc;
-  border-radius: 4px;
+  border-radius: 12px;
   background-color: #f5f5f5;
+  padding: 10px;
   margin-top: 40px;
+  width: 1200px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
 .nav-buttons{
   justify-content: left;
   margin-top: 50px;
   margin-right: 50px;
+  margin-left: 30px;
 }
 
 .nav-buttons button{
@@ -16,7 +20,11 @@
 }
 
 .profile-col{
-  display: flex;
-  width: auto;
+  display:inline-block;
+  width: 1000px;
   height: auto;
+}
+
+.profile-header{
+  justify-content: center;
 }

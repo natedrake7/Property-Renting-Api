@@ -23,16 +23,14 @@ import { SearchService } from './services/search.service';
         <a class="navbar-brand brand" [routerLink]="['/']">
           <img class="brand-logo" src="/assets/main-image.png" alt="logo" aria-hidden="true">
         </a>
-        <ng-container *ngIf="showSearchButton()">
-          <ul class="nav navbar-nav">
-            <div class="form-group input-group search-container">
-              <form action="/" (submit)="FilterByCity(filter.value)">
-                <input type="text" class="form-control" placeholder="Filter by city" #filter>
-                <button class="btn btn-primary ml-2 searchbutton" type="submit">Search</button>
-              </form>
-            </div>
-          </ul>
-        </ng-container>
+        <ul class="nav navbar-nav">
+          <div class="form-group input-group search-container">
+            <form action="/" (submit)="FilterByCity(filter.value)">
+              <input type="text" class="form-control search-bar" placeholder="Filter by Country,City,Neighbourhood or Street..." #filter>
+              <button class="btn btn-primary ml-2 searchbutton" type="submit">Search</button>
+            </form>
+          </div>
+        </ul>
         <ul class="nav navbar-nav navbar-right">
           <li class="nav-item" *ngIf="!UserStatus">
             <button class="btn btn-primary register" [routerLink]="['Register']">Register</button>
@@ -63,7 +61,6 @@ export class AppComponent {
   UserStatus: boolean = false;
   StatusCheck: boolean = false;
   Username: string | undefined;
-  CountryList: string[] = [];
   title = "airbnb";
   constructor(){
     this.UserStatus = this.UserService.GetUserStatus();
@@ -72,9 +69,6 @@ export class AppComponent {
   Logout() {
     if (this.UserService.GetUserStatus())
       this.UserService.Logout().subscribe(() => { localStorage.removeItem('User'); location.reload(); });
-  }
-  showSearchButton(){
-    return this.RoutingService.url === '/' || this.RoutingService.url === '/details'
   }
   FilterByCity(filterValue: string){this.SearchService.SetValue(filterValue);}
 }

@@ -16,13 +16,13 @@ import { RouterModule } from '@angular/router';
         </div>
       </a>
       <div class="details">
-        <p class="listing-location">{{ house.City}}, {{ house.State }},
+        <p class="listing-location">{{ house.City}}, {{ house.Country }}
           <span class="ratings"> 
             {{house.ReviewScoresRating}}
             <i class="fas fa-star"></i> 
         </span>
         </p>
-        <p class="listing-location">{{house.Street}},{{house.Neighbourhood}},
+        <p class="listing-location">{{house.Street}},{{house.Neighbourhood}}
               <a href="https://www.google.com/maps/search/?api=1&query={{house.Street}},{{house.Neighbourhood}},{{house.City}}" target="_blank">
                 <img class="maps-link"src="../../../../assets/google_maps.png" alt="Link to Address" />
             </a>

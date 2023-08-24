@@ -64,10 +64,22 @@ import * as FormData from 'form-data';
             <div class="form-group">
               <label for="host-about">About you</label>
                 <div *ngIf="Host?.HostAbout != undefined">
-                  <input id="host-about" class="form-control" type="text" [placeholder]="Host?.HostAbout" formControlName="HostAbout">
+                <textarea
+                    id="host-about"
+                    class="form-control"
+                    rows="4"
+                    formControlName="HostAbout"
+                    [placeholder]="Host?.HostAbout"
+              ></textarea>
                 </div>
                 <div *ngIf="Host?.HostAbout === undefined">
-                  <input id="host-about" class="form-control" type="text" placeholder="Please give us a description about you" formControlName="HostAbout">
+                <textarea
+                    id="host-about"
+                    class="form-control"
+                    rows="4"
+                    formControlName="HostAbout"
+                    placeholder="Please give us a description about you..."
+              ></textarea>
                 </div> 
               <div class="error" *ngIf="HostAbout_Error">
                 <div *ngFor="let message of HostAbout_Error.Errors">
