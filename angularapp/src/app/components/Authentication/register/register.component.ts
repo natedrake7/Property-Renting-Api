@@ -14,97 +14,134 @@ import { AuthModel } from 'src/app/interfaces/auth-model';
   standalone: true,
   imports: [CommonModule,RouterModule,ReactiveFormsModule, HttpClientModule,HttpClientXsrfModule],
   template: `
-    <section class="Registration">
+  <!DOCTYPE html>
+  <html lang="en">
+
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Listing</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="./register.component.css">
+  </head>
+  <body>
+    <div class="container registration">
       <h2 class="section-heading">Register</h2>
       <form [formGroup]="RegisterForm" (submit)="registerUser()">
-      <label for="username">Username</label>
-        <input id="username" type="text" placeholder="Enter your Username" formControlName="UserName">
+        <div class="form-group">
+          <label for="username">Username</label>
+          <input id="username" class="form-control" type="text" placeholder="Enter your Username" formControlName="UserName">
+        </div>
         <div class ="error"*ngIf="Username_Error">
           <div *ngFor="let message of Username_Error.Errors">
             <p>{{message}}</p>
           </div>
         </div>
-        <label for="first-name">First Name</label>
-        <input id="first-name" type="text" placeholder="Enter your First Name" formControlName="FirstName">
+        <div class="form-group">
+          <label for="first-name">First Name</label>
+          <input id="first-name" class="form-control" type="text" placeholder="Enter your First Name" formControlName="FirstName">
+        </div>
         <div class ="error"*ngIf="Firstname_Error">
           <div *ngFor="let message of Firstname_Error.Errors">
             <p>{{message}}</p>
           </div>
         </div>
-        <label for="last-name">Last Name</label>
-        <input id="last-name" type="text" placeholder="Enter your Last Name" formControlName="LastName">
+        <div class="form-group">
+          <label for="last-name">Last Name</label>
+          <input id="last-name" class="form-control" type="text" placeholder="Enter your Last Name" formControlName="LastName">
+        </div>
         <div class ="error"*ngIf="Lastname_Error">
           <div *ngFor="let message of Lastname_Error.Errors">
             <p>{{message}}</p>
           </div>
         </div>
-        <label for="email">Email</label>
-        <input id="email" type="email" placeholder="Enter your Email" formControlName="Email">
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input id="email" class="form-control" type="email" placeholder="Enter your Email" formControlName="Email">
+        </div>
         <div class ="error"*ngIf="Email_Error">
           <div *ngFor="let message of Email_Error.Errors">
             <p>{{message}}</p>
           </div>
         </div>
-        <label for="phone">Phone Number</label>
-        <input id="phone" type="text" placeholder="Enter your Phone Number" formControlName="PhoneNumber">
+        <div class="form-group">
+          <label for="phone">Phone Number</label>
+          <input id="phone" class="form-control" type="text" placeholder="Enter your Phone Number" formControlName="PhoneNumber">
+        </div>
         <div class ="error"*ngIf="Phone_Error">
           <div *ngFor="let message of Phone_Error.Errors">
             <p>{{message}}</p>
           </div>
         </div>
-        <label for="description">Description</label>
-          <input id="description" type="text" placeholder="Enter your Description" formControlName="Description">
-
-        <label for="password">Password</label>
-        <input id="password" type="password" placeholder="Enter your Password" formControlName="Password">
+        <div class="form-group">
+          <label for="description">Description</label>
+          <input id="description" class="form-control" type="text" placeholder="Enter your Description" formControlName="Description">
+        </div>
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input id="password" class="form-control" type="password" placeholder="Enter your Password" formControlName="Password">
+        </div>
         <div class ="error"*ngIf="Password_Error">
           <div *ngFor="let message of Password_Error.Errors">
             <p>{{message}}</p>
           </div>
         </div>
-        <label for="confirm-password">Confirm Password</label>
-        <input id="confirm-password" type="password" placeholder="Confirm your Password" formControlName="ConfirmPassword">
+        <div class="form-group">
+          <label for="confirm-password">Confirm Password</label>
+          <input id="confirm-password" class="form-control" type="password" placeholder="Confirm your Password" formControlName="ConfirmPassword">
+        </div>
         <div class ="error"*ngIf="ConfPassword_Error">
           <div *ngFor="let message of ConfPassword_Error.Errors">
             <p>{{message}}</p>
           </div>
         </div>
-        <label for="is-host">Host</label>
-        <input id="is-host" type="checkbox" formControlName="IsHost">
-          <div class ="host"*ngIf="RegisterForm.value.IsHost === true">
-            <label for="host-name">Your Host Name</label>
-              <input id="host-name" type="text" placeholder="Enter your Host name" formControlName="HostName">
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group">
+              <label for="is-host">Host</label>
+              <input id="is-host" type="checkbox" formControlName="IsHost">
+            </div>
+          </div>
+        <div class ="host"*ngIf="RegisterForm.value.IsHost">
+          <div class="form-group">
+              <label for="host-name">Your Host Name</label>
+              <input id="host-name" class="form-control" type="text" placeholder="Enter your Host name" formControlName="HostName">
+          </div>
               <div class ="error"*ngIf="HostName_Error">
               <div *ngFor="let message of HostName_Error.Errors">
                 <p>{{message}}</p>
               </div>
             </div>
-            <label for="host-location">Your Location</label>
-              <input id="host-location" type="text" placeholder="Enter your Location" formControlName="HostLocation">
+            <div class="form-group">
+              <label for="host-location">Your Location</label>
+              <input id="host-location" class="form-control" type="text" placeholder="Enter your Location" formControlName="HostLocation">
+            </div>
               <div class ="error"*ngIf="HostLocation_Error">
               <div *ngFor="let message of HostLocation_Error.Errors">
                 <p>{{message}}</p>
               </div>
             </div>
-            <label for="host-about">Your Host Description</label>
-              <input id="host-about" type="text" placeholder="Enter your description" formControlName="HostAbout">
-                  <div class ="error"*ngIf="HostAbout_Error">
+            <div class="form-group">
+              <label for="host-about">Your Host Description</label>
+              <input id="host-about" class="form-control" type="text" placeholder="Enter your description" formControlName="HostAbout">
+            </div>
+            <div class ="error"*ngIf="HostAbout_Error">
               <div *ngFor="let message of HostAbout_Error.Errors">
                 <p>{{message}}</p>
               </div>
             </div>
             <div class="form-group">
               <label for="host-languages">Your Languages</label>
-                <input id="host-languages" type="text" placeholder="Enter your proficient languages" formControlName="HostLanguages">
-                    <div class ="error"*ngIf="HostAbout_Error">
-                <div *ngFor="let message of HostAbout_Error.Errors">
-                  <p>{{message}}</p>
-                </div>
+              <input id="host-languages" class="form-control" type="text" placeholder="Enter your proficient languages" formControlName="Languages">
+            </div>
+            <div class ="error"*ngIf="HostAbout_Error">
+              <div *ngFor="let message of HostAbout_Error.Errors">
+                <p>{{message}}</p>
               </div>
-          </div>
+            </div>
           <div class="form-group">
               <label for="host-profession">Your Profession</label>
-                <input id="host-profession" type="text" placeholder="Enter your current profession" formControlName="HostProfession">
+                <input id="host-profession" class="form-control" type="text" placeholder="Enter your current profession" formControlName="Profession">
                     <div class ="error"*ngIf="HostAbout_Error">
                 <div *ngFor="let message of HostAbout_Error.Errors">
                   <p>{{message}}</p>
@@ -113,26 +150,35 @@ import { AuthModel } from 'src/app/interfaces/auth-model';
           </div>
           <div class="form-group">
               <label for="host-verification">Your Verification</label>
-                <input id="host-verification" type="checkbox" formControlName="HostIdentityVerified">
-                    <div class ="error"*ngIf="HostAbout_Error">
-                <div *ngFor="let message of HostAbout_Error.Errors">
-                  <p>{{message}}</p>
-                </div>
-              </div>
+              <input id="host-verification" type="checkbox" formControlName="HostIdentityVerified">
+          </div>
+          <div class ="error"*ngIf="HostAbout_Error">
+            <div *ngFor="let message of HostAbout_Error.Errors">
+              <p>{{message}}</p>
+            </div>
           </div>
             <div class="form-group">
               <label for="thumbnail">Upload Profile Picture</label>
               <input id="thumbnail" class="form-control" type="file" (change)="OnImageUpload($event)" accept="image/*">
-              <div class="error" *ngIf="ProfilePic_Error">
-                <div *ngFor="let message of ProfilePic_Error.Errors">
-                  <p>{{message}}</p>
-                </div>
+            </div>
+            <div class="error" *ngIf="ProfilePic_Error">
+              <div *ngFor="let message of ProfilePic_Error.Errors">
+                <p>{{message}}</p>
               </div>
             </div>
+        </div>
+          <div class="col-md-6">
+            <button *ngIf="RegisterForm.value.IsHost" type="submit" class="btn btn-primary submit-host">Register</button>
+            <button *ngIf="!RegisterForm.value.IsHost" type="submit" class="btn btn-primary submit">Register</button>
           </div>
-          <button type="submit" class="primary">Register</button>
-        </form>
-    </section>
+        </div>
+      </form>
+    </div>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+
+</html>
+
   `,
   styleUrls: ['./register.component.css']
 })
@@ -179,6 +225,7 @@ export class RegisterComponent {
   {
     const Data = this.GetData();
     this.UserService.Register(Data).subscribe((response) => {
+                                          console.log(response);
                                           if('Token' in response){
                                             const Auth = response as AuthModel;
                                             localStorage.setItem('usertoken',Auth.Token);
@@ -227,6 +274,7 @@ export class RegisterComponent {
 
     return Data;
   }
+
   OnImageUpload(event:any){
     const file = event.target.files[0];
     if (file) {

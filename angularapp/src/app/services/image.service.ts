@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient,HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
@@ -13,6 +13,8 @@ private EditThumbnailURL = 'https://localhost:7018/House/SetThumbnail/';
     return this.http.get<string>(this.DeleteImageURL + Id);
   }
   SetThumbnail(id:number | undefined,ImageId : number):Observable<string>{
-    return this.http.post<string>(this.EditThumbnailURL + id,ImageId);
+    const token = localStorage.getItem('usertoken');
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
+    return this.http.post<string>(this.EditThumbnailURL + id,ImageId,{headers : headers});
   }
 }

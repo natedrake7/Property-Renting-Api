@@ -8,7 +8,7 @@ import { RouterModule } from '@angular/router';
   standalone: true,
   imports: [CommonModule, RouterModule],
   template: `
-  <section class="listing">
+  <div class="container listing">
     <div class="row">
       <a [routerLink]="['/details/', house.Id]">
         <div class="thumbnail-container">
@@ -33,7 +33,7 @@ import { RouterModule } from '@angular/router';
         <a class="property-link" [routerLink]="['/details/', house.Id]">Book Now</a>
       </div>
     </div>
-    </section>
+  </div>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     `,
   styleUrls: ['./house.component.css']

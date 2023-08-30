@@ -24,6 +24,7 @@ namespace webapi.Controllers
             _userManager = userManager;
         }
 
+        /*Get available dates by Id*/
         [HttpGet]
         public async Task<IActionResult> GetPropertyDates(int Id)
         {
@@ -52,6 +53,7 @@ namespace webapi.Controllers
             return Content(json2, "application/json");
         }
 
+        /*Book property by Id*/
         [HttpPost]
         public async Task<IActionResult> BookProperty(int Id, [FromForm]BookModel bookmodel)
         {
@@ -98,6 +100,7 @@ namespace webapi.Controllers
             return Content(json2, "application/json");
         }
 
+        /*Post review*/
         [HttpPost]
         public async Task<IActionResult> SubmitReview(int Id,[FromForm]ReviewModel review)
         {
@@ -182,7 +185,7 @@ namespace webapi.Controllers
             return Content(json1, "application/json");
         }
 
-        // GET: UserHouses
+        /*Get all Houses */
         [AllowAnonymous]
         [HttpGet]
         public async Task<IActionResult> Index()
@@ -196,7 +199,7 @@ namespace webapi.Controllers
             return Content(json, "application/json");
         }
 
-
+        /*Get house thumbnail by Id*/
         [AllowAnonymous]
         [HttpGet]
         public async Task<IActionResult> GetThumbnail(int? id)
@@ -220,6 +223,7 @@ namespace webapi.Controllers
             return Content(json, "application/json");
         }
 
+        /*Get all house images by Id*/
         [AllowAnonymous]
         [HttpGet]
         public async Task<IActionResult> GetImages(int? id)
@@ -246,7 +250,9 @@ namespace webapi.Controllers
             return Content(json, "application/json");
         }
 
+        /*Set thumbnail by Id*/
         [HttpPost]
+        [Authorize(Roles="Host")]
         public async Task<IActionResult> SetThumbnail(int? id,[FromBody]int ImageId)
         {
             var options = new JsonSerializerOptions
@@ -316,6 +322,7 @@ namespace webapi.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles="Host")]
         public async Task<IActionResult> Create(string? Id,[FromForm]HouseInput House)
         {
             var options = new JsonSerializerOptions
@@ -423,6 +430,7 @@ namespace webapi.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles="Host")]
         public async Task<IActionResult> Edit(int id,[FromForm] HouseEdit House)
         {
             var options = new JsonSerializerOptions
@@ -555,6 +563,7 @@ namespace webapi.Controllers
 
         // POST: UserHouses/Delete/5
         [HttpPost]
+        [Authorize(Roles = "Host")]
         public async Task<IActionResult> Delete(int id,[FromForm]string? UserId)
         {
             var options = new JsonSerializerOptions

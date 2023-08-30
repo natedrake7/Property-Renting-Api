@@ -13,34 +13,62 @@ import { AuthModel } from 'src/app/interfaces/auth-model';
   standalone: true,
   imports: [CommonModule, RouterModule, ReactiveFormsModule],
   template: `
-   <section class="Login">
+  <!DOCTYPE html>
+  <html lang="en">
+
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Listing</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="./login.component.css">
+  </head>
+  <body>
+   <div class="container login">
+    <div class="details">
       <h2 class="section-heading">Login</h2>
       <form [formGroup]="LoginForm" (submit)="LoginUser()">
-      <label for="username">Username</label>
-        <input id="username" type="text" formControlName="UserName">
+        <div class="form-group">
+          <label for="username">Username</label>
+          <input id="username-box" class="form-control" type="text" formControlName="UserName" placeholder="Enter your Username">
+        </div>
         <div class ="error"*ngIf="Username_Error">
           <div *ngFor="let message of Username_Error.Errors">
             <p>{{message}}</p>
           </div>
         </div>
-        <label for="password">Password</label>
-        <input id="password" type="password" formControlName="Password">
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input id="password" class="form-control" type="password" formControlName="Password" placeholder="Enter your Password">
+        </div>
         <div class ="error"*ngIf="Password_Error">
           <div *ngFor="let message of Password_Error.Errors">
             <p>{{message}}</p>
           </div>
         </div>
-        <label for="Remember-me">Remember Me</label>
-        <input id="Remember-me" type="checkbox" formControlName="RememberMe">
-
-        <button type="submit" class="primary">Login</button>
+        <div class="row buttons">
+          <div class="col-md-6">
+            <div class="form-group">
+              <label for="remember-me">Remember Me</label>
+              <input id="remember-me-box" type="checkbox" formControlName="RememberMe">
+            </div>
+          </div>
+          <div class="col-md-6">
+            <button type="submit" class="btn btn-primary">Login</button>
+          </div>
+        </div>
         <div class ="error"*ngIf="Login_Error">
           <div *ngFor="let message of Login_Error.Errors">
             <p>{{message}}</p>
           </div>
         </div>
       </form>
-    </section>
+      </div>
+    </div>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+
+</html>
   `,
   styleUrls: ['./login.component.css']
 })

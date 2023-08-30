@@ -25,14 +25,14 @@ import { AuthModel } from 'src/app/interfaces/auth-model';
 <body>
   <div class="container layout">
     <div class="row">
-      <div class="col-md-1 nav-buttons">
+      <div class="col-md-1 buttons">
         <a routerLink="../">
             <button class="btn btn-primary" type="button">Back</button>
         </a>
         <a routerLink="../">
           <button class="btn btn-primary profile-button" type="button">Profile</button>
         </a>
-        <div *ngIf="User?.IsHost === true">
+        <div *ngIf="User?.IsHost">
           <a routerLink="../Host">
             <button class="btn btn-primary host-profile-button" type="button">Host Profile</button>
           </a>
@@ -44,7 +44,7 @@ import { AuthModel } from 'src/app/interfaces/auth-model';
             <button class="btn btn-primary personal-data-button" type="button">Personal Data</button>
           </a>
       </div>
-      <div class="col-md-3 email-col">
+      <div class="col-md-6 email-col">
         <section class="email-edit">
           <h2 class="section-heading">Change Email</h2>
             <form [formGroup]="EmailForm" (submit)="EditEmail()">

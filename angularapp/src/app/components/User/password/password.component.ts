@@ -25,7 +25,7 @@ import { AuthModel } from 'src/app/interfaces/auth-model';
 <body>
   <div class="container layout">
     <div class="row">
-      <div class="col-md-1 nav-buttons">
+      <div class="col-md-1 buttons">
         <a routerLink="../">
           <button class="btn btn-primary profile-button" type="button">Back</button>
         </a>
@@ -44,7 +44,7 @@ import { AuthModel } from 'src/app/interfaces/auth-model';
             <button class="btn btn-primary personal-data-button" type="button">Personal Data</button>
           </a>
       </div>
-      <div class="col-md-3 password">
+      <div class="col-md-6 password">
         <section class="change-password">
           <h2 class="section-heading">Change Password</h2>
             <form [formGroup]="PasswordForm" (submit)="ChangePassword()">

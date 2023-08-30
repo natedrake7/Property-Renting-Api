@@ -24,7 +24,7 @@ import { error } from 'src/app/interfaces/error';
 <body>
   <div class="container layout">
     <div class="row">
-      <div class="col-md-1 nav-buttons">
+      <div class="col-md-1 buttons">
         <a routerLink="../">
           <button class="btn btn-primary profile-button" type="button">Back</button>
         </a>
@@ -43,37 +43,45 @@ import { error } from 'src/app/interfaces/error';
             <button class="btn btn-primary password-button" type="button">Change Password</button>
           </a>
       </div>
-      <div class="col-md-3 personal-data">
+      <div class="col-md-10 personal-data">
         <h3>Your Personal Data</h3>
-        <h6>Would you like to download your personal data as Json?</h6>
-        <button class="btn btn-primary download-data" type="button" (click)="DownloadData()">Download</button>
-        <h6 class="delete-header">Would you like to delete your account?</h6>
-          <button class="btn btn-primary delete-data" type="button" (click)="SetBool()">Delete</button>
-          <section class="confirm-delete" *ngIf="Delete">
-            <p class="error">Would you like to delete your personal data?</p>
-            <p class="error">Warning this action cannot be revoked!</p>
-            <form [formGroup]="PasswordForm" (submit)="DeleteData()">
-              <div class="form-group">
-                <label for="password">Password</label>
-                <input id="password" class="form-control" type="password" placeholder="Enter your password" formControlName="Password">
-                <div class ="error"*ngIf="Password_Error">
-                    <div *ngFor="let message of Password_Error.Errors">
-                      <p>{{message}}</p>
+        <div class="row download-row">
+          <div class="col-md-6">
+            <h6>Would you like to download your personal data as Json?</h6>
+            <button class="btn btn-primary download-data" type="button" (click)="DownloadData()">Download</button>
+          </div>
+        </div>
+        <div class="row delete-row">
+          <div class="col-md-6">
+            <h6 class="delete-header">Would you like to delete your account?</h6>
+              <button class="btn btn-primary delete-data" type="button" (click)="SetBool()">Delete</button>
+              <section class="confirm-delete" *ngIf="Delete">
+                <p class="error">Would you like to delete your personal data?</p>
+                <p class="error">Warning this action cannot be revoked!</p>
+                <form [formGroup]="PasswordForm" (submit)="DeleteData()">
+                  <div class="form-group">
+                    <label for="password">Password</label>
+                    <input id="password" class="form-control" type="password" placeholder="Enter your password" formControlName="Password">
+                    <div class ="error"*ngIf="Password_Error">
+                        <div *ngFor="let message of Password_Error.Errors">
+                          <p>{{message}}</p>
+                        </div>
                     </div>
-                </div>
-              </div>
-              <div class="form-group">            
-                <label for="confirm-password">Confirm Password</label>
-                <input id="confirm-password" class="form-control" type="password" placeholder="Confirm your new password" formControlName="ConfirmPassword">
-                <div class ="error"*ngIf="ConfirmPassword_Error">
-                  <div *ngFor="let message of ConfirmPassword_Error.Errors">
-                    <p>{{message}}</p>
                   </div>
-                </div>
-              </div>
-              <button type="submit" class="btn btn-primary primary">Submit</button>
-            </form>
-      </section>
+                  <div class="form-group">            
+                    <label for="confirm-password">Confirm Password</label>
+                    <input id="confirm-password" class="form-control" type="password" placeholder="Confirm your new password" formControlName="ConfirmPassword">
+                    <div class ="error"*ngIf="ConfirmPassword_Error">
+                      <div *ngFor="let message of ConfirmPassword_Error.Errors">
+                        <p>{{message}}</p>
+                      </div>
+                    </div>
+                  </div>
+                  <button type="submit" class="btn btn-primary primary">Submit</button>
+                </form>
+              </section>
+          </div>
+        </div>
       </div>
     </div>
   </div>

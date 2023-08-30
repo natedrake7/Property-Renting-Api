@@ -157,10 +157,12 @@ import * as FormData from 'form-data';
           <app-preview-house *ngFor="let housingLocation of Houses" [house]="housingLocation"></app-preview-house>
         </div>
       </div>
-      <div class="add-house">
-          <a [routerLink]="['AddHouse']">
-            <button class="btn btn-primary house-button" type="button">List New Property</button>
-          </a>
+      <div class="col-md-12">
+        <div class="add-house">
+            <a [routerLink]="['AddHouse']">
+              <button class="btn btn-primary house-button" type="button">List New Property</button>
+            </a>
+        </div>
       </div>
     </div>
   </div>

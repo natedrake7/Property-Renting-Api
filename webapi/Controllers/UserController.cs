@@ -53,8 +53,7 @@ namespace airbnb.Controllers
         {
             var options = new JsonSerializerOptions
             {
-                Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
-                ReferenceHandler = ReferenceHandler.Preserve
+                Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
             };
             using var transaction = _context.Database.BeginTransaction();
             if (ModelState.IsValid)

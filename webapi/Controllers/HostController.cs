@@ -141,6 +141,7 @@ namespace webapi.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles="Host")]
         public async Task<IActionResult> Edit(string?Id,[FromForm] HostEditModel Host)
         {
             var options = new JsonSerializerOptions
@@ -225,7 +226,8 @@ namespace webapi.Controllers
             return Content(json, "application/json");
         }
 
-        // GET: UserHosts/Delete/5
+        [HttpDelete]
+        [Authorize(Roles = "Host")]
         public async Task<IActionResult> Delete(int? id)
         {
             var user = await _userManager.GetUserAsync(User);

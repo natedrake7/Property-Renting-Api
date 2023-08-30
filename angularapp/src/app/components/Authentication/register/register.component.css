@@ -1,14 +1,24 @@
-.Registration {
-    max-width: 400px;
-    margin: 0 auto;
-    padding: 20px;
-    background-color: #f2f2f2;
-    border-radius: 5px;
+.registration {
+  position: flex;
+  flex-direction: column;
+  text-align: left;
+  align-items: left;
+  width: 500px;
+  height: auto;
+  border: 1px solid #ccc;
+  border-radius: 12px;
+  background-color: #f5f5f5;
+  padding: 10px;
+  margin-top: 75px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  margin-bottom: 200px;
+
   }
   
   .section-heading {
     font-size: 24px;
     margin-bottom: 20px;
+    text-align: center;
   }
   
   .form-group {
@@ -17,6 +27,7 @@
   
   label {
     font-weight: bold;
+    margin-bottom: 10px;
   }
   
   input[type="text"],
@@ -28,23 +39,20 @@
     border: 1px solid #ccc;
     border-radius: 4px;
     box-sizing: border-box;
+    margin-bottom: 10px;
   }
   
   .error {
     color: red;
     margin-top: 5px;
   }
-  
-  .primary {
+
+.submit-host{
     margin-top: 10px;
-    padding: 10px 15px;
-    border: none;
-    border-radius: 4px;
-    background-color: #337ab7;
-    color: #fff;
-    cursor: pointer;
-  }
-  
-  .primary:hover {
-    background-color: #1e5b91;
+    margin-left: 375px;
+}
+
+.submit{
+  margin-top: 10px;
+    margin-left: 120px;
   }
