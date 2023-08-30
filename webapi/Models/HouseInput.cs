@@ -49,13 +49,13 @@ namespace webapi.Models
         [Required(ErrorMessage = "Please select one of the following options!")]
         public string? PropertyType { get; set; }
 
-        [Required(ErrorMessage = "You must state the number of bathrooms in your property!")]
+        [Range(1,double.MaxValue,ErrorMessage = "You must state the number of bathrooms in your property!")]
         public double Bathrooms { get; set; }
 
-        [Required(ErrorMessage = "You must state the number of bedrooms in your property!")]
+        [Range(1, int.MaxValue, ErrorMessage = "You must state the number of bedrooms in your property!")]
         public int Bedrooms { get; set; }
 
-        [Required(ErrorMessage = "You must state the number of beds in your property!")]
+        [Range(1, int.MaxValue, ErrorMessage = "You must state the number of beds in your property!")]
         public int Beds{ get; set; }
 
         public int SquareFeet { get; set; }

@@ -1,21 +1,45 @@
-.left-buttons {
+.image-wrapper {
+  position: relative;
+  box-shadow: 0 0 0 0 rgba(0, 123, 255, 0);
+  transition: box-shadow 0.3s ease;
+  border-radius: 12px;
+}
+
+.image-wrapper:hover .right-button,
+.image-wrapper:hover .left-button {
+  opacity: 1; /* Show the buttons on hover */
+  background-color: #0d6efd;
+}
+
+.image-wrapper:hover {
+  box-shadow: 0 0 10px 5px rgba(0, 123, 255, 0.5); /* Blue aura on hover */
+}
+
+.left-button,
+.right-button {
+  background-color: transparent;
+  border: transparent;
+  opacity: 0;
+  transition: background-color 0.3s ease; /* Add a transition effect for smooth color change */
+}
+
+.right-button:hover,
+.left-button:hover{
+  background-color: #0b5ed7;
+}
+
+.image{
+  border-radius: 12px;
+}
+
+.image-navigation-buttons {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
   display: flex;
-  justify-content: flex-start;
-  margin-bottom: 20px;
-}
-
-.left-buttons button {
-  padding: 10px 15px;
-  border: none;
-  border-radius: 4px;
-  background-color: #e6e6e6;
-  color: #333;
-  font-size: 16px;
-  cursor: pointer;
-}
-
-.left-buttons button:hover {
-  background-color: #ccc;
+  justify-content: space-between;
+  transform: translateY(-50%);
 }
 
 .error{
@@ -43,28 +67,36 @@ select option:hover {
   height: 75px;
 }
 
-  .image-slider {
-    display: flex;
-    align-items: center;
-  }
-    .image-container {
-      width: auto;
-      height: auto;
-    }
+.image-slider {
+  display: flex;
+  align-items: center;
+}
+
+.image-container {
+  width: auto;
+  height: auto;
+}
     
-    .image-container img {
-      max-width: 100%;
-      height: auto;
-    }
-    .navigation-buttons {
-      display: flex;
-      align-items: center;
-      justify-content:flex-start;
-      height: auto;
-    }
+.image-container img {
+  max-width: 100%;
+  height: auto;
+}
+
+.navigation-buttons {
+  display: flex;
+  align-items: center;
+  justify-content:flex-start;
+  height: auto;
+  margin-top: 20px;
+}
+
+.delete-button{
+  margin-right: 40px;
+}
 
 .submit-button{
   margin-top: 75px;
+  margin-bottom: 200px;
 }
 
 .col-md-6 custom-col{

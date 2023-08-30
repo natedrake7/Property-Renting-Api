@@ -28,7 +28,7 @@ import * as FormData from 'form-data';
   <div class="container">
     <div class="left-buttons">
       <a routerLink="../">
-        <button class="profile-button" type="button">Back</button>
+        <button class="btn btn-primary profile-button" type="button">Back</button>
       </a>
     </div>
 
@@ -41,37 +41,100 @@ import * as FormData from 'form-data';
               <label for="house-name">Your House name</label>
               <input id="house-name" class="form-control" type="text" placeholder="Enter your house name" formControlName="Name">
             </div>
+            <div class="error" *ngIf="Name_Error">
+              <div *ngFor="let message of Name_Error.Errors">
+                <p>{{message}}</p>
+              </div>
+            </div>
             <div class="form-group">
               <label for="house-summary">Summary</label>
-              <input id="house-summary" class="form-control summary-input" type="text" placeholder="Enter your summary of the house" formControlName="Summary">
+              <textarea
+                    id="house-summary"
+                    class="form-control"
+                    rows="4"
+                    formControlName="Summary"
+                    placeholder="Enter your summary of the house"
+              ></textarea>
+            </div>
+            <div class="error" *ngIf="Summary_Error">
+              <div *ngFor="let message of Summary_Error.Errors">
+                <p>{{message}}</p>
+              </div>
             </div>
             <div class="form-group">
               <label for="house-space">Space</label>
-              <input id="house-space" class="form-control space-input" type="text" placeholder="Describe the space of the house" formControlName="Space">
+              <textarea
+                    id="house-space"
+                    class="form-control"
+                    rows="4"
+                    formControlName="Space"
+                    placeholder="Describe the space of the house"
+              ></textarea>
+            </div>
+            <div class="error" *ngIf="Space_Error">
+              <div *ngFor="let message of Space_Error.Errors">
+                <p>{{message}}</p>
+              </div>
             </div>
             <div class="form-group">
               <label for="experiences-offered">Available Experiences</label>
-              <input id="experiences-offered" class="form-control space-input" type="text" placeholder="List available experiences" formControlName="ExperiencesOffered">
+              <textarea
+                    id="experiences-offered"
+                    class="form-control"
+                    rows="4"
+                    formControlName="ExperiencesOffered"
+                    placeholder="List available experiences"
+              ></textarea>
+            </div>
+            <div class="error" *ngIf="ExperiencesOffered_Error">
+              <div *ngFor="let message of ExperiencesOffered_Error.Errors">
+                <p>{{message}}</p>
+              </div>
             </div>
             <div class="form-group">
               <label for="country">Country</label>
               <input id="country" class="form-control" type="text" placeholder="Enter the country where your house is" formControlName="Country">
             </div>
+            <div class="error" *ngIf="Country_Error">
+              <div *ngFor="let message of Country_Error.Errors">
+                <p>{{message}}</p>
+              </div>
+            </div>
             <div class="form-group">
               <label for="state">State</label>
-              <input id="state" class="form-control space-input" type="text" placeholder="Enter the state of your house" formControlName="State">
+              <input id="state" class="form-control" type="text" placeholder="Enter the state of your house" formControlName="State">
+            </div>
+            <div class="error" *ngIf="State_Error">
+              <div *ngFor="let message of State_Error.Errors">
+                <p>{{message}}</p>
+              </div>
             </div>
             <div class="form-group">
               <label for="country-code">CountryCode</label>
               <input id="country-code" class="form-control" type="text" placeholder="Enter the country code (e.g. GR)" formControlName="CountryCode">
             </div>
+            <div class="error" *ngIf="CountryCode_Error">
+              <div *ngFor="let message of CountryCode_Error.Errors">
+                <p>{{message}}</p>
+              </div>
+            </div>
             <div class="form-group">
               <label for="city">City</label>
               <input id="city" class="form-control" type="text" placeholder="Enter the city where your house is" formControlName="City">
             </div>
+            <div class="error" *ngIf="City_Error">
+              <div *ngFor="let message of City_Error.Errors">
+                <p>{{message}}</p>
+              </div>
+            </div>
             <div class="form-group">
               <label for="street">Street Address</label>
               <input id="street" class="form-control" type="text" placeholder="Enter the street address of your house" formControlName="Street">
+            </div>
+            <div class="error" *ngIf="Street_Error">
+              <div *ngFor="let message of Street_Error.Errors">
+                <p>{{message}}</p>
+              </div>
             </div>
             <div class="form-group">
               <label for="zipcode">ZipCode</label>
@@ -117,15 +180,30 @@ import * as FormData from 'form-data';
                     <label for="bathrooms">Bathrooms</label>
                     <input id="bathrooms" class="form-control" type="number" formControlName="Bathrooms">
                   </div>
+                  <div class="error" *ngIf="Bathrooms_Error">
+                    <div *ngFor="let message of Bathrooms_Error.Errors">
+                      <p>{{message}}</p>
+                    </div>
+                  </div>
                   <div class="form-group">
                     <label for="beds">Beds</label>
                     <input id="beds" class="form-control" type="number" formControlName="Beds">
+                  </div>
+                  <div class="error" *ngIf="Beds_Error">
+                    <div *ngFor="let message of Beds_Error.Errors">
+                      <p>{{message}}</p>
+                    </div>
                   </div>
                 </div>
                 <div class="col-md-6">
                   <div class="form-group">
                     <label for="bedrooms">Bedrooms</label>
                     <input id="bedrooms" class="form-control" type="number" formControlName="Bedrooms">
+                  </div>
+                  <div class="error" *ngIf="Bedrooms_Error">
+                    <div *ngFor="let message of Bedrooms_Error.Errors">
+                      <p>{{message}}</p>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -137,6 +215,11 @@ import * as FormData from 'form-data';
                       <select id="property-type" class="form-control" formControlName="PropertyType">
                         <option *ngFor="let option of PropertyOptions" [value]="option">{{ option }}</option>
                       </select>
+                    </div>
+                    <div class="error" *ngIf="PropertyType_Error">
+                      <div *ngFor="let message of PropertyType_Error.Errors">
+                        <p>{{message}}</p>
+                      </div>
                     </div>
                   </div>
                   <div class="col-md-6">
@@ -239,14 +322,32 @@ import * as FormData from 'form-data';
   styleUrls: ['./add-house.component.css']
 })
 export class AddHouseComponent {
+  //Services
   HouseService = inject(HouseService);
   UserService = inject(UserService);
   RoutingService = inject(Router);
-  User: User | undefined;
+
+  //Errors
   imageError: string | undefined;
   Thumbnail_Error: error | undefined;
   Images_Error: error | undefined;
+  Name_Error: error | undefined;
+  City_Error: error | undefined;
+  Space_Error: error | undefined;
+  State_Error: error | undefined;
+  Street_Error: error | undefined;
+  Country_Error: error|undefined
+  Summary_Error: error | undefined;
+  CountryCode_Error: error | undefined;
+  PropertyType_Error: error | undefined;
+  ExperiencesOffered_Error: error | undefined;
+  Bedrooms_Error: error | undefined;
+  Bathrooms_Error: error | undefined;
+  Beds_Error: error | undefined;
+
+  //Variables
   images: File[] = [];
+  User: User | undefined;
   Thumbnail: File | undefined;
   PropertyOptions = ["Apartment","House","Villa","Motel","Hotel"];
   CancellationPolicyOptions = ["None","Strict"];
@@ -255,6 +356,7 @@ export class AddHouseComponent {
     { label: 'Yes', value: true },
     { label: 'No', value: false }
   ];
+  //Data form
   HouseForm = new FormGroup({
     Name: new FormControl('',Validators.required),
     Summary: new FormControl('',Validators.required),
@@ -297,15 +399,26 @@ export class AddHouseComponent {
   AddPropertyListing(){
     const ListingData = this.GetData();
     this.HouseService.CreateProperty(ListingData).subscribe((response) => {
-      console.log(response);
       if(response === 'ok'){
         this.RoutingService.navigate(["/Profile/Host"]).then(() => location.reload());
       }
       else{
-        console.log(response);
         const Error = response as error[];
         this.Thumbnail_Error = Error.find(item => item.Variable === 'Thumbnail');
         this.Images_Error = Error.find(item => item.Variable === 'Images');
+        this.Name_Error = Error.find(item => item.Variable === 'Name');
+        this.City_Error = Error.find(item => item.Variable === 'City');
+        this.Space_Error = Error.find(item => item.Variable === 'Space');
+        this.State_Error = Error.find(item => item.Variable === 'State');
+        this.Street_Error = Error.find(item => item.Variable === 'Street');
+        this.Country_Error = Error.find(item => item.Variable === 'Country');
+        this.CountryCode_Error = Error.find(item => item.Variable === 'CountryCode');
+        this.Summary_Error = Error.find(item => item.Variable === 'Summary');
+        this.PropertyType_Error = Error.find(item => item.Variable === 'PropertyType');
+        this.ExperiencesOffered_Error = Error.find(item => item.Variable === 'ExperiencesOffered');
+        this.Bathrooms_Error = Error.find(item => item.Variable === 'Bathrooms');
+        this.Bedrooms_Error = Error.find(item => item.Variable === 'Bedrooms');
+        this.Beds_Error = Error.find(item => item.Variable === 'Beds');
       }
     });
 

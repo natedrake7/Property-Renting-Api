@@ -48,10 +48,12 @@
   margin-bottom: 25px;
 }
 
+
 .profile-col {
   display: block;
   width: auto;
   height: auto;
+  margin-bottom: 40px;
 }
 
 .layout{

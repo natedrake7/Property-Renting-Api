@@ -32,7 +32,7 @@ import * as FormData from 'form-data';
   <div class="container">
     <div class="left-buttons">
       <a routerLink="../../">
-        <button class="profile-button" type="button">Back</button>
+        <button class="btn btn-primary profile-button" type="button">Back</button>
       </a>
     </div>
 
@@ -47,15 +47,41 @@ import * as FormData from 'form-data';
             </div>
             <div class="form-group">
               <label for="house-summary">Summary</label>
-              <input id="house-summary" class="form-control summary-input" type="text" [placeholder]="House?.Summary" formControlName="Summary">
+              <textarea
+                    id="house-summary"
+                    class="form-control"
+                    rows="4"
+                    formControlName="Summary"
+                    [placeholder]="House?.Summary"
+              ></textarea>
             </div>
             <div class="form-group">
               <label for="house-space">Space</label>
-              <input id="house-space" class="form-control space-input" type="text" [placeholder]="House?.Space" formControlName="Space">
+              <textarea
+                    id="house-space"
+                    class="form-control"
+                    rows="4"
+                    formControlName="Space"
+                    [placeholder]="House?.Space"
+              ></textarea>
+            </div>
+            <div class="form-group">
+              <label for="experiences-offered">Available Experiences</label>
+              <textarea
+                    id="experiences-offered"
+                    class="form-control"
+                    rows="4"
+                    formControlName="ExperiencesOffered"
+                    [placeholder]="House?.ExperiencesOffered"
+              ></textarea>
             </div>
             <div class="form-group">
               <label for="country">Country</label>
               <input id="country" class="form-control" type="text" [placeholder]="House?.Country" formControlName="Country">
+            </div>
+            <div class="form-group">
+              <label for="state">State</label>
+              <input id="state" class="form-control" type="text" placeholder="Enter the state of your house" formControlName="State">
             </div>
             <div class="form-group">
               <label for="country-code">CountryCode</label>
@@ -95,12 +121,16 @@ import * as FormData from 'form-data';
                 </div>
                 <h2>Edit Images</h2>
                 <div class="image-container">
-                    <img [src]="currentImage" alt="Image">
+                  <div class="image-wrapper">
+                      <img class="image" [src]="currentImage" alt="Image">
+                      <div class="image-navigation-buttons">
+                        <button class="btn btn-primary left-button" type="button" (click)="previousImage()">&lt;</button>
+                        <button class="btn btn-primary right-button" type="button" (click)="nextImage()">&gt;</button>
+                      </div>
+                  </div>
                 </div>
                 <div class="navigation-buttons">
-                  <button class="btn btn-primary" type="button" (click)="previousImage()">&lt;</button>
-                  <button class="btn btn-primary" type="button" (click)="nextImage()">&gt;</button>
-                  <button class="btn btn-danger"  type="button"(click)="DeleteImage()">Delete Image</button>
+                  <button class="btn btn-danger delete-button"  type="button"(click)="DeleteImage()">Delete Image</button>
                   <div class="error" *ngIf="DeleteError">
                     <p> {{DeleteError}} </p>
                   </div>
@@ -133,7 +163,7 @@ import * as FormData from 'form-data';
                     <div class="form-group">
                       <label for="property-type">Property Type</label>
                       <select id="property-type" class="form-control" formControlName="PropertyType">
-                        <option [value]="House?.PropertyType" disabled selected>Select Property Type</option>
+                        <option value="" disabled selected>{{House?.PropertyType}}</option>
                         <option *ngFor="let option of PropertyOptions" [value]="option">{{ option }}</option>
                       </select>
                     </div>
@@ -152,29 +182,13 @@ import * as FormData from 'form-data';
                   <label for="price">Daily Price</label>
                   <input id="price" class="form-control" type="number" [placeholder]="House?.Price" formControlName="Price">
                 </div>
-                <div *ngIf="House?.WeeklyPrice">
-                  <div class="form-group">
-                    <label for="weekly-price">Weekly Price</label>
-                    <input id="weekly-price" class="form-control" type="number" [placeholder]="House?.WeeklyPrice" formControlName="WeeklyPrice">
-                  </div>
+                <div class="form-group">
+                  <label for="weekly-price">Weekly Price</label>
+                  <input id="weekly-price" class="form-control" type="number" [placeholder]="House?.WeeklyPrice" formControlName="WeeklyPrice">
                 </div>
-                <div *ngIf="!House?.WeeklyPrice">
-                  <div class="form-group">
-                    <label for="weekly-price">Weekly Price</label>
-                    <input id="weekly-price" class="form-control" type="number" formControlName="WeeklyPrice">
-                  </div>
-                </div>
-                <div *ngIf="House?.MonthlyPrice">
-                  <div class="form-group">
-                    <label for="monthly-price">Monthly Price</label>
-                    <input id="monthly-price" class="form-control" type="number" formControlName="MonthlyPrice">
-                  </div>
-                </div>
-                <div *ngIf="!House?.MonthlyPrice">
-                  <div class="form-group">
-                    <label for="monthly-price">Monthly Price</label>
-                    <input id="monthly-price" class="form-control" type="number" formControlName="MonthlyPrice">
-                  </div>
+                <div class="form-group">
+                  <label for="monthly-price">Monthly Price</label>
+                  <input id="monthly-price" class="form-control" type="number" [placeholder]="House?.MonthlyPrice" formControlName="MonthlyPrice">
                 </div>
                 <div *ngIf="House?.CleaningFee">
                   <div class="form-group">
@@ -185,7 +199,7 @@ import * as FormData from 'form-data';
                 <div *ngIf="!House?.CleaningFee">
                   <div class="form-group">
                     <label for="cleaning-fee">Cleaning Fee</label>
-                    <input id="cleaning-fee" class="form-control" type="number" formControlName="CleaningFee">
+                    <input id="cleaning-fee" class="form-control" type="number" formControlName="CleaningFee" placeholder="0">
                   </div>
                 </div>
               </div>
@@ -199,7 +213,7 @@ import * as FormData from 'form-data';
                   <div *ngIf="!House?.ExtraPeople">
                     <div class="form-group">
                       <label for="extra-people">Extra People Cost</label>
-                      <input id="extra-people" class="form-control" type="number" formControlName="ExtraPeople">
+                      <input id="extra-people" class="form-control" type="number" formControlName="ExtraPeople" placeholder="0">
                     </div>
                   </div>
                   <div *ngIf="House?.MinimumNights">
@@ -211,7 +225,7 @@ import * as FormData from 'form-data';
                   <div *ngIf="!House?.MinimumNights">
                     <div class="form-group">
                       <label for="minimum-nights">Minimum Nights</label>
-                      <input id="minimum-nights" class="form-control" type="number" formControlName="MinimumNights">
+                      <input id="minimum-nights" class="form-control" type="number" formControlName="MinimumNights" placeholder="1">
                     </div>
                   </div>
                   <div *ngIf="House?.MaximumNights">
@@ -223,7 +237,7 @@ import * as FormData from 'form-data';
                   <div *ngIf="!House?.MaximumNights">
                     <div class="form-group">
                       <label for="maximum-nights">Maximum Nights</label>
-                      <input id="maximum-nights" class="form-control" type="number" formControlName="MaximumNights">
+                      <input id="maximum-nights" class="form-control" type="number" formControlName="MaximumNights" placeholder="NA">
                     </div>
                   </div>
               </div>
@@ -234,18 +248,21 @@ import * as FormData from 'form-data';
                     <div class="form-group">
                       <label for="license">Is driver's license required?</label>
                       <select id="license" class="form-control" formControlName="RequiresLicense">
+                        <option value="" disabled selected>{{House?.RequiresLicense}}</option>
                         <option *ngFor="let option of GeneralOptions" [value]="option.value">{{ option.label }}</option>
                       </select>
                     </div>
                     <div class="form-group">
                       <label for="transit">Transit</label>
                       <select id="transit" class="form-control" formControlName="Transit">
+                        <option value="" disabled selected>{{House?.Transit}}</option>
                         <option *ngFor="let option of TransitOptions" [value]="option">{{ option }}</option>
                       </select>
                     </div>
                     <div class="form-group">
                       <label for="cancellation-policy">Cancellation policy</label>
                       <select id="cancellation-policy" class="form-control" formControlName="CancellationPolicy">
+                        <option value="" disabled selected>{{House?.CancellationPolicy}}</option>
                         <option *ngFor="let option of CancellationPolicyOptions" [value]="option">{{ option }}</option>
                       </select>
                     </div>
@@ -254,18 +271,21 @@ import * as FormData from 'form-data';
                       <div class="form-group">
                         <label for="instantly-bookable">Instantly booked?</label>
                         <select id="instantly-bookable" class="form-control" formControlName="InstantBookable">
+                          <option value="" disabled selected>{{House?.InstantBookable}}</option>
                           <option *ngFor="let option of GeneralOptions" [value]="option.value">{{ option.label }}</option>
                         </select>
                       </div>
                       <div class="form-group">
                         <label for="phone-verification">Required guest phone verification?</label>
                         <select id="phone-verification" class="form-control" formControlName="RequireGuestPhoneVerification">
+                          <option value="" disabled selected>{{House?.RequireGuestPhoneVerification}}</option>
                           <option *ngFor="let option of GeneralOptions" [value]="option.value">{{ option.label }}</option>
                         </select>
                       </div>
                       <div class="form-group">
                         <label for="location-exact">Is Location Exact</label>
                         <select id="location-exact" class="form-control" formControlName="IsLocationExact">
+                          <option value="" disabled selected>{{House?.IsLocationExact}}</option>
                           <option *ngFor="let option of GeneralOptions" [value]="option.value">{{ option.label }}</option>
                         </select>
                       </div>
