@@ -102,6 +102,7 @@ export class EmailComponent {
   })
   constructor(){
     this.User = this.UserService.GetUserData();
+    console.log(this.User)
   }
   EditEmail(){
     const formValue = this.EmailForm.value;

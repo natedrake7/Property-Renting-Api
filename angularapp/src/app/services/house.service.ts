@@ -57,6 +57,7 @@ EditHouseById(Id:number,Data : FormData | undefined):Observable<string|error[]>{
   const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
   return this.http.post<string|error[]>(this.EditHouseURL + Id,Data,{headers:headers});
 }
+
 DeleteHousebyId(Id:number,UserId:string | undefined):Observable<string>{
   const DeleteData = new FormData();
   DeleteData.append('UserId',UserId);

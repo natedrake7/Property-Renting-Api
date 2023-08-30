@@ -32,9 +32,14 @@ import { AuthModel } from 'src/app/interfaces/auth-model';
           <label for="username">Username</label>
           <input id="username" class="form-control" type="text" placeholder="Enter your Username" formControlName="UserName">
         </div>
-        <div class ="error"*ngIf="Username_Error">
+        <div class ="error" *ngIf="Username_Error">
           <div *ngFor="let message of Username_Error.Errors">
             <p>{{message}}</p>
+          </div>
+        </div>
+        <div class="error" *ngIf="!Username_Error && CredentialTaken_Error">
+          <div *ngIf="CredentialTaken_Error.Errors[0].includes('Username')">
+            <p>{{CredentialTaken_Error.Errors[0]}}</p>
           </div>
         </div>
         <div class="form-group">
@@ -62,6 +67,14 @@ import { AuthModel } from 'src/app/interfaces/auth-model';
         <div class ="error"*ngIf="Email_Error">
           <div *ngFor="let message of Email_Error.Errors">
             <p>{{message}}</p>
+          </div>
+        </div>
+        <div class="error" *ngIf="!Email_Error && CredentialTaken_Error">
+          <div *ngIf="CredentialTaken_Error.Errors.length === 1 && CredentialTaken_Error.Errors[0].includes('Email')">
+            <p>{{CredentialTaken_Error.Errors[0]}}</p>
+          </div>
+          <div *ngIf="CredentialTaken_Error.Errors.length > 1">
+            <p>{{CredentialTaken_Error.Errors[1]}}</p>
           </div>
         </div>
         <div class="form-group">
@@ -188,6 +201,7 @@ export class RegisterComponent {
   RoutingService: Router = inject(Router);
   ProfilePic: File | undefined;
   Username_Error: error|undefined;
+  CredentialTaken_Error: error|undefined;
   Firstname_Error: error|undefined;
   Lastname_Error: error|undefined;
   Email_Error: error|undefined;
@@ -229,11 +243,14 @@ export class RegisterComponent {
                                           if('Token' in response){
                                             const Auth = response as AuthModel;
                                             localStorage.setItem('usertoken',Auth.Token);
+                                            if(this.UserService.GetRole() === 'Host')
+                                            {
                                               this.HostService.RetrieveHostData().subscribe((response) => {
                                                 const HostAuth = response as AuthModel;
                                                 localStorage.setItem('hosttoken',HostAuth.Token);
                                               });
-                                            this.RoutingService.navigate(['/']);  
+                                            }
+                                            this.RoutingService.navigate(['/']).then(() => location.reload());
                                           }else{
                                             const ErrorResponse = response as error[];
                                             this.Username_Error = ErrorResponse.find(item => item.Variable === 'Username');
@@ -249,6 +266,7 @@ export class RegisterComponent {
                                             this.Languages_Error = ErrorResponse.find(item => item.Variable === 'Languages');
                                             this.Profession_Error = ErrorResponse.find(item => item.Variable === 'Profession');
                                             this.ProfilePic_Error = ErrorResponse.find(item => item.Variable === 'ProfilePic');
+                                            this.CredentialTaken_Error = ErrorResponse.find(item => item.Variable === '');
                                           };});
   }
 

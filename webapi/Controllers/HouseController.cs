@@ -322,7 +322,6 @@ namespace webapi.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles="Host")]
         public async Task<IActionResult> Create(string? Id,[FromForm]HouseInput House)
         {
             var options = new JsonSerializerOptions

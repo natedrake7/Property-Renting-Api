@@ -299,7 +299,7 @@ export class AddHouseComponent {
     this.HouseService.CreateProperty(ListingData).subscribe((response) => {
       console.log(response);
       if(response === 'ok'){
-        this.RoutingService.navigateByUrl('../');
+        this.RoutingService.navigate(["/Profile/Host"]).then(() => location.reload());
       }
       else{
         console.log(response);

@@ -89,16 +89,25 @@ export class UserService {
     this.User.Bio = token['Bio'];
     return this.User
   }
+
   GetUserStatus(): boolean {
     if (!this.GetToken('usertoken'))
       return false
     return true;
   }
+
   GetUsername(): string | undefined {
     const token = this.GetToken('usertoken');
     if(!token)
       return undefined;
     return token['username'];
+  }
+
+  GetRole():string | undefined{
+    const token = this.GetToken('usertoken');
+    if(!token)
+      return undefined;
+    return token['Role'];
   }
 
   GetToken(TokenId: string):{[key: string]: string} | undefined

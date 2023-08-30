@@ -79,6 +79,7 @@ namespace airbnb.Controllers
                     await _signInManager.SignInAsync(user, isPersistent: false);
                     if (user.IsHost == true)
                     {
+                        bool check = false;
                         await _signInManager.RefreshSignInAsync(user);
                         if(Input.HostName == null)
                             Input.HostName = user.FirstName;
@@ -87,16 +88,7 @@ namespace airbnb.Controllers
                         if(Input.HostLocation == null)
                         {
                            ModelState.AddModelError("HostLocation", "You must enter a valid location");
-                           var ModelErrors2 = ModelState
-                                    .Where(entry => entry.Value!.Errors.Count > 0)
-                                    .Select(entry => new {
-                                        Variable = entry.Key,
-                                        Errors = entry.Value!.Errors.Select(error => error.ErrorMessage)
-                                    })
-                                    .ToList();
-                            var json3 = JsonSerializer.Serialize(ModelErrors2, options);
-                            return Content(json3, "application/json");
-
+                           check = true;
                         }
                         var userHost = new webapi.Models.Host()
                         {
@@ -111,7 +103,22 @@ namespace airbnb.Controllers
                          };
                         _context.Add(userHost);
                         await _context.SaveChangesAsync();
-
+                        if(Input.ProfilePic == null)
+                        {
+                            ModelState.AddModelError("ProfilePic", "Your profile must have a pic!");
+                        }
+                        if(check == true) //There is an error
+                        {
+                            var ModelErrors2 = ModelState
+                             .Where(entry => entry.Value!.Errors.Count > 0)
+                             .Select(entry => new {
+                                 Variable = entry.Key,
+                                 Errors = entry.Value!.Errors.Select(error => error.ErrorMessage)
+                             })
+                             .ToList();
+                            var json3 = JsonSerializer.Serialize(ModelErrors2, options);
+                            return Content(json3, "application/json");
+                        }
                         var hostImage = new HostImage()
                         {
                             HostId = userHost.Id,
@@ -309,7 +316,6 @@ namespace airbnb.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Host")]
         public async Task<IActionResult> Edit([FromBody]ReturnModel Input,string? Id)
         {
             var options = new JsonSerializerOptions
