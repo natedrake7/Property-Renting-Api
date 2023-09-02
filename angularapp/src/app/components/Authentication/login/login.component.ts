@@ -96,13 +96,17 @@ export class LoginComponent {
         if('Token' in response){
           const Auth = response as AuthModel;
           localStorage.setItem('usertoken',Auth.Token);
-          this.HostService.RetrieveHostData().subscribe((response2) => {
-            if('Token' in response2){
-              const Auth = response2 as AuthModel;
-              localStorage.setItem('hosttoken',Auth.Token);
-            }
+          if(this.UserService.GetRole() === 'Host'){
+            this.HostService.RetrieveHostData().subscribe((response2) => {
+              if('Token' in response2){
+                const Auth = response2 as AuthModel;
+                localStorage.setItem('hosttoken',Auth.Token);
+              }
+              this.RoutingService.navigate(['/']).then(() => location.reload());
+            }); 
+          }
+          else
             this.RoutingService.navigate(['/']).then(() => location.reload());
-          });
         }
         else {
           const ErrorResponse = response as error[];

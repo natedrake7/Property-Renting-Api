@@ -68,7 +68,7 @@ export class AppComponent {
   }
   Logout() {
     if (this.UserService.GetUserStatus())
-      this.UserService.Logout().subscribe(() => { localStorage.removeItem('User'); location.reload(); });
+      this.UserService.Logout().subscribe(() => {this.RoutingService.navigate(['/']).then(() => location.reload());});
   }
   FilterByCity(filterValue: string){this.SearchService.SetValue(filterValue);}
 }

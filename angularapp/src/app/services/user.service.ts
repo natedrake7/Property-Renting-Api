@@ -34,7 +34,8 @@ export class UserService {
   Logout(): Observable<string> { 
     const token = this.GetToken('usertoken');
     const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
-    localStorage.clear(); return this.http.get<string>(this.LogoutURL,{headers:headers}); 
+    localStorage.clear(); 
+    return this.http.get<string>(this.LogoutURL,{headers:headers}); 
   }
   EditUser(username: string|undefined,firstname: string|undefined,lastname: string|undefined,
            phonenumber: string|undefined,bio: string|undefined):Observable<AuthModel | error[]>{

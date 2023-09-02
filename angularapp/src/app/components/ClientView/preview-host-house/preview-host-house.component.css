@@ -19,6 +19,12 @@
     width: 250px;
     object-fit: cover;
     border-radius: 30px;
+    box-shadow: 0px 0px 0px transparent; /* Initially transparent box shadow */
+    transition: box-shadow 0.3s; /* Add a smooth transition for the box shadow */
+  }
+
+  .thumbnail:hover{
+    box-shadow: 0 0 10px 5px rgba(0, 123, 255, 0.5); /* Blue aura on hover */
   }
 
   .details{

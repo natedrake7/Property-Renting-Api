@@ -52,10 +52,12 @@ GetHousesByHostId(HostId: number|undefined):Observable<House[]>{
     return this.http.get<House[]>(this.GetHostHousesURL + HostId);
   }
 
-EditHouseById(Id:number,Data : FormData | undefined):Observable<string|error[]>{
+EditHouseById(Id:number,Data : FormData | undefined):Observable<string | error[]>{
   const token = this.GetToken('usertoken');
   const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
-  return this.http.post<string|error[]>(this.EditHouseURL + Id,Data,{headers:headers});
+  const AuthToken = this.GetToken('usertoken');
+  Data?.append('UserId',AuthToken!['Id']);
+  return this.http.post<string|error[]>(this.EditHouseURL + Id,Data,{headers: headers});
 }
 
 DeleteHousebyId(Id:number,UserId:string | undefined):Observable<string>{

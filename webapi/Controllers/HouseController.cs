@@ -328,9 +328,10 @@ namespace webapi.Controllers
             {
                 Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
             };
-            var user = await _userManager.FindByIdAsync(Id!);
-            if (user == null)
-                return NotFound();
+
+            var user = await AuthorizeAsync(Id!);
+            if(user == null) 
+              return NotFound("User not found or is not host!");
 
             using var transaction = _context.Database.BeginTransaction();
             if (ModelState.IsValid)
@@ -429,7 +430,6 @@ namespace webapi.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles="Host")]
         public async Task<IActionResult> Edit(int id,[FromForm] HouseEdit House)
         {
             var options = new JsonSerializerOptions
@@ -443,6 +443,12 @@ namespace webapi.Controllers
                 return NotFound();
             else if (id != existingHouse.Id)
                 return NotFound();
+
+            if(!await AuthorizeAsync(House.UserId!,existingHouse.HostId))
+            {
+                return BadRequest("User is not authorized!");
+            }
+
             using var transaction = _context.Database.BeginTransaction();
             if (ModelState.IsValid)
             {
@@ -562,7 +568,6 @@ namespace webapi.Controllers
 
         // POST: UserHouses/Delete/5
         [HttpPost]
-        [Authorize(Roles = "Host")]
         public async Task<IActionResult> Delete(int id,[FromForm]string? UserId)
         {
             var options = new JsonSerializerOptions
@@ -571,6 +576,7 @@ namespace webapi.Controllers
                 NumberHandling = JsonNumberHandling.AllowNamedFloatingPointLiterals,
                 ReferenceHandler = ReferenceHandler.Preserve
             };
+
             if (_context.Houses == null)
                 return Problem("Entity set 'UserContext.UserHouses'  is null.");
 
@@ -578,9 +584,10 @@ namespace webapi.Controllers
             if (userHouse == null)
                 return NotFound($"House with id {id} not found.");
 
-            var user = await _userManager.FindByIdAsync(UserId!);
-            if (user == null)
-                return NotFound($"User with id {UserId} not found.");
+            if (!await AuthorizeAsync(UserId!, userHouse.HostId))
+            {
+                return BadRequest("User is not authorized!");
+            }
 
             if (userHouse != null)
                   _context.Houses.Remove(userHouse);
@@ -594,5 +601,36 @@ namespace webapi.Controllers
         {
             return (_context.Houses?.Any(e => e.Id == id)).GetValueOrDefault();
         }
+
+        private async Task<bool> AuthorizeAsync(string UserId,int HostId)
+        {
+            var user = await _userManager.FindByIdAsync(UserId);
+            if (user == null)
+            {
+                return false;
+            }
+            else if (!await _userManager.IsInRoleAsync(user, "Host") || user.HostId != HostId)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        private async Task<User> AuthorizeAsync(string UserId)
+        {
+            var user = await _userManager.FindByIdAsync(UserId);
+            if (user == null)
+            {
+                return null;
+            }
+            else if (!await _userManager.IsInRoleAsync(user, "Host"))
+            {
+                return null;
+            }
+            return user;
+        }
+
+
+
     }
 }
